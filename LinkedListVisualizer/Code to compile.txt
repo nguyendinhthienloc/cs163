@@ -1,1 +1,0 @@
-g++ -o LinkedListVisualizer main.cpp LinkedList.cpp -I"D:/CS163-Visualisation Application Project (Thien Loc)/raylib/include" -L"D:/CS163-Visualisation Application Project (Thien Loc)/raylib/lib" -lraylib -lglfw3 -lopengl32 -lgdi32 -lwinmm
