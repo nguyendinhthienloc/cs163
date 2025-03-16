@@ -2,7 +2,6 @@
 #define UI_H
 
 class HashTable;
-
 extern HashTable ht;
 
 #include "raylib.h"

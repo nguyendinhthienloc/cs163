@@ -25,6 +25,8 @@ void HashTable::cleanUp() {
 		FreeTable(snapshot);  // Free all nodes in the snapshot
 		redoStack.pop();
 	}
+
+	ht.searchMessage = "";
 }
 
 int HashTable::hashFunction(int val) {
@@ -220,6 +222,8 @@ void HashTable::Clear() {
 }
 
 void HashTable::RandomInsert(int maxElements, int minValue, int maxValue) {
+	srand(time(NULL));  // Ensure different random numbers each time the program runs
+
 	undoStack.push(CopyTable());  // Save the state before inserting multiple values
 	while (!redoStack.empty()) redoStack.pop();  // Clear redo stack on new action
 

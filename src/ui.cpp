@@ -9,6 +9,13 @@ Texture2D redoIcon;
 void LoadIcons() {
     undoIcon = LoadTexture("icons/undo.png");
     redoIcon = LoadTexture("icons/redo.png");
+
+    if (undoIcon.id == 0) {
+        printf("Failed to load undo.png\n");
+    }
+    if (redoIcon.id == 0) {
+        printf("Failed to load redo.png\n");
+    }
 }
 
 HashTable ht;
@@ -178,6 +185,9 @@ void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
 // Draw Back Button on visualization screens
 void DrawBackButton() {
     if (DrawButton({20, 20, 100, 40}, "Back", GRAY)) {
+        if (currentScreen == HASH_TABLE) {
+            ht.cleanUp();
+        }
         currentScreen = MENU;
     }
 }

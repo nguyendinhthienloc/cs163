@@ -27,6 +27,8 @@ public:
 
 	void ResetHighlight();
 
+	void cleanUp();
+
 private:
 	static const int HT_SIZE = 13;
 
@@ -50,7 +52,6 @@ private:
 	int hashFunction(int val);
 	std::vector<Node*> CopyTable();
 	void FreeTable(std::vector<Node*>& tableCopy);
-	void cleanUp();
 
 	// Variables for inserting
 	Node* insertedNode = nullptr;  // Track the last inserted node
