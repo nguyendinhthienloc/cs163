@@ -1,0 +1,30 @@
+﻿  AVLtree.cpp
+  AVLtreeAnimation.cpp
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(129,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(129,16): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(131,77): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(131,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(134,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(134,26): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(134,21): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(134,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(138,38): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(138,26): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(138,21): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(138,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(148,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(148,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(155,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(155,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(156,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(156,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(157,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(157,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(158,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(158,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\testFolder\TestAVL\TestAVL\AVLtreeAnimation.cpp(161,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  main.cpp
+  Generating Code...
+  TestAVL.vcxproj -> D:\Documents\Coding\testFolder\TestAVL\TestAVL\x64\Debug\TestAVL.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
