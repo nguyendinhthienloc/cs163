@@ -26,7 +26,11 @@ private:
     void RecalculatePositions();
     Vector2 CalculateArrowStart(Vector2 from, Vector2 to, float radius);  // 🔥 ADDED FUNCTION for precise arrow positioning
 
+    
 public:
+    int GetSize() {
+    return nodes.size();
+    }
     LinkedList();
     ~LinkedList();
     void Insert(int value);

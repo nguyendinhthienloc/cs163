@@ -3,27 +3,33 @@
 
 #include "raylib.h"
 #include "linked_list.h"
+#include "hash_table.h"
+#include "avl_tree.h"
+#include "graph.h"
 
-
-// Enum for different screens
+// Enum defining different screens
 typedef enum {
     MENU,
     LINKED_LIST,
     HASH_TABLE,
-    TWO_THREE_TREE,
+    AVL_TREE,
     GRAPH
 } Screen;
 
-// Global variable for screen state
+// Global screen tracker
 extern Screen currentScreen;
 
 // UI Functions
+void DrawUI(LinkedList &list, HashTable &hashTable, AVLTree &avlTree, Graph &graph);
 void DrawMenu();
 void DrawLinkedList(LinkedList &list);
-
-
-// Button Helper Function
+void DrawHashTable(HashTable &hashTable);
+void DrawAVLTree(AVLTree &avlTree);
+void DrawGraph(Graph &graph);
+void DrawBackButton();
 bool DrawButton(Rectangle rect, const char* text, Color color);
 
+// 🟢 Smooth screen transition function
+void TransitionTo(Screen newScreen);
+
 #endif // UI_H
-// End of Path: ui.h

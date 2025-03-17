@@ -17,7 +17,9 @@ LinkedList::~LinkedList() {
 
 // Insert a new node with smooth animation
 void LinkedList::Insert(int value) {
-    Node* newNode = new Node(value, {0, 300});  // Start off-screen
+    float startX = 120 + nodes.size() * nodeSpacing;
+    Node* newNode = new Node(value, {startX, 300});  // Start at computed position
+
     if (!head) {
         head = newNode;
     } else {
@@ -25,9 +27,11 @@ void LinkedList::Insert(int value) {
         while (temp->next) temp = temp->next;
         temp->next = newNode;
     }
+
     nodes.push_back(newNode);
     RecalculatePositions();
 }
+
 
 // Delete a node smoothly
 void LinkedList::Delete(int value) {
@@ -41,20 +45,21 @@ void LinkedList::Delete(int value) {
         temp = temp->next;
     }
 
-    if (!temp) return;  // Value not found
+    if (!temp) return;  // Node not found, exit early
 
-    if (prev) {
-        prev->next = temp->next;
-    } else {
-        head = temp->next;
+    if (prev) prev->next = temp->next;
+    else head = temp->next;
+
+    auto it = std::find(nodes.begin(), nodes.end(), temp);
+    if (it != nodes.end()) {
+        nodes.erase(it);
+        delete temp;  // Properly delete node
     }
 
-    // Remove node from visualization list
-    nodes.erase(std::remove(nodes.begin(), nodes.end(), temp), nodes.end());
-
-    delete temp;  // Free memory
-    RecalculatePositions();  // Adjust UI layout
+    RecalculatePositions();
 }
+
+
 
 
 // Search for a node and highlight it smoothly
@@ -80,11 +85,13 @@ void LinkedList::Update(int oldValue, int newValue) {
 
 // Recalculate positions with dynamic spacing
 void LinkedList::RecalculatePositions() {
-    float screenWidth = 800;  // Set your screen width
-    float maxNodes = 8;  // Maximum nodes before spacing changes
+    float screenWidth = 800;
+    float maxNodes = 8;
     float startX = 120;
     float yPos = 300;
+
     nodeSpacing = (nodes.size() > maxNodes) ? screenWidth / nodes.size() : 100;
+    if (nodeSpacing < 50) nodeSpacing = 50; // Prevents nodes from overlapping too much
 
     for (auto node : nodes) {
         node->targetPosition = {startX, yPos};
@@ -92,31 +99,50 @@ void LinkedList::RecalculatePositions() {
     }
 }
 
+
+
 // Helper function to calculate direction vector
 Vector2 CalculateArrowStart(Vector2 from, Vector2 to, float radius) {
-    float angle = atan2f(to.y - from.y, to.x - from.x);
-    return {from.x + cosf(angle) * radius, from.y + sinf(angle) * radius};
+    Vector2 direction = {to.x - from.x, to.y - from.y};
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
+    
+    if (length == 0) return from;  // Avoid division by zero
+
+    direction.x /= length;
+    direction.y /= length;
+
+    return {from.x + direction.x * radius, from.y + direction.y * radius};
 }
+
 
 // Draw the linked list with correctly positioned arrows
 void LinkedList::Draw() {
-    float radius = 30;  // Circle radius
+    float radius = 30;
+    float lerpSpeed = 0.1f;  // Adjustable for smooth movement
+    bool flash = (GetTime() - (int)GetTime() < 0.5f);  // Toggle color every 0.5 seconds
 
     for (auto node : nodes) {
-        // LERP for smooth movement
-        node->position.x += (node->targetPosition.x - node->position.x) * 0.1f;
-        node->position.y += (node->targetPosition.y - node->position.y) * 0.1f;
+        // Dynamic LERP adjustment based on distance
+        float dist = sqrt(pow(node->targetPosition.x - node->position.x, 2) +
+                          pow(node->targetPosition.y - node->position.y, 2));
+        float dynamicLerp = (dist > 50) ? 0.15f : lerpSpeed;  // Increase speed if far apart
 
-        // Draw Node
-        DrawCircleV(node->position, radius, (node == foundNode) ? GREEN : SKYBLUE);
+        node->position.x += (node->targetPosition.x - node->position.x) * dynamicLerp;
+        node->position.y += (node->targetPosition.y - node->position.y) * dynamicLerp;
+
+        // 🎯 Apply flashing effect for search result node
+        Color nodeColor = (node == foundNode && flash) ? RED : SKYBLUE;
+        DrawCircleV(node->position, radius, nodeColor);
         DrawText(TextFormat("%d", node->value), node->position.x - 10, node->position.y - 10, 20, BLACK);
 
-        // Draw Correctly Positioned Arrows
+        // Draw Arrows
         if (node->next) {
             Vector2 startArrow = CalculateArrowStart(node->position, node->next->position, radius);
-            Vector2 endArrow = CalculateArrowStart(node->next->position, node->position, -radius);  // Arrow should end just outside the next node
+            Vector2 endArrow = CalculateArrowStart(node->next->position, node->position, -radius);  
 
-            DrawLineEx(startArrow, endArrow, 3.0f, BLACK);  // Smooth line with correct thickness
+            DrawLineEx(startArrow, endArrow, 3.0f, BLACK);
         }
     }
 }
+
+
