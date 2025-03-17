@@ -1,3 +1,0 @@
-D:\Documents\Coding\testFolder\TestAVL\TestAVL\x64\Debug\raylib.dll
-D:\Documents\Coding\testFolder\TestAVL\TestAVL\x64\Debug\glfw3.dll
-D:\Documents\Coding\testFolder\TestAVL\TestAVL\TestAVL\x64\Debug\TestAVL.vcxproj.Up2Date
