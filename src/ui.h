@@ -2,8 +2,10 @@
 #define UI_H
 
 #include "raylib.h"
+#include "linked_list.h"
 
-// Enumeration for different screens
+
+// Enum for different screens
 typedef enum {
     MENU,
     LINKED_LIST,
@@ -12,15 +14,16 @@ typedef enum {
     GRAPH
 } Screen;
 
-// Global screen variable
+// Global variable for screen state
 extern Screen currentScreen;
 
-// Function prototypes
+// UI Functions
 void DrawMenu();
-void DrawLinkedList();
-void DrawHashTable();
-void DrawTwoThreeTree();
-void DrawGraph();
-void DrawUI();
+void DrawLinkedList(LinkedList &list);
+
+
+// Button Helper Function
+bool DrawButton(Rectangle rect, const char* text, Color color);
 
 #endif // UI_H
+// End of Path: ui.h
