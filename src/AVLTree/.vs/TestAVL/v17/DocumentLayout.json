@@ -1,26 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\",
+  "WorkspaceRootPath": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:AVLtreeAnimation.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:AVLtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:AVLtreeAnimation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:AVLtree.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BA961855-C55E-4508-BD32-6B22D00D2011}|TestAVL.vcxproj|solutionrelative:AVLtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,37 +46,37 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "AVLtree.h",
-              "DocumentMoniker": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.h",
+              "DocumentMoniker": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.h",
               "RelativeDocumentMoniker": "AVLtree.h",
-              "ToolTip": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.h",
+              "ToolTip": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.h",
               "RelativeToolTip": "AVLtree.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-03-12T14:08:19.113Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "AVLtree.cpp",
-              "DocumentMoniker": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.cpp",
+              "DocumentMoniker": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.cpp",
               "RelativeDocumentMoniker": "AVLtree.cpp",
-              "ToolTip": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtree.cpp",
+              "ToolTip": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtree.cpp",
               "RelativeToolTip": "AVLtree.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMMAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-12T14:07:26.787Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "AVLtreeAnimation.h",
-              "DocumentMoniker": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.h",
+              "DocumentMoniker": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.h",
               "RelativeDocumentMoniker": "AVLtreeAnimation.h",
-              "ToolTip": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.h",
+              "ToolTip": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.h",
               "RelativeToolTip": "AVLtreeAnimation.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-03-12T14:08:03.497Z"
             },
@@ -84,11 +84,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "AVLtreeAnimation.cpp",
-              "DocumentMoniker": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.cpp",
+              "DocumentMoniker": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.cpp",
               "RelativeDocumentMoniker": "AVLtreeAnimation.cpp",
-              "ToolTip": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\AVLtreeAnimation.cpp",
+              "ToolTip": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\AVLtreeAnimation.cpp",
               "RelativeToolTip": "AVLtreeAnimation.cpp",
-              "ViewState": "AgIAAL4AAAAAAAAAAAAAANQAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-12T14:07:52.69Z",
               "EditorCaption": ""
@@ -97,14 +97,13 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "main.cpp",
-              "DocumentMoniker": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\main.cpp",
+              "DocumentMoniker": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
-              "ToolTip": "D:\\Documents\\Coding\\testFolder\\TestAVL\\TestAVL\\main.cpp",
+              "ToolTip": "D:\\Documents\\Coding\\CS163\\Project\\AppVisualizer\\cs163\\src\\AVLTree\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-12T14:07:11.22Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-12T14:07:11.22Z"
             }
           ]
         }

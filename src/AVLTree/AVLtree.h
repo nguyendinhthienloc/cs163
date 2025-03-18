@@ -35,7 +35,7 @@ public:
     void leftRotate(Node*& root);
     void insert(Node*& node, int value);
     void remove(Node*& node, int value);
-    bool search(int value) const;
+    bool search(int value);
     std::vector<Node*> getInsertionPath(int value);
 
 };

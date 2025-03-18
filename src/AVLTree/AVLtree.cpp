@@ -193,7 +193,7 @@ void AVLTree::remove(Node*& node, int value) {
     }  
 }
 
-bool AVLTree::search(int value) const {
+bool AVLTree::search(int value) {
     Node* current = root;
     while (current) {
         if (value == current->data) return true;

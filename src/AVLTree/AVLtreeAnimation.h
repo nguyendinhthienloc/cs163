@@ -1,4 +1,3 @@
-
 #include "AVLtree.h"
 #include "raylib.h"
 #include <string>
@@ -15,6 +14,7 @@ public:
     Rectangle deleteButton;
     Rectangle searchButton;
     Rectangle randomButton;
+    Rectangle clearButton;
 
     enum AnimationState { IDLE, TRAVERSING, INSERTING, ROTATING, SHOWING_RESULT };
     AnimationState currentState;
@@ -39,5 +39,6 @@ public:
     void animateDelete(int value);
     void animateSearch(int value);
     void animateRandom();
+    void animateClear();
 };
 

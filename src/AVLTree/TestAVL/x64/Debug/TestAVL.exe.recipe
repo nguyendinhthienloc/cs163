@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\Documents\Coding\testFolder\TestAVL\TestAVL\x64\Debug\TestAVL.exe</FullPath>
+      <FullPath>D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\x64\Debug\TestAVL.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
