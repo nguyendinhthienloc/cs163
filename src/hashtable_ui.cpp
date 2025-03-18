@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "ui.h"
+#include "hashtable_ui.h"
 #include "HashTable.h"
 #include <string>
 
@@ -9,13 +9,6 @@ Texture2D redoIcon;
 void LoadIcons() {
     undoIcon = LoadTexture("icons/undo.png");
     redoIcon = LoadTexture("icons/redo.png");
-
-    if (undoIcon.id == 0) {
-        printf("Failed to load undo.png\n");
-    }
-    if (redoIcon.id == 0) {
-        printf("Failed to load redo.png\n");
-    }
 }
 
 HashTable ht;
@@ -142,44 +135,56 @@ void DefineUIElements(Rectangle& insertBtn, Rectangle& deleteBtn, Rectangle& sea
 
 void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn, const Rectangle& searchBtn,
     const Rectangle& randomBtn, const Rectangle& clearBtn) {
-    if (currentScreen == HASH_TABLE) {
-        if (DrawButton(insertBtn, "Insert", GREEN))
-            ProcessButtonClick([](int v) { ht.searchMessage = ""; ht.Insert(v, false); });
-
-        if (DrawButton(deleteBtn, "Delete", RED))
-            ProcessButtonClick([](int v) { ht.searchMessage = ""; ht.Delete(v); });
-
-        if (DrawButton(searchBtn, "Search", BLUE)) {
-            ProcessButtonClick([](int v) {
-                ht.searchMessage = ht.Search(v) ? TextFormat("Value %d found!", v) : TextFormat("Value %d not found!", v);
-                });
-        }
-
-        if (DrawButton(randomBtn, "Random", ORANGE)) {
-            ht.searchMessage = "";
-            ht.RandomInsert(30, 0, 100);
-        }
-
-        if (DrawButton(clearBtn, "Clear", RED)) {
-            ht.searchMessage = "";
-            ht.Clear();
-        }
+    if (DrawButton(insertBtn, "Insert", GREEN)) {
+        ProcessButtonClick([](int v) {
+            ht.ResetColors();
+            ht.StartSearch(v, true); // Shows calculation
+            ht.SetPendingOperation(HashTable::PendingOperation::INSERT, v);
+            });
     }
-    else {
-        // For other data structures
+
+    if (DrawButton(deleteBtn, "Delete", RED)) {
+        ProcessButtonClick([](int v) {
+            ht.ResetColors();
+            ht.StartSearch(v, false); // Shows calculation
+            ht.SetPendingOperation(HashTable::PendingOperation::DELETE, v);
+            });
+    }
+
+    if (DrawButton(searchBtn, "Search", BLUE)) {
+        ProcessButtonClick([](int v) {
+            ht.ResetColors();
+            ht.StartSearch(v, false); // Shows calculation
+            });
+    }
+
+    if (DrawButton(randomBtn, "Random", ORANGE)) {
+        ht.ResetColors();
+        ht.searchMessage = "Generated random values.";
+        ht.RandomInsert(30, 0, 100);
+    }
+
+    if (DrawButton(clearBtn, "Clear", RED)) {
+        ht.ResetColors();
+        ht.searchMessage = "Table cleared.";
+        ht.Clear();
     }
 }
 
 void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
     if (CheckCollisionPointRec(GetMousePosition(), undoBtn)) DrawRectangleRec(undoBtn, GRAY);
     DrawTexture(undoIcon, undoBtn.x + (undoBtn.width - undoIcon.width) / 2, undoBtn.y + (undoBtn.height - undoIcon.height) / 2, BLACK);
-    if(currentScreen==HASH_TABLE)
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), undoBtn)) ht.Undo();
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), undoBtn)) {
+        ht.ResetColors();
+        ht.Undo();
+    }
 
     if (CheckCollisionPointRec(GetMousePosition(), redoBtn)) DrawRectangleRec(redoBtn, GRAY);
     DrawTexture(redoIcon, redoBtn.x + (redoBtn.width - redoIcon.width) / 2, redoBtn.y + (redoBtn.height - redoIcon.height) / 2, BLACK);
-    if (currentScreen == HASH_TABLE)
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), redoBtn)) ht.Redo();
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), redoBtn)) {
+        ht.ResetColors();
+        ht.Redo();
+    }
 }
 
 // Draw Back Button on visualization screens
@@ -200,6 +205,8 @@ void DrawHashTable() {
     DrawUndoRedoButtons(undoBtn, redoBtn);
 
     ht.HandleTableDragging();
+    ht.UpdateDeletionAnimation();
+    ht.UpdateSearchAnimation();
     ht.Draw();
 
     DrawInputBox(inputBox);
