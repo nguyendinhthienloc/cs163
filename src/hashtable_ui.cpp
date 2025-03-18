@@ -2,6 +2,7 @@
 #include "hashtable_ui.h"
 #include "HashTable.h"
 #include <string>
+#include <fstream>
 
 Texture2D undoIcon;
 Texture2D redoIcon;
@@ -110,7 +111,7 @@ void ProcessButtonClick(void (*operation)(int)) {
 
 // **Draw UI and handle button actions**
 void DefineUIElements(Rectangle& insertBtn, Rectangle& deleteBtn, Rectangle& searchBtn, Rectangle& inputBox,
-    Rectangle& randomBtn, Rectangle& clearBtn, Rectangle& undoBtn, Rectangle& redoBtn) {
+    Rectangle& randomBtn, Rectangle& clearBtn, Rectangle& undoBtn, Rectangle& redoBtn, Rectangle& loadFileBtn) {
     float screenWidth = GetScreenWidth();
     float screenHeight = GetScreenHeight();
     float buttonWidth = screenWidth / 8;
@@ -129,12 +130,15 @@ void DefineUIElements(Rectangle& insertBtn, Rectangle& deleteBtn, Rectangle& sea
     randomBtn = { padding, screenHeight - buttonHeight - padding, buttonWidth, buttonHeight };
     clearBtn = { randomBtn.x + buttonWidth + padding, randomBtn.y, buttonWidth, buttonHeight };
 
+    float loadFileWidth = 2 * buttonWidth + padding;
+    loadFileBtn = { padding, randomBtn.y - buttonHeight - padding, loadFileWidth, buttonHeight };
+
     redoBtn = { screenWidth - padding - buttonWidth, screenHeight - buttonHeight - padding, buttonWidth, buttonHeight };
     undoBtn = { redoBtn.x - buttonWidth - padding, redoBtn.y, buttonWidth, buttonHeight };
 }
 
 void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn, const Rectangle& searchBtn,
-    const Rectangle& randomBtn, const Rectangle& clearBtn) {
+    const Rectangle& randomBtn, const Rectangle& clearBtn, const Rectangle& loadFileBtn) {
     if (DrawButton(insertBtn, "Insert", GREEN)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
@@ -169,6 +173,28 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
         ht.searchMessage = "Table cleared.";
         ht.Clear();
     }
+
+    if (DrawButton(loadFileBtn, "Load File", PURPLE)) { // New button handling
+        ht.ResetColors();
+        LoadFromFile("input.txt"); // Specify your file name here
+        ht.searchMessage = "Loaded values from file.";
+    }
+}
+
+void LoadFromFile(const char* filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        ht.searchMessage = "Failed to open file!";
+        return;
+    }
+
+    ht.Clear(); // Clear the table before loading new values
+    int value;
+    while (file >> value) {
+        ht.Insert(value, true); // Insert each value from the file
+    }
+
+    file.close();
 }
 
 void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
@@ -198,10 +224,10 @@ void DrawBackButton() {
 }
 
 void DrawHashTable() {
-    Rectangle insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn;
-    DefineUIElements(insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn);
+    Rectangle insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn;
+    DefineUIElements(insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn);
 
-    DrawAndHandleButtons(insertBtn, deleteBtn, searchBtn, randomBtn, clearBtn);
+    DrawAndHandleButtons(insertBtn, deleteBtn, searchBtn, randomBtn, clearBtn, loadFileBtn);
     DrawUndoRedoButtons(undoBtn, redoBtn);
 
     ht.HandleTableDragging();
