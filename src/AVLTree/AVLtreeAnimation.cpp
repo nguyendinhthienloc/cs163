@@ -1,6 +1,11 @@
 #include "AVLtreeAnimation.h"
 #include <sstream>
 #include <cstdlib>
+#include <stack>
+#include <iostream>
+
+std::stack<AVLTree> treeUndoState;
+std::stack<AVLTree> treeRedoState;
 
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
@@ -11,6 +16,8 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     searchButton = { 410, 20, 90, 30 };
     randomButton = { 510, 20, 90, 30 };
     clearButton  = { 610, 20, 70, 30 };
+    previousButton = { 1000, 20, 105, 30 };
+    nextButton = { 1120, 20, 65, 30 }; 
 
     currentState = IDLE;
     pathIndex = 0;
@@ -21,8 +28,6 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     operationValue = 0;
     pendingInsertValue = 0;
 }
-
-
 
 void AVLTreeVisualizer::handleInput() {
     Vector2 mousePos = GetMousePosition();
@@ -69,6 +74,16 @@ void AVLTreeVisualizer::handleInput() {
         animateClear();
         inputText.clear();
     }
+
+    if (CheckCollisionPointRec(mousePos, previousButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        animatePrevious();
+        inputText.clear();
+    }
+
+    if (CheckCollisionPointRec(mousePos, nextButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        animateNext();
+        inputText.clear();
+    }
 }
 
 //timing algorithms
@@ -86,17 +101,26 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             stateTimer = 0.0f;
         }
         if (pathIndex >= currentPath.size()) {
-            currentState = SHOWING_RESULT; // Always transition to SHOWING_RESULT after traversal
-            resultTimer = 0.0f;
+            if (currentOperation == "insert") {
+                currentState = INSERTING; 
+            }
+            else {
+                currentState = SHOWING_RESULT; 
+            }
             stateTimer = 0.0f;
         }
         break;
 
     case INSERTING:
         if (stateTimer >= 0.5f) {
-            tree.insert(tree.root, pendingInsertValue);
+            tree.insert(tree.root, pendingInsertValue); 
+            AVLTree treeReplica(tree);
+            treeUndoState.push(treeReplica);
+            currentPath = tree.getInsertionPath(pendingInsertValue); 
+            pathIndex = currentPath.size(); 
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
+            stateTimer = 0.0f;
         }
         break;
 
@@ -155,12 +179,16 @@ void AVLTreeVisualizer::draw() {
     DrawRectangleRec(searchButton, BLUE);
     DrawRectangleRec(randomButton, PURPLE);
     DrawRectangleRec(clearButton, RED);
+    DrawRectangleRec(previousButton, GRAY);
+    DrawRectangleRec(nextButton, GRAY);
 
     DrawText("Insert", insertButton.x + 10, insertButton.y + 5, 20, WHITE);
     DrawText("Delete", deleteButton.x + 10, deleteButton.y + 5, 20, WHITE);
     DrawText("Search", searchButton.x + 10, searchButton.y + 5, 20, WHITE);
     DrawText("Random", randomButton.x + 10, randomButton.y + 5, 20, WHITE);
     DrawText("Clear", clearButton.x + 10, clearButton.y + 5, 20, WHITE);
+    DrawText("Previous", previousButton.x + 10, previousButton.y + 5, 20, WHITE);
+    DrawText("Next", nextButton.x + 10, nextButton.y + 5, 20, WHITE);
 
     if (tree.root) {
         drawTree(tree.root, GetScreenWidth() / 2, 100, 200, highlightNodes);
@@ -189,17 +217,19 @@ void AVLTreeVisualizer::animateDelete(int value) {
     pathIndex = 0;
     currentState = TRAVERSING;
     tree.remove(tree.root, value);
+    AVLTree treeReplica(tree);
+    treeUndoState.push(treeReplica);
 }
 
 void AVLTreeVisualizer::animateSearch(int value) {
     currentOperation = "search";
     operationValue = value;
-    currentPath = tree.getInsertionPath(value); // Get the traversal path
+    currentPath = tree.getInsertionPath(value); 
     pathIndex = 0;
-    searchFound = tree.search(value); // Check if the value exists
+    searchFound = tree.search(value); 
     currentState = TRAVERSING;
-    stateTimer = 0.0f; // Reset timer for smooth animation
-    resultTimer = 0.0f; // Reset result timer
+    stateTimer = 0.0f; 
+    resultTimer = 0.0f; 
 }
 
 void AVLTreeVisualizer::animateRandom() {
@@ -207,19 +237,18 @@ void AVLTreeVisualizer::animateRandom() {
     tree.~AVLTree();
     new (&tree) AVLTree(); 
 
-
-    // Generate random sequence (15 values)
     int* randomValues = LoadRandomSequence(15, 1, 100);
 
-    // Insert the random values into the tree
     for (int i = 0; i < 15; i++) {
         tree.insert(tree.root, randomValues[i]);
     }
 
-    // Clean up the allocated memory from LoadRandomSequence
+    AVLTree treeReplica(tree);
+    treeUndoState.push(treeReplica);
+    std::cout << treeUndoState.size() << std::endl;
+
     UnloadRandomSequence(randomValues);
 
-    // Set up animation state
     currentOperation = "random";
     currentPath.clear();
     pathIndex = 0;
@@ -238,4 +267,43 @@ void AVLTreeVisualizer::animateClear() {
     currentState = IDLE;
     stateTimer = 0.0f;
     resultTimer = 0.0f;
+}
+
+void AVLTreeVisualizer::animatePrevious() {
+    if (!treeUndoState.empty()) {
+        
+        //push the current tree to redo stack
+        AVLTree treeReplica(tree);
+        treeRedoState.push(treeReplica);
+
+        //change the tree to previous state
+        tree = treeUndoState.top();
+        treeUndoState.pop();
+
+        currentOperation = "";
+        currentPath.clear();
+        pathIndex = 0;
+        currentState = IDLE;
+        stateTimer = 0.0f;
+        resultTimer = 0.0f;
+    }
+}
+
+void AVLTreeVisualizer::animateNext() {
+    if (!treeRedoState.empty()) {
+        //push the current tree to undo stack
+        AVLTree treeReplica(tree);
+        treeUndoState.push(treeReplica);
+
+        //change the tree to next state
+        tree = treeRedoState.top();
+        treeRedoState.pop();
+
+        currentOperation = "";
+        currentPath.clear();
+        pathIndex = 0;
+        currentState = IDLE;
+        stateTimer = 0.0f;
+        resultTimer = 0.0f;
+    }
 }

@@ -15,6 +15,8 @@ public:
     Rectangle searchButton;
     Rectangle randomButton;
     Rectangle clearButton;
+    Rectangle previousButton;
+    Rectangle nextButton;
 
     enum AnimationState { IDLE, TRAVERSING, INSERTING, ROTATING, SHOWING_RESULT };
     AnimationState currentState;
@@ -40,5 +42,7 @@ public:
     void animateSearch(int value);
     void animateRandom();
     void animateClear();
+    void animatePrevious();
+    void animateNext();
 };
 
