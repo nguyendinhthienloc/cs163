@@ -1,8 +1,11 @@
 #include "raylib.h"
 #include "hashtable_ui.h"
 #include "HashTable.h"
+#include "tinyfiledialogs.h"
 #include <string>
 #include <fstream>
+#include <locale>   
+#include <codecvt>
 
 Texture2D undoIcon;
 Texture2D redoIcon;
@@ -176,25 +179,46 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
 
     if (DrawButton(loadFileBtn, "Load File", PURPLE)) { // New button handling
         ht.ResetColors();
-        LoadFromFile("input.txt"); // Specify your file name here
+        LoadFromFile(); // Specify your file name here
         ht.searchMessage = "Loaded values from file.";
     }
 }
 
-void LoadFromFile(const char* filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        ht.searchMessage = "Failed to open file!";
+void LoadFromFile() {
+    const char* filters[] = { "*.txt" };
+    const char* filePath = tinyfd_openFileDialog(
+        "Select a Text File", "", 1, filters, "Text Files", 0
+    );
+
+    if (!filePath) {
+        ht.searchMessage = "File selection canceled.";
         return;
     }
 
-    ht.Clear(); // Clear the table before loading new values
-    int value;
-    while (file >> value) {
-        ht.Insert(value, true); // Insert each value from the file
+    // Convert UTF-8 path to UTF-16 for Windows
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::wstring wideFilePath = converter.from_bytes(filePath);
+
+    // Use _wfopen_s to open the file
+    FILE* file = nullptr;
+    errno_t err = _wfopen_s(&file, wideFilePath.c_str(), L"r");
+    if (err != 0 || file == nullptr) {
+        ht.searchMessage = TextFormat("Failed to open file: %s", filePath);
+        return;
     }
 
-    file.close();
+    ht.Clear();
+    ht.ResetTableOffset();
+
+    int value;
+    int count = 0;
+    while (fscanf_s(file, "%d", &value) == 1) {
+        ht.Insert(value, true);
+        count++;
+    }
+
+    fclose(file);
+    ht.searchMessage = TextFormat("Loaded %d values from %s", count, filePath);
 }
 
 void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {

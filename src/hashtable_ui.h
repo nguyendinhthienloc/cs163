@@ -25,7 +25,7 @@ void LoadIcons();
 void DrawMenu();
 //void DrawLinkedList();
 void DrawHashTable();
-void LoadFromFile(const char* filename);
+void LoadFromFile();
 //void DrawTwoThreeTree();
 //void DrawGraph();
 void DrawUI();
