@@ -3,9 +3,11 @@
 #include <cstdlib>
 #include <stack>
 #include <iostream>
+#include <cmath>
 
 std::stack<AVLTree> treeUndoState;
 std::stack<AVLTree> treeRedoState;
+#define NODE_RADIUS 20.0f
 
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
@@ -153,17 +155,25 @@ void AVLTreeVisualizer::drawTree(Node* node, float x, float y, float offset, con
             nodeColor = GREEN;
     }
 
-    DrawCircle(x, y, 20, nodeColor);
+    DrawCircle(x, y, NODE_RADIUS, nodeColor);
     std::string valueStr = std::to_string(node->data);
     DrawText(valueStr.c_str(), x - MeasureText(valueStr.c_str(), 20) / 2, y - 10, 20, BLACK);
 
     if (node->left) {
-        DrawLine(x, y, x - offset, y + 60, WHITE);
-        drawTree(node->left, x - offset, y + 60, offset / 2, highlight);
+        float leftX = tree.getSubtreeWidth(node->left->right);
+        float hypotenus = sqrt(60.0f * 60.0f + leftX * leftX);
+        float startLineX = x - NODE_RADIUS*leftX/hypotenus;
+        float startLineY = y + NODE_RADIUS*60.0f/hypotenus;
+        DrawLine(startLineX, startLineY, x - leftX, y + 60, ORANGE);
+        drawTree(node->left, x - leftX, y + 60, offset / 2, highlight);
     }
     if (node->right) {
-        DrawLine(x, y, x + offset, y + 60, WHITE);
-        drawTree(node->right, x + offset, y + 60, offset / 2, highlight);
+        float rightX = tree.getSubtreeWidth(node->right->left);
+        float hypotenus = sqrt(60.0f * 60.0f + rightX * rightX);
+        float startLineX = x + NODE_RADIUS * rightX / hypotenus;
+        float startLineY = y + NODE_RADIUS * 60.0f / hypotenus;
+        DrawLine(startLineX, startLineY, x + rightX, y + 60, ORANGE);
+        drawTree(node->right, x + rightX, y + 60, offset / 2, highlight);
     }
 }
 

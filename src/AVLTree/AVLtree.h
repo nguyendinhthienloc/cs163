@@ -2,6 +2,8 @@
 #define AVLTREE_H
 
 #include <vector>
+#include <algorithm>
+#include <queue>
 
 // Node structure for the AVL tree
 struct Node {
@@ -28,6 +30,7 @@ public:
 
     int getHeight(Node* node) const;
     int getBalanceFactor(Node* node);
+    float getSubtreeWidth(Node* node);
     Node* minValueNode(Node* node);
 
 

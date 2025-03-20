@@ -3,6 +3,10 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <algorithm>
+#include "tinyfiledialogs.h"
+#include <locale>
+#include <codecvt>
 
 class AVLTreeVisualizer {
 public: 

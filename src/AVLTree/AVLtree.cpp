@@ -1,5 +1,5 @@
 #include "AVLtree.h"
-#include <algorithm>
+
 
 // Node constructor
 Node::Node(int data) : data(data), left(nullptr), right(nullptr) {}
@@ -55,6 +55,15 @@ int AVLTree::getBalanceFactor(Node* node) {
     if (!node) return 0;
 
     return getHeight(node->left) - getHeight(node->right);
+}
+
+float AVLTree::getSubtreeWidth(Node* node) {
+    if (!node) return 20.0;
+
+    int leftWidth = getSubtreeWidth(node->left);
+    int rightWidth = getSubtreeWidth(node->right);
+
+    return leftWidth + rightWidth + 20.0f;
 }
 
 Node* AVLTree::minValueNode(Node* node) {
