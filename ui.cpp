@@ -169,6 +169,11 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     if (DrawButton({ rightEdge - 180, 280, 180, 50 }, "Clear", PURPLE, true)) {
         inputState.inputLength = 0;
         inputState.inputBuffer[0] = '\0';
+        while (list.GetSize() > 0) {  // Delete all nodes
+            list.Delete(list.GetNodeAt(0)->value);
+        }
+        list.SetFoundNode(nullptr);  // Reset foundNode
+        list.SetScrollOffsetX(0);    // Reset scroll
     }
 
     // Call Draw method to draw the nodes
@@ -192,7 +197,6 @@ void DrawUI(LinkedList& list, bool& isFullScreen, InputState& inputState) {
     std::string feedbackMessage = "";
     double feedbackTimer = 0.0;
     float dragStartX = 0.0f;
-
     // Update the animation for the linked list
     list.UpdateAnimation(GetFrameTime());  // Update the animation in each frame
 
