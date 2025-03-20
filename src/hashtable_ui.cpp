@@ -208,7 +208,6 @@ void LoadFromFile() {
     }
 
     ht.Clear();
-    ht.ResetTableOffset();
 
     int value;
     int count = 0;

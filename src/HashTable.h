@@ -48,8 +48,6 @@ public:
 
 	void cleanUp();
 
-	void ResetTableOffset() { tableOffset = { 0, 0 }; }
-
 private:
 	static const int HT_SIZE = 13;
 

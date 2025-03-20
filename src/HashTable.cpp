@@ -234,34 +234,44 @@ void HashTable::DrawNodes(int index, float startX, float startY, float boxWidth,
 	Node* curr = table[index];
 	int offset = 1;
 	while (curr) {
+		// Calculate the target position for the node (relative to the bucket)
 		Vector2 targetPos = { startX + index * boxWidth, startY + offset * (boxHeight + GetScreenHeight() / 100) };
+		// Update the node's position with lerp (this position is not yet offset)
 		curr->position.x += (targetPos.x - curr->position.x) * 0.1f;
 		curr->position.y += (targetPos.y - curr->position.y) * 0.1f;
 
+		// Apply tableOffset to the node's position for drawing
+		Vector2 adjustedPos = { curr->position.x + tableOffset.x, curr->position.y + tableOffset.y };
+
+		// Set the color based on the node's state
 		Color color = RAYWHITE;
 		Color borderColor = DARKGRAY;
 		if (curr == insertedNode) color = GREEN;
-		if (curr == visitedNode) color = RED;
+		if (curr == visitedNode) color = YELLOW;
 		if (curr == foundNode) color = BLUE;
 		if (curr == nodeToDelete) color = Fade(RED, deleteTimer / deleteDuration);
 
-		Rectangle nodeBox = { curr->position.x, curr->position.y, boxWidth - 2, boxHeight };
+		// Draw the node at the adjusted position
+		Rectangle nodeBox = { adjustedPos.x, adjustedPos.y, boxWidth - 2, boxHeight };
 		DrawRectangleRec(nodeBox, color);
 		DrawRectangleLines(nodeBox.x, nodeBox.y, nodeBox.width, nodeBox.height, borderColor);
 
+		// Draw the text inside the node
 		int textWidth = MeasureText(TextFormat("%d", curr->val), boxHeight / 2);
 		int textX = nodeBox.x + (nodeBox.width - textWidth) / 2;
 		int textY = nodeBox.y + (nodeBox.height - boxHeight / 2) / 2;
 		DrawText(TextFormat("%d", curr->val), textX, textY, boxHeight / 2, BLACK);
 
-		// Draw arrow to next node if it exists
+		// Draw arrow to the next node if it exists
 		if (curr->next) {
-			// Adjust start and end points with tableOffset
-			Vector2 start = { nodeBox.x + nodeBox.width / 2 + tableOffset.x, nodeBox.y + nodeBox.height + tableOffset.y };
-			Vector2 end = { curr->next->position.x + nodeBox.width / 2 + tableOffset.x, curr->next->position.y + tableOffset.y };
+			// Adjust the next node's position with tableOffset
+			Vector2 nextAdjustedPos = { curr->next->position.x + tableOffset.x, curr->next->position.y + tableOffset.y };
+			// Draw the line from the current node to the next node
+			Vector2 start = { nodeBox.x + nodeBox.width / 2, nodeBox.y + nodeBox.height };
+			Vector2 end = { nextAdjustedPos.x + nodeBox.width / 2, nextAdjustedPos.y };
 			DrawLineEx(start, end, 2.0f, BLACK);
 
-			// Adjust arrowhead with tableOffset
+			// Draw the arrowhead
 			Vector2 dir = { end.x - start.x, end.y - start.y };
 			float len = sqrtf(dir.x * dir.x + dir.y * dir.y);
 			if (len > 0) {
@@ -270,8 +280,8 @@ void HashTable::DrawNodes(int index, float startX, float startY, float boxWidth,
 				Vector2 tip = { end.x - dir.x * 10, end.y - dir.y * 10 };
 				DrawTriangle(
 					end,
-					{ tip.x + perp.x * 5 + tableOffset.x, tip.y + perp.y * 5 + tableOffset.y },
-					{ tip.x - perp.x * 5 + tableOffset.x, tip.y - perp.y * 5 + tableOffset.y },
+					{ tip.x + perp.x * 5, tip.y + perp.y * 5 },
+					{ tip.x - perp.x * 5, tip.y - perp.y * 5 },
 					BLACK
 				);
 			}
