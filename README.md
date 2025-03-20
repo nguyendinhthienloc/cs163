@@ -6,16 +6,14 @@ DataVisualizer is a C++ application that visualizes fundamental data structures 
 - More data structures to be added soon...
 
 ## Features
-- Step-by-step visualization
+- Step-by-step visualization (Insert, Delete, Search and Random Generation. etc)
 - Smooth animations using Raylib
 - Customization options (colors, speed, etc.)
 
-## How to Build and Run
 ### Prerequisites
 - [Raylib](https://www.raylib.com/)
-- `w64devkit` (for Windows)
+- Compiler: Visual Studio
+- vcpkg (To incorporate Raylib library into IDE)
 - C++17 or later
 
-### Compilation
-```sh
-make
+
