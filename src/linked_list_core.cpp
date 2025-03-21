@@ -15,7 +15,7 @@ int LinkedList::GetSize() { return nodes.size(); }
 
 void LinkedList::Insert(int value) {
     float startX = 120 + static_cast<float>(nodes.size()) * nodeSpacing;
-    Node* newNode = new Node(value, { startX, 400 });  // Updated yPos to 300
+    Node* newNode = new Node(value, { startX, 400 });  // Updated yPos to 400
 
     animState = AnimState::INSERTING;
     animProgress = 0.0f;
@@ -115,18 +115,40 @@ void LinkedList::Undo() {
     if (history.empty() || IsAnimating()) return;  // No history or animation in progress
 
     Operation lastOp = history.back();
-    history.pop_back();
+    history.pop_back();  // Remove the operation immediately
 
     if (lastOp.type == Operation::Type::INSERT) {
         // Undo insert: delete the last inserted value
-        Delete(lastOp.value);
+        Node* temp = head;
+        Node* prev = nullptr;
+        while (temp && temp->value != lastOp.value) {
+            prev = temp;
+            temp = temp->next;
+        }
+        if (temp) {
+            animState = AnimState::DELETING;
+            animProgress = 0.0f;
+            animNode = temp;
+            animStartPos = temp->position;
+
+            if (prev) {
+                prev->next = temp->next;
+            } else {
+                head = temp->next;
+            }
+            auto it = std::find(nodes.begin(), nodes.end(), temp);
+            if (it != nodes.end()) {
+                nodes.erase(it);
+            }
+            cur = nullptr;
+        }
     } else if (lastOp.type == Operation::Type::DELETE) {
         // Undo delete: re-insert the node at its original position
         Node* newNode = new Node(lastOp.value, lastOp.position);
         animState = AnimState::INSERTING;
         animProgress = 0.0f;
         animNode = newNode;
-        animStartPos = { lastOp.position.x, 200 };  // Animate from above
+        animStartPos = { lastOp.position.x, 200 };
         newNode->position = animStartPos;
 
         if (!head || !lastOp.prevNode) {
