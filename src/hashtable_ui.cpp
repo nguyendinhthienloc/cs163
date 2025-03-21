@@ -1,7 +1,7 @@
 #include "raylib.h"
-#include "hashtable_ui.h"
-#include "HashTable.h"
-#include "tinyfiledialogs.h"
+#include "../include/hashtable_ui.h"
+#include "../include/HashTable.h"
+#include "../lib/tinyfiledialogs.h"
 #include <string>
 #include <fstream>
 #include <locale>   
