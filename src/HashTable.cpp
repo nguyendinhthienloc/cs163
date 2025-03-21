@@ -33,7 +33,7 @@ int HashTable::hashFunction(int val) {
 }
 
 void HashTable::Insert(int val, bool isRandom) {
-    ResetHighlight();
+    ResetColors();
     int index = hashFunction(val);
     Node* temp = table[index];
     while (temp) {
@@ -70,7 +70,7 @@ void HashTable::PerformInsertion(int val, bool isRandom) {
 }
 
 void HashTable::Delete(int val) {
-    ResetHighlight();
+    ResetColors();
     undoStack.push(CopyTable());
     while (!redoStack.empty()) redoStack.pop();
     int index = hashFunction(val);
@@ -115,7 +115,7 @@ void HashTable::UpdateDeletionAnimation() {
 }
 
 void HashTable::StartSearch(int val, bool isInsert) {
-    ResetHighlight();
+    ResetColors();
     searching = true;
     searchValue = val;
     visitedNode = table[hashFunction(val)];
@@ -408,13 +408,6 @@ void HashTable::Redo() {
         table = redoStack.top();
         redoStack.pop();
     }
-}
-
-void HashTable::ResetHighlight() {
-    foundNode = nullptr;
-    searching = false;
-    nodeToDelete = nullptr;
-    deleteTimer = 0.0f;
 }
 
 void HashTable::ResetColors() {

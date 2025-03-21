@@ -37,7 +37,6 @@ public:
     void HandleTableDragging();  // Keep this for bounded dragging
     void Undo();
     void Redo();
-    void ResetHighlight();
     void cleanUp();
 
 private:
