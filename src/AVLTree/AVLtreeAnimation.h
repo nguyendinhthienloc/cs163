@@ -13,12 +13,14 @@ public:
     AVLTree tree;
     std::string inputText;
     bool inputActive;
+    Rectangle handleSpace;
     Rectangle inputBox;
     Rectangle insertButton;
     Rectangle deleteButton;
     Rectangle searchButton;
     Rectangle randomButton;
     Rectangle clearButton;
+    Rectangle loadFileButton;
     Rectangle previousButton;
     Rectangle nextButton;
 
@@ -46,6 +48,7 @@ public:
     void animateSearch(int value);
     void animateRandom();
     void animateClear();
+    void animateLoadFile();
     void animatePrevious();
     void animateNext();
 };

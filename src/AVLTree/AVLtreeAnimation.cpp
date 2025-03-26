@@ -1,4 +1,5 @@
 #include "AVLtreeAnimation.h"
+#include "Color.h"
 #include <sstream>
 #include <cstdlib>
 #include <stack>
@@ -12,12 +13,14 @@ std::stack<AVLTree> treeRedoState;
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
     inputActive = false;
+    handleSpace = { 0, 0, 1600, 75 };
     inputBox     = { 20, 20, 200, 30 };
     insertButton = { 230, 20, 80, 30 };
     deleteButton = { 320, 20, 80, 30 };
     searchButton = { 410, 20, 90, 30 };
     randomButton = { 510, 20, 90, 30 };
     clearButton  = { 610, 20, 70, 30 };
+    loadFileButton = {690, 20, 110, 30};
     previousButton = { 1000, 20, 105, 30 };
     nextButton = { 1120, 20, 65, 30 }; 
 
@@ -31,6 +34,7 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     pendingInsertValue = 0;
 }
 
+//button click
 void AVLTreeVisualizer::handleInput() {
     Vector2 mousePos = GetMousePosition();
 
@@ -74,6 +78,11 @@ void AVLTreeVisualizer::handleInput() {
 
     if (CheckCollisionPointRec(mousePos, clearButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         animateClear();
+        inputText.clear();
+    }
+
+    if (CheckCollisionPointRec(mousePos, loadFileButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        animateLoadFile();
         inputText.clear();
     }
 
@@ -164,7 +173,7 @@ void AVLTreeVisualizer::drawTree(Node* node, float x, float y, float offset, con
         float hypotenus = sqrt(60.0f * 60.0f + leftX * leftX);
         float startLineX = x - NODE_RADIUS*leftX/hypotenus;
         float startLineY = y + NODE_RADIUS*60.0f/hypotenus;
-        DrawLine(startLineX, startLineY, x - leftX, y + 60, ORANGE);
+        DrawLine(startLineX, startLineY, x - leftX, y + 60, BLACK);
         drawTree(node->left, x - leftX, y + 60, offset / 2, highlight);
     }
     if (node->right) {
@@ -172,14 +181,16 @@ void AVLTreeVisualizer::drawTree(Node* node, float x, float y, float offset, con
         float hypotenus = sqrt(60.0f * 60.0f + rightX * rightX);
         float startLineX = x + NODE_RADIUS * rightX / hypotenus;
         float startLineY = y + NODE_RADIUS * 60.0f / hypotenus;
-        DrawLine(startLineX, startLineY, x + rightX, y + 60, ORANGE);
+        DrawLine(startLineX, startLineY, x + rightX, y + 60, BLACK);
         drawTree(node->right, x + rightX, y + 60, offset / 2, highlight);
     }
 }
 
+//draw button
 void AVLTreeVisualizer::draw() {
     std::set<Node*> highlightNodes(currentPath.begin(), currentPath.begin() + pathIndex);
 
+    DrawRectangleRec(handleSpace, HandleInputSpaceBG);
     DrawRectangleRec(inputBox, LIGHTGRAY);
     DrawRectangleLinesEx(inputBox, 2, inputActive ? BLUE : GRAY);
     DrawText(inputText.c_str(), inputBox.x + 5, inputBox.y + 5, 20, BLACK);
@@ -189,19 +200,21 @@ void AVLTreeVisualizer::draw() {
     DrawRectangleRec(searchButton, BLUE);
     DrawRectangleRec(randomButton, PURPLE);
     DrawRectangleRec(clearButton, RED);
-    DrawRectangleRec(previousButton, GRAY);
-    DrawRectangleRec(nextButton, GRAY);
+    DrawRectangleRec(loadFileButton, MY_TURQUOIS);
+    DrawRectangleRec(previousButton, BlueButton);
+    DrawRectangleRec(nextButton, BlueButton);
 
     DrawText("Insert", insertButton.x + 10, insertButton.y + 5, 20, WHITE);
     DrawText("Delete", deleteButton.x + 10, deleteButton.y + 5, 20, WHITE);
     DrawText("Search", searchButton.x + 10, searchButton.y + 5, 20, WHITE);
     DrawText("Random", randomButton.x + 10, randomButton.y + 5, 20, WHITE);
     DrawText("Clear", clearButton.x + 10, clearButton.y + 5, 20, WHITE);
+    DrawText("Load File", loadFileButton.x + 10, loadFileButton.y + 5, 20, WHITE);
     DrawText("Previous", previousButton.x + 10, previousButton.y + 5, 20, WHITE);
     DrawText("Next", nextButton.x + 10, nextButton.y + 5, 20, WHITE);
 
     if (tree.root) {
-        drawTree(tree.root, GetScreenWidth() / 2, 100, 200, highlightNodes);
+        drawTree(tree.root, GetScreenWidth() / 2, 120, 200, highlightNodes);
     }
 
     if (currentState == SHOWING_RESULT && currentOperation == "search" && !searchFound) {
@@ -275,6 +288,54 @@ void AVLTreeVisualizer::animateClear() {
     currentPath.clear();
     pathIndex = 0;
     currentState = IDLE;
+    stateTimer = 0.0f;
+    resultTimer = 0.0f;
+}
+
+void AVLTreeVisualizer::animateLoadFile() {
+    const char* filters[] = { "*.txt" };
+    const char* filePath = tinyfd_openFileDialog(
+        "Select a Text File", "", 1, filters, "Text Files", 0
+    );
+
+    if (!filePath) {
+        currentOperation = "loadfile";
+        currentState = SHOWING_RESULT;
+        resultTimer = 0.0f;
+        return;
+    }
+
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::wstring wideFilePath = converter.from_bytes(filePath);
+
+    // Use fopen_s instead of fopen
+    FILE* file = nullptr;
+    errno_t err = _wfopen_s(&file, wideFilePath.c_str(), L"r");
+    if (err != 0 || !file) {
+        currentOperation = "loadfile";
+        currentState = SHOWING_RESULT;
+        resultTimer = 0.0f;
+        return;
+    }
+
+    // Clear the current tree before loading new data
+    tree.~AVLTree();
+    new (&tree) AVLTree();
+
+    int value;
+    while (fscanf_s(file, "%d", &value) == 1) {
+        tree.insert(tree.root, value);
+    }
+
+    fclose(file);
+
+    AVLTree treeReplica(tree);
+    treeUndoState.push(treeReplica);
+
+    currentOperation = "loadfile";
+    currentPath.clear();
+    pathIndex = 0;
+    currentState = SHOWING_RESULT;
     stateTimer = 0.0f;
     resultTimer = 0.0f;
 }

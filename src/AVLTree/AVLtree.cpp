@@ -58,7 +58,7 @@ int AVLTree::getBalanceFactor(Node* node) {
 }
 
 float AVLTree::getSubtreeWidth(Node* node) {
-    if (!node) return 20.0;
+    if (!node) return 25.0f;
 
     int leftWidth = getSubtreeWidth(node->left);
     int rightWidth = getSubtreeWidth(node->right);

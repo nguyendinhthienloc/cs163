@@ -1,5 +1,6 @@
 #include "AVLtreeAnimation.h"
 #include "raylib.h"
+#include "Color.h"
 
 int main() {
     const int screenWidth = 1600;
@@ -10,7 +11,7 @@ int main() {
     AVLTreeVisualizer visualizer;
 
     while (!WindowShouldClose()) {
-        ClearBackground(BLACK);
+        ClearBackground(CreamyBlueBG);
         float deltaTime = GetFrameTime();
         visualizer.handleInput();
         visualizer.updateAnimation(deltaTime);
