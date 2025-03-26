@@ -121,7 +121,7 @@ void DrawMenu() {
     }
 
     // Button 5: Fullscreen
-    Rectangle btn5Rect = { 20, (float)GetScreenHeight() - 120, 200, 50 };
+    Rectangle btn5Rect = { 20, (float)GetScreenHeight() - 120, 180, 50 }; // Reduced width by 20
     bool btn5Hover = CheckCollisionPointRec(mouse, btn5Rect);
     hoverScale[4] += (btn5Hover ? (HOVER_SCALE - hoverScale[4]) : (1.0f - hoverScale[4])) * HOVER_SPEED * GetFrameTime();
     Color btn5Color = YELLOW;

@@ -3,10 +3,23 @@
 #include <string>
 
 void LinkedList::Draw() {
-    float radius = 40;  // Increased from 30 for bigger nodes
+    float radius = 40;
     bool flash = (GetTime() - static_cast<int>(GetTime()) < 0.5f);
     float scrollX = GetScrollOffsetX();
 
+    // Draw head pointer
+    if (head) {
+        Vector2 headPos = { head->position.x - scrollX, head->position.y - 60 };
+        DrawText("head", headPos.x - 10, headPos.y - 20, 20, DARKBLUE);
+        DrawLineV(headPos, { headPos.x, head->position.y - radius }, DARKBLUE);
+        Vector2 dir = { 0, radius };
+        Vector2 tip = { headPos.x, head->position.y - radius };
+        Vector2 left = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) + 30 * DEG2RAD));
+        Vector2 right = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) - 30 * DEG2RAD));
+        DrawTriangle(tip, left, right, DARKBLUE);
+    }
+
+    // Draw nodes in the vector
     for (auto node : nodes) {
         node->position.x = node->targetPosition.x - scrollX;
         node->position.y = node->targetPosition.y;
@@ -14,28 +27,24 @@ void LinkedList::Draw() {
         std::string valueStr = std::to_string(node->value);
         if (valueStr.length() > 4) valueStr = valueStr.substr(0, 4);
 
-        Color nodeColor = SKYBLUE;
-        if (node == animNode && animState == AnimState::INSERTING) {
-            nodeColor = GREEN;
-        } else if (node == foundNode && animState == AnimState::IDLE) {
+        Color nodeColor = node->selected ? YELLOW : SKYBLUE;
+        if (node == foundNode && animState == AnimState::IDLE) {
             nodeColor = flash ? RED : DARKPURPLE;
         } else if (node == cur && animState == AnimState::SEARCHING) {
             nodeColor = YELLOW;
         }
 
-        DrawCircleV(node->position, radius, nodeColor);
-        DrawText(valueStr.c_str(), node->position.x - 20, node->position.y - 10, 24, BLACK);  // Larger text
+        DrawCircleV(node->position, radius, Fade(nodeColor, node->alpha));
+        DrawText(valueStr.c_str(), node->position.x - 20, node->position.y - 10, 24, BLACK);
 
         if (node->next) {
             Vector2 start = CalculateArrowStart(node->position, node->next->position, radius);
             Vector2 end = CalculateArrowEnd(node->position, node->next->position, radius);
             DrawLineEx(start, end, 3.0f, BLACK);
-
             Vector2 dir = { end.x - start.x, end.y - start.y };
             float len = Vector2Length(dir);
             if (len > 0) {
-                dir.x /= len;
-                dir.y /= len;
+                dir.x /= len; dir.y /= len;
                 Vector2 tip = end;
                 Vector2 left = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) + 30 * DEG2RAD));
                 Vector2 right = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) - 30 * DEG2RAD));
@@ -44,32 +53,40 @@ void LinkedList::Draw() {
         }
     }
 
-    // Draw cur pointer higher with arrow
+    // Draw animNode for INSERTING_AFTER (just the node, no pointers yet)
+    if (animState == AnimState::INSERTING_AFTER && animNode) {
+        DrawText(TextFormat("Insert After Progress: %.2f", animProgress), 20, 20, 20, RED);
+        Vector2 animPos = { animNode->position.x - scrollX, animNode->position.y };
+        std::string valueStr = std::to_string(animNode->value);
+        if (valueStr.length() > 4) valueStr = valueStr.substr(0, 4);
+        DrawCircleV(animPos, radius, Fade(GREEN, 1.0f));
+        DrawText(valueStr.c_str(), animPos.x - 20, animPos.y - 10, 24, BLACK);
+    }
+
+    // Draw cur pointer
     if (animState == AnimState::SEARCHING && cur) {
-        Vector2 curDisplayPos = { curPos.x, curPos.y - 60 };
+        Vector2 curDisplayPos = { curPos.x - scrollX, curPos.y - 60 };
         DrawText("cur", curDisplayPos.x - 10, curDisplayPos.y - 20, 20, ORANGE);
-        Vector2 arrowEnd = { curPos.x, cur->position.y };
-        DrawLineEx(curDisplayPos, arrowEnd, 2.0f, ORANGE);
-        Vector2 dir = { arrowEnd.x - curDisplayPos.x, arrowEnd.y - curDisplayPos.y };
+        DrawLineEx(curDisplayPos, { curPos.x - scrollX, cur->position.y }, 2.0f, ORANGE);
+        Vector2 dir = { 0, cur->position.y - curDisplayPos.y };
         float len = Vector2Length(dir);
         if (len > 0) {
-            dir.x /= len;
-            dir.y /= len;
-            Vector2 tip = arrowEnd;
+            dir.x /= len; dir.y /= len;
+            Vector2 tip = { curPos.x - scrollX, cur->position.y };
             Vector2 left = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) + 30 * DEG2RAD));
             Vector2 right = Vector2Add(tip, Vector2Rotate({-10, 0}, Vector2Angle({1, 0}, dir) - 30 * DEG2RAD));
             DrawTriangle(tip, left, right, ORANGE);
         }
     }
 
-    // Always draw NULL at the end if list is not empty
+    // Draw NULL at the end
     if (nodes.size() > 0) {
         Vector2 lastPos = nodes.back()->position;
-        DrawText("NULL", lastPos.x + 50, lastPos.y, 20, DARKGRAY);  // Adjusted for larger radius
-        DrawLineV({lastPos.x + radius, lastPos.y}, {lastPos.x + 50, lastPos.y}, DARKGRAY);
+        Vector2 nullPos = { lastPos.x + 50, lastPos.y };
+        DrawText("NULL", nullPos.x, nullPos.y - 10, 20, DARKGRAY);
+        DrawLineV({lastPos.x + radius, lastPos.y}, nullPos, DARKGRAY);
     }
 }
-
 
 void LinkedList::RecalculatePositions() {
     float screenWidth = GetScreenWidth();

@@ -1,31 +1,49 @@
 #include "linked_list.h"
-
+#include <algorithm>
 void LinkedList::UpdateAnimation(float deltaTime) {
+    const float TRAVERSAL_SPEED = 0.1f;
     const float ANIM_DURATION = 0.5f;
-    const float TRAVERSAL_SPEED = 0.1f;  // Slower movement for search
-    animProgress += deltaTime;
+    if (animState != AnimState::IDLE) {
+        animProgress += deltaTime / ANIM_DURATION;
+        std::cout << "UpdateAnimation: State=" << static_cast<int>(animState) << ", Progress=" << animProgress << std::endl;
+    }
 
     static float notFoundTimer = 0;
 
     if (animState == AnimState::INSERTING && animNode) {
-        animNode->position.x = animStartPos.x + (animProgress * (animNode->targetPosition.x - animStartPos.x));
-        animNode->position.y = animStartPos.y + (animProgress * (animNode->targetPosition.y - animStartPos.y));
+        animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
+        animNode->position.y = Lerp(animStartPos.y, animNode->targetPosition.y, animProgress);
         if (animProgress >= 1.0f) {
+            animNode->position = animNode->targetPosition;
             animState = AnimState::IDLE;
+            animNode = nullptr;
             RecalculatePositions();
+            animProgress = 0.0f;
         }
-    } else if (animState == AnimState::DELETING && animNode) {
+    } else if (animState == AnimState::INSERTING_AFTER && animNode && animPrevNode) {
+        animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
+        animNode->position.y = Lerp(animStartPos.y, animNode->targetPosition.y, animProgress);
+        if (animProgress >= 1.0f) {
+            animNode->position = animNode->targetPosition;
+            animState = AnimState::IDLE;
+            animNode = nullptr;
+            animPrevNode = nullptr;
+            RecalculatePositions(); // Ensure all positions are updated
+            animProgress = 0.0f;
+            std::cout << "InsertAfter: Animation completed" << std::endl;
+        }
+    } else if (animState == AnimState::DELETING && animNode) { 
         animNode->alpha = 1.0f - animProgress;
         animNode->position.y = animStartPos.y + (animProgress * 100);
         if (animProgress >= 1.0f) {
-            if (animNode) {
-                delete animNode;
-                animNode = nullptr;
-            }
+            delete animNode;
+            animNode = nullptr;
             animState = AnimState::IDLE;
             RecalculatePositions();
+            animProgress = 0.0f;
         }
     } else if (animState == AnimState::SEARCHING && cur) {
+        // Search animation
         if (cur->value == animNode->value) {
             foundNode = cur;
             animState = AnimState::IDLE;

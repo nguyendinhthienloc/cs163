@@ -1,6 +1,7 @@
 #include "ui_linked_list.h"
 #include "ui_menu.h"  // For DrawButton and DrawBackButton
 #include <algorithm>
+#include <string>
 
 void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedbackMessage, double& feedbackTimer, bool& isDragging, float& dragStartX) {
     ClearBackground(RAYWHITE);
@@ -10,7 +11,7 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     static bool undoInProgress = false;
 
     // Input box
-    Rectangle inputBox = { 130, 20, 180, 40 };
+    Rectangle inputBox = { 130, 20, 150, 40 };
     DrawRectangleRec(inputBox, LIGHTGRAY);
     DrawRectangleLinesEx(inputBox, 2, BLACK);
 
@@ -20,12 +21,12 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     } else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         inputState.inputActive = false;
     }
-
+    // Input handling
     if (inputState.inputActive) {
         int key = GetCharPressed();
         while (key > 0) {
             if ((key >= 48 && key <= 57) && (inputState.inputLength < 4)) {
-                inputState.inputBuffer[inputState.inputLength] = (char)key;
+                inputState.inputBuffer[inputState.inputLength] = static_cast<char>(key);
                 inputState.inputLength++;
                 inputState.inputBuffer[inputState.inputLength] = '\0';
             }
@@ -36,36 +37,97 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
             inputState.inputBuffer[inputState.inputLength] = '\0';
         }
     }
-
+    // Draw input text
     DrawText(inputState.inputBuffer, inputBox.x + 10, inputBox.y + 10, 20, BLACK);
     if (inputState.inputActive) {
         Vector2 textSize = MeasureTextEx(GetFontDefault(), inputState.inputBuffer, 20, 1);
         float cursorX = inputBox.x + 10 + textSize.x;
         float cursorY = inputBox.y + 10;
         bool cursorVisible = (GetTime() - static_cast<int>(GetTime()) < 0.5f);
-        if (cursorVisible) {
-            DrawLine(cursorX, cursorY, cursorX, cursorY + 20, BLACK);
-        }
+        if (cursorVisible) DrawLine(cursorX, cursorY, cursorX, cursorY + 20, BLACK);
     }
     DrawText("Value (1-9999):", 130, 70, 20, DARKGRAY);
 
-    // Buttons in 2 rows
+// Node selection
+if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos, inputBox)) {
+    bool selected = false;
+    for (int i = 0; i < list.GetSize(); i++) {
+        Node* node = list.GetNodeAt(i);
+        if (node) {
+            // Adjust node position for scrolling when comparing with mouse
+            Vector2 adjustedNodePos = { node->position.x + list.GetScrollOffsetX(), node->position.y };
+            if (Vector2Distance(mousePos, adjustedNodePos) < 40) {
+                list.SetSelectedNode(node);
+                selected = true;
+                std::cout << "Node clicked: Value=" << node->value << ", Pos=(" << node->position.x << ", " << node->position.y << ")" << std::endl;
+                break;
+            }
+        }
+    }
+    if (!selected) {
+        list.SetSelectedNode(nullptr);
+        std::cout << "No node selected" << std::endl;
+    }
+    // Sync selected flag with selectedNode
+    for (int i = 0; i < list.GetSize(); i++) {
+        Node* n = list.GetNodeAt(i);
+        if (n) n->selected = (n == list.GetSelectedNode());
+    }
+}
+
+    // Buttons in 3 rows
     float buttonWidth = 100;
     float buttonHeight = 40;
-    float buttonSpacing = 10;
-    float startX = 320;
+    float buttonSpacing = 30;
+    float startX = 300;
     float row1Y = 20;
     float row2Y = 70;
-
-    if (DrawButton({ startX, row1Y, buttonWidth, buttonHeight }, "Insert", LIME, inputState.inputLength > 0 && !list.IsAnimating())) {
+    float row3Y = 120;
+    //Insert Head Button
+    if (DrawButton({ startX, row1Y, buttonWidth, buttonHeight }, "Insert Head", LIME, inputState.inputLength > 0 && !list.IsAnimating())) {
         int value;
         if (ValidateInput(inputState.inputBuffer, value)) {
-            list.Insert(value);
+            list.InsertHead(value);
             inputState.inputLength = 0;
             inputState.inputBuffer[0] = '\0';
         }
     }
-    if (DrawButton({ startX + buttonWidth + buttonSpacing, row1Y, buttonWidth, buttonHeight }, "Delete", RED, hasNodes && inputState.inputLength > 0 && !list.IsAnimating())) {
+    //Insert Tail Button
+    if (DrawButton({ startX + buttonWidth + buttonSpacing + 30, row1Y, buttonWidth, buttonHeight }, "Insert Tail", GREEN, inputState.inputLength > 0 && !list.IsAnimating())) {
+        int value;
+        if (ValidateInput(inputState.inputBuffer, value)) {
+            list.InsertTail(value);
+            inputState.inputLength = 0;
+            inputState.inputBuffer[0] = '\0';
+        }
+    }
+    
+    // Insert After button
+bool canInsertAfter = list.GetSize() > 0 && list.GetSelectedNode() && inputState.inputLength > 0 && !list.IsAnimating();
+if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing + 30), row1Y, buttonWidth, buttonHeight }, "Insert After", YELLOW, canInsertAfter)) {
+    int value;
+    if (ValidateInput(inputState.inputBuffer, value)) {
+        Node* selected = list.GetSelectedNode();
+        if (selected) {
+            std::cout << "Insert After clicked: Value=" << value << ", Target=" << selected->value << std::endl;
+            list.InsertAfter(selected, value);
+            feedbackMessage = "Inserted " + std::to_string(value) + " after " + std::to_string(selected->value);
+            feedbackTimer = GetTime() + 2.0;
+        } else {
+            std::cout << "Insert After failed: No node selected!" << std::endl;
+            feedbackMessage = "Error: No node selected!";
+            feedbackTimer = GetTime() + 2.0;
+        }
+        inputState.inputLength = 0;
+        inputState.inputBuffer[0] = '\0';
+    } else {
+        std::cout << "Invalid input: " << inputState.inputBuffer << std::endl;
+        feedbackMessage = "Invalid input: " + std::string(inputState.inputBuffer);
+        feedbackTimer = GetTime() + 2.0;
+    }
+}
+    //Delete button
+    if (DrawButton({ startX, row2Y, buttonWidth, buttonHeight }, "Delete", RED, hasNodes && inputState.inputLength > 0 && !list.IsAnimating())) {
         int value;
         if (ValidateInput(inputState.inputBuffer, value)) {
             list.Delete(value);
@@ -73,7 +135,8 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
             inputState.inputBuffer[0] = '\0';
         }
     }
-    if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row1Y, buttonWidth, buttonHeight }, "Search", BLUE, hasNodes && inputState.inputLength > 0 && !list.IsAnimating())) {
+    //Search button
+    if (DrawButton({ startX + buttonWidth + buttonSpacing, row2Y, buttonWidth, buttonHeight }, "Search", BLUE, hasNodes && inputState.inputLength > 0 && !list.IsAnimating())) {
         int value;
         if (ValidateInput(inputState.inputBuffer, value)) {
             list.Search(value);
@@ -81,8 +144,19 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
             inputState.inputBuffer[0] = '\0';
         }
     }
-
-    if (DrawButton({ startX, row2Y, buttonWidth, buttonHeight }, "Clear", PURPLE, true)) {
+    //Load File button
+    if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row2Y, buttonWidth, buttonHeight }, "Load File", BROWN, !list.IsAnimating())) {
+        if (list.LoadFromFile("list.txt")) {
+            feedbackMessage = "File loaded successfully!";
+        } else {
+            feedbackMessage = "Failed to load file 'list.txt'!";
+        }
+        feedbackTimer = GetTime() + 2.0;
+        inputState.inputLength = 0;
+        inputState.inputBuffer[0] = '\0';
+    } 
+    //Clear button
+    if (DrawButton({ startX, row3Y, buttonWidth, buttonHeight }, "Clear", PURPLE, true)) {
         inputState.inputLength = 0;
         inputState.inputBuffer[0] = '\0';
         while (list.GetSize() > 0) {
@@ -92,19 +166,21 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
         list.SetScrollOffsetX(0);
         undoInProgress = false;
     }
-    if (DrawButton({ startX + buttonWidth + buttonSpacing, row2Y, buttonWidth, buttonHeight }, "Undo", ORANGE, !list.GetHistory().empty() && !list.IsAnimating() && !undoInProgress)) {
+    //Undo button
+    if (DrawButton({ startX + buttonWidth + buttonSpacing, row3Y, buttonWidth, buttonHeight }, "Undo", ORANGE, !list.GetHistory().empty() && !list.IsAnimating() && !undoInProgress)) {
         list.Undo();
         undoInProgress = true;
     }
-    if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row2Y, buttonWidth, buttonHeight }, "Random", PINK, !list.IsAnimating())) {
+    //Random button
+    if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row3Y, buttonWidth, buttonHeight }, "Random", PINK, !list.IsAnimating())) {
         while (list.GetSize() > 0) list.Delete(list.GetNodeAt(0)->value);
         int numNodes = GetRandomValue(3, 10);
         for (int i = 0; i < numNodes; i++) {
-            list.Insert(GetRandomValue(1, 9999));
+            list.InsertTail(GetRandomValue(1, 9999));
         }
         undoInProgress = false;
     }
-
+    //Check if undo is complete
     if (undoInProgress && !list.IsAnimating()) {
         undoInProgress = false;
     }
@@ -116,29 +192,39 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     DrawRectangleLinesEx(historyBox, 2, DARKGRAY);
     DrawText("History:", 25, 125, 20, BLACK);
 
-    const auto& history = list.GetHistory();
+    const std::vector<Operation>& history = list.GetHistory();
     int maxVisible = 6;
     float scrollSpeed = 20.0f;
-
+    // Scroll history with mouse wheel
     if (CheckCollisionPointRec(mousePos, historyBox)) {
         float wheelMove = GetMouseWheelMove();
         if (wheelMove != 0) {
             historyScroll -= wheelMove * scrollSpeed;
-            int maxScroll = std::max(0, (int)history.size() - maxVisible) * 20;
-            historyScroll = fmaxf(0, fminf(historyScroll, maxScroll));
+            int maxScroll = std::max(0, static_cast<int>(history.size() - maxVisible)) * 20;
+            historyScroll = std::max(0.0f, std::min(historyScroll, static_cast<float>(maxScroll)));
         }
     }
-
+    // Draw history items
     BeginScissorMode(historyBox.x, historyBox.y + 30, historyBox.width, historyBox.height - 30);
-    int startIdx = (int)(historyScroll / 20);
-    for (int i = startIdx; i < (int)history.size() && (i - startIdx) < maxVisible; i++) {
-        std::string opStr = (history[i].type == Operation::Type::INSERT) 
-            ? "Insert " + std::to_string(history[i].value) 
-            : "Delete " + std::to_string(history[i].value);
+    int startIdx = static_cast<int>(historyScroll / 20);
+    for (int i = startIdx; i < static_cast<int>(history.size()) && (i - startIdx) < maxVisible; i++) {
+        std::string opStr;
+        switch (history[i].type) {
+            case Operation::Type::INSERT: opStr = "Insert " + std::to_string(history[i].value); break;
+            case Operation::Type::INSERT_HEAD: opStr = "InsHead " + std::to_string(history[i].value); break;
+            case Operation::Type::INSERT_TAIL: opStr = "InsTail " + std::to_string(history[i].value); break;
+            case Operation::Type::INSERT_AFTER: opStr = "InsAfter " + std::to_string(history[i].value); break;
+            case Operation::Type::DELETE: opStr = "Delete " + std::to_string(history[i].value); break;
+        }
         float textY = 150 + (i * 20) - historyScroll;
         DrawText(opStr.c_str(), 25, textY, 16, BLACK);
     }
     EndScissorMode();
+
+    // Draw feedback message
+    if (feedbackTimer > GetTime()) {
+        DrawText(feedbackMessage.c_str(), GetScreenWidth() / 2 - MeasureText(feedbackMessage.c_str(), 20) / 2, 50, 20, feedbackMessage[0] == 'F' ? RED : GREEN);
+    }
 
     // Draw the linked list
     list.Draw();
@@ -148,8 +234,8 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     if (GetMouseWheelMove() != 0 && !CheckCollisionPointRec(mousePos, historyBox)) {
         float newScrollOffsetX = list.GetScrollOffsetX() - GetMouseWheelMove() * listScrollSpeed;
         float minScroll = 0;
-        float maxScroll = list.GetSize() * 100 - GetScreenWidth() + 200;
-        list.SetScrollOffsetX(fmaxf(minScroll, fminf(newScrollOffsetX, maxScroll)));
+        float maxScroll = std::max(0.0f, static_cast<float>(list.GetSize() * 100 - GetScreenWidth() + 200));
+        list.SetScrollOffsetX(std::max(minScroll, std::min(newScrollOffsetX, maxScroll)));
     }
 }
 
