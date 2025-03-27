@@ -1,0 +1,63 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Visual Studio & VS Code
+.vs/
+.vscode/
+*.VC.db
+*.sdf
+*.opendb
+
+# Build folders
+x64/
+x86/
+Debug/
+Release/
+build/
+
+
+# Logs & Cache
+*.log
+*.cache
+*.temp
+*.swp
+*.swo
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.ncb
+*.opensdf
+*.VC.opendb
+
