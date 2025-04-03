@@ -24,12 +24,24 @@
     <ClCompile Include="AVLtreeAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tinyfiledialogs.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="initAVLProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVLtreeAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AVLtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="initAVLProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

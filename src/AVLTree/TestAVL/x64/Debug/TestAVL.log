@@ -1,1 +1,36 @@
-﻿  TestAVL.vcxproj -> D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\x64\Debug\TestAVL.exe
+﻿  AVLtreeAnimation.cpp
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(131,41): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(167,19): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(167,16): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(169,77): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(169,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(176,55): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(176,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(176,30): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(176,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(184,56): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(184,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(184,30): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(184,18): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(196,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(196,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(207,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(207,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(208,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(208,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(209,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(209,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(210,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(210,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(211,57): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(211,37): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(212,67): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(212,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(213,66): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(213,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(214,54): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(214,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\AVLtreeAnimation.cpp(217,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  TestAVL.vcxproj -> D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\x64\Debug\TestAVL.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.

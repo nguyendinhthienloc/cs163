@@ -4,3 +4,6 @@ D:\Documents\Coding\testFolder\TestAVL\TestAVL\TestAVL\x64\Debug\TestAVL.vcxproj
 D:\Documents\Coding\CS163\Project\AppVisual\cs163\src\TestAVL\x64\Debug\raylib.dll
 D:\Documents\Coding\CS163\Project\AppVisual\cs163\src\TestAVL\x64\Debug\glfw3.dll
 D:\Documents\Coding\CS163\Project\AppVisual\cs163\src\TestAVL\TestAVL\x64\Debug\TestAVL.vcxproj.Up2Date
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\x64\Debug\raylib.dll
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\x64\Debug\glfw3.dll
+D:\Documents\Coding\CS163\Project\AppVisualizer\cs163\src\AVLTree\TestAVL\x64\Debug\TestAVL.vcxproj.Up2Date

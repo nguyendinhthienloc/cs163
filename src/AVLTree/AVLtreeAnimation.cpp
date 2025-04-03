@@ -14,13 +14,13 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
     inputActive = false;
     handleSpace = { 0, 0, 1600, 75 };
-    inputBox     = { 20, 20, 200, 30 };
-    insertButton = { 230, 20, 80, 30 };
-    deleteButton = { 320, 20, 80, 30 };
-    searchButton = { 410, 20, 90, 30 };
-    randomButton = { 510, 20, 90, 30 };
-    clearButton  = { 610, 20, 70, 30 };
-    loadFileButton = {690, 20, 110, 30};
+    inputBox     = { 170, 20, 200, 30 };
+    insertButton = { 380, 20, 80, 30 };
+    deleteButton = { 470, 20, 80, 30 };
+    searchButton = { 560, 20, 90, 30 };
+    randomButton = { 660, 20, 90, 30 };
+    clearButton  = { 760, 20, 70, 30 };
+    loadFileButton = {840, 20, 110, 30};
     previousButton = { 1000, 20, 105, 30 };
     nextButton = { 1120, 20, 65, 30 }; 
 

@@ -129,11 +129,15 @@
   <ItemGroup>
     <ClCompile Include="AVLtree.cpp" />
     <ClCompile Include="AVLtreeAnimation.cpp" />
+    <ClCompile Include="initAVLProgram.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="tinyfiledialogs.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVLtree.h" />
     <ClInclude Include="AVLtreeAnimation.h" />
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="initAVLProgram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
