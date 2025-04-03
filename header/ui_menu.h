@@ -7,7 +7,10 @@
 // Enum for managing different screens
 typedef enum {
     MENU,
-    LINKED_LIST
+    LINKED_LIST,
+    HASH_TABLE,
+    AVL_TREE,
+    GRAPH
 } Screen;
 
 extern Screen currentScreen;

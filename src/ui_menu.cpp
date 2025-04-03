@@ -1,5 +1,6 @@
-#include "ui_menu.h"
+#include "../header/ui_menu.h"
 #include <cstring>
+
 
 Screen currentScreen = MENU;
 float transitionAlpha = 0.0f;
@@ -43,7 +44,7 @@ void DrawBackButton() {
 
 void DrawMenu() {
     ClearBackground(RAYWHITE);
-    DrawText("Data Structure Visualizer", (int)(GetScreenWidth() / 2 - MeasureText("Data Structure Visualizer", 30) / 2), 80, 30, DARKBLUE);
+    DrawText("Data Structure Visualizer", (int)(GetScreenWidth() - MeasureText("Data Structure Visualizer", 30)) / 2, 80, 30, DARKBLUE);
 
     float centerX = GetScreenWidth() / 2 - 125;
     float buttonWidth = 200;
@@ -71,7 +72,7 @@ void DrawMenu() {
     DrawText("Singly Linked List", (int)(btn1Rect.x + 10), (int)(btn1Rect.y + 10), textSize, BLACK);
     if (btn1Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        TransitionTo(LINKED_LIST);
+        TransitionTo(LINKED_LIST);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[0] = 0.95f;
     }
 
@@ -86,7 +87,7 @@ void DrawMenu() {
     DrawText("Hash Table", (int)(btn2Rect.x + 10), (int)(btn2Rect.y + 10), textSize, BLACK);
     if (btn2Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + buttonSpacing + 35, textSize, RED);
+        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + buttonSpacing + 35, textSize, RED);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[1] = 0.95f;
     }
 
@@ -101,7 +102,7 @@ void DrawMenu() {
     DrawText("AVL Tree", (int)(btn3Rect.x + 10), (int)(btn3Rect.y + 10), textSize, BLACK);
     if (btn3Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + 2 * buttonSpacing + 35, textSize, RED);
+        TransitionTo(AVL_TREE);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[2] = 0.95f;
     }
 
@@ -116,7 +117,7 @@ void DrawMenu() {
     DrawText("Graph", (int)(btn4Rect.x + 10), (int)(btn4Rect.y + 10), textSize, BLACK);
     if (btn4Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + 3 * buttonSpacing + 35, textSize, RED);
+        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + 3 * buttonSpacing + 35, textSize, RED);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[3] = 0.95f;
     }
 

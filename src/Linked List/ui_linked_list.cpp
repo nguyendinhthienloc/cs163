@@ -1,5 +1,5 @@
-#include "ui_linked_list.h"
-#include "ui_menu.h"  // For DrawButton and DrawBackButton
+#include "../../header/Linked List/ui_linked_list.h"
+#include "../../header/ui_menu.h"
 #include <algorithm>
 #include <string>
 
@@ -18,7 +18,11 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
     Vector2 mousePos = GetMousePosition();
     if (CheckCollisionPointRec(mousePos, inputBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         inputState.inputActive = true;
-    } else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        //Clear the buffer
+        memset(inputState.inputBuffer, 0, sizeof(inputState.inputBuffer));
+        inputState.inputLength = 0;
+    } 
+    else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         inputState.inputActive = false;
     }
     // Input handling
@@ -38,7 +42,7 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
         }
     }
     // Draw input text
-    DrawText(inputState.inputBuffer, inputBox.x + 10, inputBox.y + 10, 20, BLACK);
+    
     if (inputState.inputActive) {
         Vector2 textSize = MeasureTextEx(GetFontDefault(), inputState.inputBuffer, 20, 1);
         float cursorX = inputBox.x + 10 + textSize.x;
@@ -46,10 +50,11 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
         bool cursorVisible = (GetTime() - static_cast<int>(GetTime()) < 0.5f);
         if (cursorVisible) DrawLine(cursorX, cursorY, cursorX, cursorY + 20, BLACK);
     }
+    DrawText(inputState.inputBuffer, inputBox.x + 10, inputBox.y + 10, 20, BLACK);
     DrawText("Value (1-9999):", 130, 70, 20, DARKGRAY);
 
 // Node selection
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos, inputBox)) {
+if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos, inputBox)) {
     bool selected = false;
     for (int i = 0; i < list.GetSize(); i++) {
         Node* node = list.GetNodeAt(i);

@@ -1,5 +1,6 @@
-#include "linked_list.h"
+#include "../../header/Linked List/linked_list.h"
 #include <algorithm>
+
 void LinkedList::UpdateAnimation(float deltaTime) {
     const float TRAVERSAL_SPEED = 0.1f;
     const float ANIM_DURATION = 0.5f;
