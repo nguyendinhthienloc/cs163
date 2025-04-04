@@ -1,7 +1,4 @@
 #include "../include/HashTable.h"
-#include "../lib/raylib.h"
-#include <cstdlib>
-#include <ctime>
 
 HashTable::HashTable() {
     table.resize(HT_SIZE);
@@ -304,8 +301,8 @@ void HashTable::RandomInsert(int maxElements, int minValue, int maxValue) {
     Clear();
     while (!redoStack.empty()) redoStack.pop();
 
-    int elementsToInsert = maxElements > HT_SIZE ? HT_SIZE : maxElements;
-    for (int i = 0; i < elementsToInsert; i++) {
+    maxElements = 5 + rand() % (50 - 5 + 1);
+    for (int i = 0; i < maxElements; i++) {
         int randomValue = minValue + (rand() % (maxValue - minValue + 1));
         Insert(randomValue, true);
     }

@@ -1,24 +1,7 @@
-#include "raylib.h"
 #include "../include/hashtable_ui.h"
-#include "../include/HashTable.h"
-#include "../lib/tinyfiledialogs.h"
-#include <string>
-#include <fstream>
-#include <locale>   
-#include <codecvt>
 
-Texture2D undoIcon;
-Texture2D redoIcon;
-
-void LoadIcons() {
-    undoIcon = LoadTexture("icons/undo.png");
-    redoIcon = LoadTexture("icons/redo.png");
-}
 
 HashTable ht;
-
-// Define screen variable (default: MENU)
-Screen currentScreen = MENU;
 
 // Button rendering function with animations
 bool DrawButton(Rectangle rect, const char* text, Color color) {
@@ -49,25 +32,6 @@ static int letterCount = 0;
 // Function to draw the input box
 bool isInputActive = false;  // Track if input box is active
 
-// Draw Main Menu UI
-void DrawMenu() {
-    ClearBackground(RAYWHITE);
-    DrawText("Data Structure Visualizer", 180, 80, 30, DARKBLUE);
-    
-    if (DrawButton({250, 200, 300, 50}, "Singly Linked List", SKYBLUE)) {
-        currentScreen = LINKED_LIST;
-    }
-    if (DrawButton({250, 270, 300, 50}, "Hash Table (Chaining)", ORANGE)) {
-        currentScreen = HASH_TABLE;
-    }
-    if (DrawButton({250, 340, 300, 50}, "2-3 Tree", GREEN)) {
-        currentScreen = TWO_THREE_TREE;
-    }
-    if (DrawButton({250, 410, 300, 50}, "Shortest Path (Graph)", RED)) {
-        currentScreen = GRAPH;
-    }
-}
-
 void DrawInputBox(Rectangle inputBox) {
     Vector2 mouse = GetMousePosition();
     bool isHovered = CheckCollisionPointRec(mouse, inputBox);
@@ -83,14 +47,18 @@ void DrawInputBox(Rectangle inputBox) {
 
     DrawRectangleRec(inputBox, boxColor);
     DrawRectangleLinesEx(inputBox, 2, borderColor);
-    DrawText(textInput, inputBox.x + 5, inputBox.y + inputBox.height / 4, 20, BLACK);
+
+    Vector2 textPos = MeasureTextEx(GetFontDefault(), textInput, 40, 1);
+    float padding = inputBox.x / 100;
+
+    DrawText(textInput, inputBox.x+padding, inputBox.y+(inputBox.height - textPos.y) / 2.0, 40, BLACK);
 }
 
 // Function to handle text input
 void HandleTextInput() {
     int key = GetCharPressed();
     while (key > 0) {
-        if (letterCount < 49 && key >= '0' && key <= '9') { // Valid characters
+        if (letterCount < 9 && key >= '0' && key <= '9') { // Valid characters
             textInput[letterCount] = (char)key;
             letterCount++;
             textInput[letterCount] = '\0';
@@ -118,8 +86,8 @@ void DefineUIElements(Rectangle& insertBtn, Rectangle& deleteBtn, Rectangle& sea
     float screenWidth = GetScreenWidth();
     float screenHeight = GetScreenHeight();
     float buttonWidth = screenWidth / 8;
-    float buttonHeight = screenHeight / 12;
-    float padding = screenWidth / 50;
+    float buttonHeight = screenHeight / 15;
+    float padding = screenWidth / 100;
 
     float totalWidth = 3 * (buttonWidth + padding) + (screenWidth / 3);
     float startX = screenWidth - totalWidth - padding;
@@ -168,7 +136,7 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
     if (DrawButton(randomBtn, "Random", ORANGE)) {
         ht.ResetColors();
         ht.searchMessage = "Generated random values.";
-        ht.RandomInsert(30, 0, 100);
+        ht.RandomInsert(50, 0, 100);
     }
 
     if (DrawButton(clearBtn, "Clear", RED)) {
@@ -221,28 +189,14 @@ void LoadFromFile() {
 }
 
 void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
-    if (CheckCollisionPointRec(GetMousePosition(), undoBtn)) DrawRectangleRec(undoBtn, GRAY);
-    DrawTexture(undoIcon, undoBtn.x + (undoBtn.width - undoIcon.width) / 2, undoBtn.y + (undoBtn.height - undoIcon.height) / 2, BLACK);
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), undoBtn)) {
+    if(DrawButton(undoBtn, "Previous", LIGHTGRAY)) {
         ht.ResetColors();
         ht.Undo();
     }
 
-    if (CheckCollisionPointRec(GetMousePosition(), redoBtn)) DrawRectangleRec(redoBtn, GRAY);
-    DrawTexture(redoIcon, redoBtn.x + (redoBtn.width - redoIcon.width) / 2, redoBtn.y + (redoBtn.height - redoIcon.height) / 2, BLACK);
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), redoBtn)) {
+    if(DrawButton(redoBtn, "Next", LIGHTGRAY)) {
         ht.ResetColors();
         ht.Redo();
-    }
-}
-
-// Draw Back Button on visualization screens
-void DrawBackButton() {
-    if (DrawButton({20, 20, 100, 40}, "Back", GRAY)) {
-        if (currentScreen == HASH_TABLE) {
-            ht.cleanUp();
-        }
-        currentScreen = MENU;
     }
 }
 
@@ -260,22 +214,4 @@ void DrawHashTable() {
 
     DrawInputBox(inputBox);
     HandleTextInput();
-}
-
-// Draw UI based on the current screen
-void DrawUI() {
-    if (currentScreen == MENU) {
-        DrawMenu();
-    } else {
-        DrawBackButton(); // Adds a back button for navigation
-        if (currentScreen == LINKED_LIST) {
-            //DrawLinkedList();
-        } else if (currentScreen == HASH_TABLE) {
-            DrawHashTable();
-        } else if (currentScreen == TWO_THREE_TREE) {
-            //DrawTwoThreeTree();
-        } else if (currentScreen == GRAPH) {
-            //DrawGraph();
-        }
-    }
 }
