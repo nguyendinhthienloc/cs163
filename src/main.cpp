@@ -11,6 +11,9 @@
 #include "../header/AVL Tree/AVLtreeAnimation.h"
 #include "../header/AVL Tree/initAVLProgram.h"
 
+#include "../header/Hash Table/HashTable.h"
+#include "../header/Hash Table/hashtable_ui.h"
+
 
  
 bool showGreeting = true;
@@ -104,7 +107,9 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
     }
 
     else if (currentScreen == HASH_TABLE) {
-        //init hashtable program
+
+        DrawHashTable();
+        DrawBackButton();
     }
 
     else if (currentScreen == AVL_TREE) {

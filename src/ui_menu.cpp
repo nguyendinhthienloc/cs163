@@ -87,7 +87,7 @@ void DrawMenu() {
     DrawText("Hash Table", (int)(btn2Rect.x + 10), (int)(btn2Rect.y + 10), textSize, BLACK);
     if (btn2Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        DrawText("COMING SOON", (int)(centerX + buttonWidth / 2 - 60), 200 + buttonSpacing + 35, textSize, RED);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        TransitionTo(HASH_TABLE);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[1] = 0.95f;
     }
 
@@ -102,7 +102,7 @@ void DrawMenu() {
     DrawText("AVL Tree", (int)(btn3Rect.x + 10), (int)(btn3Rect.y + 10), textSize, BLACK);
     if (btn3Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
-        TransitionTo(AVL_TREE);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        TransitionTo(AVL_TREE);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         hoverScale[2] = 0.95f;
     }
 
