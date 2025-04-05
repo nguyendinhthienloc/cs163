@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylib.h"
+#include "InputBox.h"
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -8,7 +9,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "InputBox.h"
+#include <queue>
 
 #define WIDTH 1600
 #define HEIGHT 900
@@ -65,6 +66,8 @@ private:
     size_t kruskalStep = 0;
     int frameCounter = 0;
     bool mstFinished = false;
+
+    int countComponents();
 public:
 
     Graph();
@@ -75,6 +78,7 @@ public:
 
     State state = NORMAL;
 
+    void EdgeToMatrix();
     std::string edgeListToString();
     bool stringToEdgeList(const std::string& str);
 

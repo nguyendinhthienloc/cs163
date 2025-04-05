@@ -42,6 +42,9 @@ void ShPTextBox::update() {
         // Split m_content into lines and determine the number of lines
         std::vector<std::string> lines = splitContentIntoLines(m_content);
 
+        // Adjust lineClicked based on the scroll offset
+        lineClicked += m_scrollOffset;
+
         if (lineClicked < lines.size()) {
             m_cursorLine = lineClicked;
         }
@@ -124,6 +127,14 @@ void ShPTextBox::update() {
             m_cursorLine++;  // Move to the next line after the newline
             m_cursorCharIndex = 0;  // Place the cursor at the beginning of the new line
         }
+
+        // Scroll if the cursor moves beyond the visible lines
+        if (m_cursorLine >= m_scrollOffset + m_maxVisibleLines) {
+            m_scrollOffset = m_cursorLine - m_maxVisibleLines + 1;
+        }
+        else if (m_cursorLine < m_scrollOffset) {
+            m_scrollOffset = m_cursorLine;
+        }
     }
 }
 
@@ -133,6 +144,9 @@ std::vector<std::string> ShPTextBox::splitContentIntoLines(const std::string& co
     std::string line;
     while (std::getline(ss, line, '\n')) {
         lines.push_back(line);
+    }
+    if (lines.empty()) {
+        lines.push_back("");
     }
     return lines;
 }
@@ -167,43 +181,39 @@ void ShPTextBox::handleBackspace() {
     static float backspaceTimer = 0.0f;
     if (IsKeyDown(KEY_BACKSPACE)) {
         backspaceTimer += GetFrameTime();
-        if (backspaceTimer > 0.1f) {  // Set a delay for continuous deletion
+        if (backspaceTimer > 0.1f) {
             std::vector<std::string> lines = splitContentIntoLines(m_content);
             std::string& currentLine = lines[m_cursorLine];
 
-            // Handle backspace within a non-empty line
             if (!currentLine.empty() && m_cursorCharIndex > 0) {
-                // Normal backspace behavior: delete the character at the cursor
+                // Normal character deletion
                 currentLine.erase(m_cursorCharIndex - 1, 1);
-                m_cursorCharIndex--;  // Move the cursor position back
-                m_content = rebuildContentFromLines(lines); // Rebuild content after modification
-            }
-            // If the current line is empty and we're at the start of the line, merge with the previous line
-            else if ((currentLine.empty() || m_cursorCharIndex == 0) && m_cursorLine > 0) {
-                std::string& previousLine = lines[m_cursorLine - 1];
-
-                // Merge the current line (empty) with the previous line
-                previousLine += currentLine;  // Merge without adding a newline
-
-                // Remove the empty line
-                lines.erase(lines.begin() + m_cursorLine);
-
-                // Update the cursor to the end of the previous line after merging
-                m_cursorLine--;
-                m_cursorCharIndex = previousLine.length(); // Set cursor at the end of the merged line
-
-                // Rebuild the content with merged lines
+                m_cursorCharIndex--;
                 m_content = rebuildContentFromLines(lines);
             }
+            else if (m_cursorCharIndex == 0 && m_cursorLine > 0) {
+                std::string& prevLine = lines[m_cursorLine - 1];
 
-            backspaceTimer = 0.0f;  // Reset the timer after each deletion
+                // Save the position before merging
+                size_t prevLength = prevLine.length();
+
+                // Merge lines
+                prevLine += currentLine;
+                lines.erase(lines.begin() + m_cursorLine);
+
+                // Rebuild content and update cursor
+                m_content = rebuildContentFromLines(lines);
+                m_cursorLine--;
+                m_cursorCharIndex = prevLength; // Cursor is placed where the \n used to be
+            }
+
+            backspaceTimer = 0.0f;
         }
     }
     else {
-        backspaceTimer = 0.0f;  // Reset the timer if the key is not held
+        backspaceTimer = 0.0f;
     }
 }
-
 
 void ShPTextBox::render() {
     Color boxColorToUse = m_isTyping ? textBoxColorInputing : textBoxColor;
@@ -220,10 +230,14 @@ void ShPTextBox::render() {
         lines.push_back(line);
     }
 
+    // Calculate visible lines based on scroll offset
+    int startLine = m_scrollOffset;
+    int endLine = std::min(startLine + m_maxVisibleLines, (int)lines.size());
+
     // Draw each line
     float y = m_box.y + 5;  // Top padding
-    for (size_t i = 0; i < lines.size(); ++i) {
-        DrawText(lines[i].c_str(), m_box.x + 7, y + i * textBoxTextSize, textBoxTextSize, m_textColor);
+    for (size_t i = startLine; i < endLine; ++i) {
+        DrawText(lines[i].c_str(), m_box.x + 7, y + (i - startLine) * textBoxTextSize, textBoxTextSize, m_textColor);
     }
 
     // Draw blinker if typing
@@ -235,7 +249,7 @@ void ShPTextBox::render() {
             // Calculate the cursor's line and position
             size_t cursorLine = m_cursorLine;
             size_t cursorCharIndex = m_cursorCharIndex;
-            float blinkerY = y + cursorLine * textBoxTextSize;
+            float blinkerY = y + (cursorLine - m_scrollOffset) * textBoxTextSize;
 
             if (cursorCharIndex > 0) {
                 int textWidth = MeasureText(lines[cursorLine].substr(0, cursorCharIndex).c_str(), textBoxTextSize);
@@ -257,6 +271,8 @@ std::string ShPTextBox::getText() {
 }
 
 void ShPTextBox::clearContent() {
+    m_cursorLine = 0;
+    m_cursorCharIndex = 0;
     m_content.clear();
 }
 
@@ -269,3 +285,88 @@ void ShPTextBox::setBoxSize(Vector2 size) {
     m_box.width = size.x;
     m_box.height = size.y;
 }
+
+void ShPTextBox::scrollUp() {
+    if (m_scrollOffset > 0) {
+        m_scrollOffset--;
+    }
+}
+
+void ShPTextBox::scrollDown() {
+    std::vector<std::string> lines = splitContentIntoLines(m_content);
+    if (m_scrollOffset + m_maxVisibleLines < (int)lines.size()) {
+        m_scrollOffset++;
+    }
+}
+
+template <typename T>
+T Clamp(T value, T minValue, T maxValue) {
+    if (value < minValue) return minValue;
+    if (value > maxValue) return maxValue;
+    return value;
+}
+
+void ShPTextBox::DrawScrollBar() {
+    // Define the position and dimensions of the scroll bar
+    Rectangle scrollBar = { 690, 290, 20, 282 };  // Width: 20px, Height: 282px (distance between buttons)
+
+    // Draw the scroll bar background (gray)
+    DrawRectangleRec(scrollBar, GRAY);
+
+    // If the number of lines exceeds the max visible lines, draw the slider
+    if (splitContentIntoLines(m_content).size() > m_maxVisibleLines) {
+        // Calculate the height of the slider based on visible lines vs total lines
+        float sliderHeight = scrollBar.height * (m_maxVisibleLines / (float)splitContentIntoLines(m_content).size());
+
+        // Calculate the position of the slider based on scroll offset
+        float sliderY = scrollBar.y + m_scrollOffset * (scrollBar.height - sliderHeight) / (splitContentIntoLines(m_content).size() - m_maxVisibleLines);
+
+        // Draw the slider
+        Rectangle slider = { scrollBar.x, sliderY, scrollBar.width, sliderHeight };
+        DrawRectangleRec(slider, DARKGRAY);
+
+        // Handle mouse drag to move the slider
+        static bool isDragging = false;  // Track whether the user is dragging
+        static float dragStartY = 0.0f;  // Store the Y position where dragging started
+
+        if (CheckCollisionPointRec(GetMousePosition(), slider)) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                m_isTyping = false;
+                isDragging = true;  // Start dragging
+                dragStartY = GetMousePosition().y - slider.y;  // Calculate the offset between mouse and slider
+            }
+        }
+
+        if (isDragging) {
+            // Get the mouse Y position
+            float mousePosY = GetMousePosition().y;
+
+            // Constrain the slider's position within the scroll bar height
+            float newSliderY = mousePosY - dragStartY;
+            newSliderY = Clamp(newSliderY, scrollBar.y, scrollBar.y + scrollBar.height - sliderHeight);
+
+            // Update the slider's Y position and the scroll offset
+            slider.y = newSliderY;
+            m_scrollOffset = (slider.y - scrollBar.y) / (scrollBar.height - sliderHeight) * (splitContentIntoLines(m_content).size() - m_maxVisibleLines);
+
+            // Ensure the scroll offset stays within the valid range
+            m_scrollOffset = Clamp<float>(m_scrollOffset, 0, splitContentIntoLines(m_content).size() - m_maxVisibleLines);
+        }
+
+        // Stop dragging when the mouse button is released
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            isDragging = false;
+        }
+    }
+    else {
+        // If the number of lines is smaller than or equal to the max visible lines, you can either draw the scrollbar as inactive
+        // or not draw it at all, depending on your preference
+        // Optional: Draw the scrollbar in a different color to indicate it's inactive
+        Rectangle inactiveScrollBar = { 690, 290, 20, 282 };
+        DrawRectangleRec(inactiveScrollBar, BLACK);
+        if (CheckCollisionPointRec(GetMousePosition(), inactiveScrollBar)) {
+            m_isTyping = false;
+        }
+    }
+}
+

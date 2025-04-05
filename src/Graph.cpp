@@ -32,6 +32,14 @@ void Graph::addNode(int node) {
     nodes.push_back(newNode);
 }
 
+void Graph::EdgeToMatrix() {
+    adjMatrix.resize(V, std::vector<int>(V));
+    for (auto e : edges) {
+        adjMatrix[e.a][e.b] = e.w;
+        adjMatrix[e.b][e.a] = e.w;
+    }
+}
+
 // Function to apply forces using the spring algorithm
 void Graph::ApplySpringForces() {
     Vector2 center = { WIDTH / 2.0f, HEIGHT / 2.0f };
@@ -285,6 +293,10 @@ bool initialDelayComplete = false;
 
 void Graph::StartKruskalAnimation() {
     if (nodes.empty()) return;
+    if (countComponents() > 1) {
+        message = "The graph is not connected";
+        return;
+    }
 
     state = MST;
     kruskalStep = 0;
@@ -504,12 +516,12 @@ bool Graph::stringToEdgeList(const std::string& str) {
     while (std::getline(ss, line)) {
         std::stringstream edgeStream(line);
         if (!(edgeStream >> a >> b >> w)) {
-            message = "Invalid Edge List! (Invalid edge format)";
+            message = "Invalid edge format";
             return false;
         }
 
         if (a < 0 || b < 0 || a >= V || b >= V) {
-            message = "Invalid Edge List! (Edge vertices out of bounds)";
+            message = "Edge vertices out of bounds";
             return false;
         }
 
@@ -519,10 +531,34 @@ bool Graph::stringToEdgeList(const std::string& str) {
 
     // Check if the number of edges matches the expected count
     if (edgeCounter != eCount) {
-        message = "Invalid Edge List! (Edge count mismatch)";
+        message = "Edge count mismatch";
         return false;
     }
 
     return true;
+}
+
+int Graph::countComponents() {
+    EdgeToMatrix();
+    std::vector<int> visited(V, false);
+    int res = 0;
+    std::queue<int> q;
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            res++;
+            q.push(i);
+            visited[i] = true;
+            while (!q.empty()) {
+                int u = q.front(); q.pop();
+                for (int v = 0; v < V; v++) {
+                    if (adjMatrix[u][v] && !visited[v]) {
+                        q.push(v);
+                        visited[v] = true;
+                    }
+                }
+            }
+        }
+    }
+    return res;
 }
 

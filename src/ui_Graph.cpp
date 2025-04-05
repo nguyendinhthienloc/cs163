@@ -144,6 +144,7 @@ void DrawAndHandleButtons() {
         }
 
         Rectangle submitBtn = { 416, 600, 100, 40 };
+        Rectangle clearBtn = { 526, 600, 100, 40 };
 
         // If the box was closed this frame, reset flag
         if (DrawTextBox()) {
@@ -154,10 +155,30 @@ void DrawAndHandleButtons() {
             // Handle submission...
             textInitialized = false;
             isTextBoxOpen = false;
-            G.stringToEdgeList(textBox.getText());
             isPaused = false;
+            G.stringToEdgeList(textBox.getText());
         }
+        if (DrawButton(clearBtn, "Clear", GRAY, 1, codeFont, 20)) {
+            textBox.clearContent();
+        }
+
+        DrawScrollBtn();
     }
+}
+
+void DrawScrollBtn() {
+    Rectangle scrollUpBtn = { 690 , 270, 20, 20 };
+    Rectangle scrollDownBtn = { 690, 572, 20, 20 };
+    if (DrawButton(scrollUpBtn, "^", GRAY, 1, codeFont, 20)) {
+        textBox.m_isTyping = false;
+        textBox.scrollUp();
+    }
+    if (DrawButton(scrollDownBtn, "v", GRAY, 1, codeFont, 20)) {
+        textBox.m_isTyping = false;
+        textBox.scrollDown();
+    }
+
+    textBox.DrawScrollBar();
 }
 
 void DefineTextBoxElements(Rectangle& menu) {
@@ -182,8 +203,8 @@ bool DrawTextBox() {
     bool closed = false;
     if (DrawButton(closeBtn, "Close", RED, 1, codeFont, 20) || IsKeyPressed(KEY_ESCAPE)) {
         isTextBoxOpen = false;
-        closed = true;
         isPaused = false;
+        closed = true;
     }
 
     DrawRectangleLinesEx(menu, 1, BLACK);
