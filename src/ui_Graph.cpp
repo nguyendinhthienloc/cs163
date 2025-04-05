@@ -26,7 +26,7 @@ bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font f
     //DrawRectangleLinesEx(rect, 2, BLACK);
 
     float textX, textY;
-    int textSize=FontSize;
+    int textSize = FontSize;
 
     if (shift == 1) {
         // Dynamically adjust text size based on button height
@@ -41,7 +41,7 @@ bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font f
         //textSize = 17;// rect.height * 0.3;
         Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, 1);
 
-        textX = rect.x+rect.width * 0.05;
+        textX = rect.x + rect.width * 0.05;
         textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
     }
 
@@ -50,53 +50,145 @@ bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font f
     return (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)); // Return true if clicked
 }
 
-void DefineButtons(Rectangle& openMenuBtn, Rectangle& randomBtn, Rectangle& LoadFileBtn, Rectangle& mstBtn, Rectangle& clearBtn) {
+void DefineButtons(Rectangle& openMenuBtn, Rectangle& randomBtn, Rectangle& LoadFileBtn, Rectangle& mstBtn, Rectangle& clearBtn, Rectangle& inputBtn, Rectangle& loadMatrix, Rectangle& loadEdge) {
     float screenWidth = GetScreenWidth();
     float screenHeight = GetScreenHeight();
     float buttonWidth = 150;
     float buttonHeight = 50;
     float padding = screenWidth / 100;
 
-    float startY = HEIGHT - 65 - 200;
-    openMenuBtn = {0, startY, 50, 200};
+    float startY = HEIGHT - 65 - 250;
+    openMenuBtn = { 0, startY, 50, 250 };
 
-    randomBtn = { 50+padding, startY, buttonWidth, buttonHeight };
-    LoadFileBtn = { 50+padding, startY+buttonHeight, buttonWidth, buttonHeight };
-    mstBtn = { 50+ padding , startY+2*buttonHeight, buttonWidth, buttonHeight };
+    randomBtn = { 50 + padding, startY, buttonWidth, buttonHeight };
+
+    LoadFileBtn = { 50 + padding, startY + buttonHeight, buttonWidth, buttonHeight };
+    loadMatrix = { 50 + 2 * padding + buttonWidth, startY + buttonHeight / 2, buttonWidth, buttonHeight };
+    loadEdge = { 50 + 2 * padding + buttonWidth , startY + 3 * buttonHeight / 2, buttonWidth, buttonHeight };
+
+    mstBtn = { 50 + padding , startY + 2 * buttonHeight, buttonWidth, buttonHeight };
     clearBtn = { 50 + padding, startY + 3 * buttonHeight, buttonWidth, buttonHeight };
+    inputBtn = { 50 + padding, startY + 4 * buttonHeight, buttonWidth, buttonHeight };
 }
 
+bool isLoadFileOpen = false;
+bool isTextBoxOpen = false;
+Color overlayColor = { 0, 0, 0, 150 };  // Black with some transparency
+ShPTextBox textBox({ 416, 266 }, { 300, 330 }, GRAY, BLACK, 500, 17);
+static bool textInitialized = false;
+
 void DrawAndHandleButtons() {
-    Rectangle randomBtn, LoadFileBtn, mstBtn, openMenuBtn, clearBtn;
-    DefineButtons(openMenuBtn, randomBtn, LoadFileBtn, mstBtn, clearBtn);
+    Rectangle randomBtn, LoadFileBtn, mstBtn, openMenuBtn, clearBtn, inputBtn, loadMatrix, loadEdge;
+    DefineButtons(openMenuBtn, randomBtn, LoadFileBtn, mstBtn, clearBtn, inputBtn, loadMatrix, loadEdge);
 
     //Color GOLDENROD = { 218, 165, 32, 255 };
 
     if (isOpen) {
-        if (DrawButton(openMenuBtn, "<", DARKGREEN, 1, codeFont, 0.1f*openMenuBtn.height)) {
-            isOpen = false;
+        if (!isTextBoxOpen) {
+            if (DrawButton(openMenuBtn, "<", DARKGREEN, 1, codeFont, 0.1f * openMenuBtn.height)) {
+                isOpen = false;
+                isLoadFileOpen = false;
+            }
+            if (DrawButton(randomBtn, "Random", DARKGREEN, 2, codeFont, 17)) {
+                G.RandomGraph();
+            }
+            if (DrawButton(LoadFileBtn, "Load File", DARKGREEN, 2, codeFont, 17)) {
+                isLoadFileOpen = !isLoadFileOpen;
+            }
+            if (isLoadFileOpen) {
+                if (DrawButton(loadMatrix, "Matrix", DARKGREEN, 2, codeFont, 17)) {
+                    LoadFileGraph(1);
+                }
+                if (DrawButton(loadEdge, "Edge list", DARKGREEN, 2, codeFont, 17)) {
+                    LoadFileGraph(2);
+                }
+            }
+            if (DrawButton(mstBtn, "Run Kruskal", DARKGREEN, 2, codeFont, 17)) {
+                isOpen = false;
+                isCodeOpen = true;
+                isLoadFileOpen = false;
+                chosenAlgo = "Kruskal's Algorithm";
+                G.StartKruskalAnimation();
+            }
+            if (DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17)) {
+                G.clearGraph();
+            }
+            if (DrawButton(inputBtn, "Input Graph", DARKGREEN, 2, codeFont, 17)) {
+                isTextBoxOpen = true;
+            }
         }
-        if (DrawButton(randomBtn, "Random", DARKGREEN, 2, codeFont, 17)) {
-            G.RandomGraph();
-        }
-        if (DrawButton(LoadFileBtn, "Load File", DARKGREEN, 2, codeFont, 17)) {
-            LoadFileGraph();
-        }
-        if (DrawButton(mstBtn, "Run Kruskal", DARKGREEN, 2, codeFont, 17)) {
-            isOpen = false;
-            isCodeOpen = true;
-            chosenAlgo = "Kruskal's Algorithm";
-            G.StartKruskalAnimation();
-        }
-        if (DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17)) {
-            G.clearGraph();
+
+        if (isTextBoxOpen) {
+            if (DrawButton(openMenuBtn, "<", DARKGREEN, 1, codeFont, 0.1f * openMenuBtn.height)) {
+                isOpen = false;
+            }
+            DrawButton(randomBtn, "Random", DARKGREEN, 2, codeFont, 17);
+            DrawButton(LoadFileBtn, "Load File", DARKGREEN, 2, codeFont, 17);
+            DrawButton(mstBtn, "Run Kruskal", DARKGREEN, 2, codeFont, 17);
+            DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17);
+            DrawButton(inputBtn, "Input Graph", DARKGREEN, 2, codeFont, 17);
         }
     }
     else {
-        if (DrawButton(openMenuBtn, ">", DARKGREEN, 1, codeFont, openMenuBtn.height*0.1f)) {
+        if (DrawButton(openMenuBtn, ">", DARKGREEN, 1, codeFont, openMenuBtn.height * 0.1f)) {
             isOpen = true;
         }
     }
+
+    if (isTextBoxOpen) {
+        isPaused = true;
+
+        if (!textInitialized) {
+            textBox.setText(G.edgeListToString());
+            textInitialized = true;
+        }
+
+        Rectangle submitBtn = { 416, 600, 100, 40 };
+
+        // If the box was closed this frame, reset flag
+        if (DrawTextBox()) {
+            textInitialized = false;
+        }
+
+        if (DrawButton(submitBtn, "Submit", GRAY, 1, codeFont, 20)) {
+            // Handle submission...
+            textInitialized = false;
+            isTextBoxOpen = false;
+            G.stringToEdgeList(textBox.getText());
+            isPaused = false;
+        }
+    }
+}
+
+void DefineTextBoxElements(Rectangle& menu) {
+    float w = 800, h = 400;
+    float startX = (WIDTH - w) / 2, startY = (HEIGHT - h) / 2;
+    float padding = w / 50;
+
+    menu = { startX, startY, w, h };
+}
+
+bool DrawTextBox() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), overlayColor);
+    Rectangle menu;
+    DefineTextBoxElements(menu);
+    DrawRectangleRec(menu, WHITE);
+    textBox.render();
+    textBox.update();
+
+    Rectangle closeBtn = { menu.x + menu.width - 100, menu.y, 100, 40 };
+
+    // Check for close
+    bool closed = false;
+    if (DrawButton(closeBtn, "Close", RED, 1, codeFont, 20) || IsKeyPressed(KEY_ESCAPE)) {
+        isTextBoxOpen = false;
+        closed = true;
+        isPaused = false;
+    }
+
+    DrawRectangleLinesEx(menu, 1, BLACK);
+
+    return closed;
 }
 
 void DrawOutLine() {
@@ -105,7 +197,7 @@ void DrawOutLine() {
     Vector2 textSizeMeasure = MeasureTextEx(codeFont, title, textSize, 1);
 
     // Center the text within the button
-    float textX =  (WIDTH - textSizeMeasure.x) / 2;
+    float textX = (WIDTH - textSizeMeasure.x) / 2;
     float textY = (50 - textSizeMeasure.y) / 2;
 
     DrawRectangle(0, 0, WIDTH, 50, BLACK);
@@ -115,7 +207,7 @@ void DrawOutLine() {
     DrawRectangle(WIDTH - 50, 50, 50, HEIGHT - 100, BLACK);
 }
 
-bool LoadFileGraph() {
+bool LoadFileGraph(int choice) {
     const char* path = tinyfd_openFileDialog("Choose A File", "", 0, nullptr, nullptr, 0);
 
     if (path == nullptr) return false;
@@ -128,18 +220,18 @@ bool LoadFileGraph() {
     fin.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));  // Handle UTF-8
 
     if (!fin) {
-        std::cerr << "Error: Could not open file!\n";
+        message = "Error: Could not open file!";
         return false;
     }
 
-    G.loadFromFile(fin);
+    G.loadFromFile(fin, choice);
 
     fin.close();
 
     return true;
 }
 
-void DefineCodeTableElements(Rectangle& openBtn, Rectangle& startAlgo1, Rectangle& startAlgo2, Rectangle& forLoop, Rectangle& condition, Rectangle& add, Rectangle&  skip, Rectangle& done) {
+void DefineCodeTableElements(Rectangle& openBtn, Rectangle& startAlgo1, Rectangle& startAlgo2, Rectangle& forLoop, Rectangle& condition, Rectangle& add, Rectangle& skip, Rectangle& done) {
     float screenWidth = GetScreenWidth();
     float screenHeight = GetScreenHeight();
     float buttonWidth = 510;
@@ -163,12 +255,12 @@ void DrawCodeTable() {
     Rectangle openBtn, startAlgo1, startAlgo2, forLoop, condition, add, skip, done;
     DefineCodeTableElements(openBtn, startAlgo1, startAlgo2, forLoop, condition, add, skip, done);
     if (isCodeOpen) {
-        if (DrawButton(openBtn, ">", BLUE, 1, codeFont, openBtn.height*0.1f)) {
+        if (DrawButton(openBtn, ">", BLUE, 1, codeFont, openBtn.height * 0.1f)) {
             isCodeOpen = false;
         }
 
         const char* algo1 = "Sort edges by increasing weight";
-        DrawButton(startAlgo1, algo1, (stateOfCode==1)? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(startAlgo1, algo1, (stateOfCode == 1) ? BLACK : BLUE, 2, codeFont, 17);
 
         const char* algo2 = "T={ }";
         DrawButton(startAlgo2, algo2, (stateOfCode == 1) ? BLACK : BLUE, 2, codeFont, 17);
@@ -180,7 +272,7 @@ void DrawCodeTable() {
         DrawButton(condition, conditionText, (stateOfCode == 3) ? BLACK : BLUE, 2, codeFont, 17);
 
         const char* addText = "       add e to T";
-        DrawButton(add, addText, (stateOfCode == 4) ? BLACK: BLUE, 2, codeFont, 17);
+        DrawButton(add, addText, (stateOfCode == 4) ? BLACK : BLUE, 2, codeFont, 17);
 
         const char* skipText = "   else ignore e";
         DrawButton(skip, skipText, (stateOfCode == 5) ? BLACK : BLUE, 2, codeFont, 17);
@@ -189,7 +281,7 @@ void DrawCodeTable() {
         DrawButton(done, doneText, (stateOfCode == 6) ? BLACK : BLUE, 2, codeFont, 17);
     }
     else {
-        if (DrawButton(openBtn, "<", BLUE, 1, codeFont, openBtn.height*0.1f)) {
+        if (DrawButton(openBtn, "<", BLUE, 1, codeFont, openBtn.height * 0.1f)) {
             isCodeOpen = true;
         }
     }
@@ -197,8 +289,8 @@ void DrawCodeTable() {
 
 void DrawChosenAlgo() {
     float h = 50.0f, w = 330.0f;
-    float startY = 50.0f+h;
-    float startX = WIDTH - 50-w;
+    float startY = 50.0f;
+    float startX = WIDTH - 50 - w;
 
     Rectangle rect = { startX, startY, w, h };
     float textSize = 25; // 50% of button height
@@ -208,11 +300,11 @@ void DrawChosenAlgo() {
     float textX = rect.x + (rect.width - textSizeMeasure.x) / 2;
     float textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
 
-    DrawTextEx(codeFont, chosenAlgo.c_str(), {textX, textY}, textSize, 1.0f, BLACK);
+    DrawTextEx(codeFont, chosenAlgo.c_str(), { textX, textY }, textSize, 1.0f, BLACK);
 }
 
 void DrawCurrentStep() {
-    float h = 50.0f, w = 2*WIDTH/3.0;
+    float h = 50.0f, w = 2 * WIDTH / 3.0;
     float startX = 0, startY = HEIGHT - 50 - h;
 
     Rectangle rect = { startX, startY, w, h };
@@ -233,7 +325,7 @@ bool isDragging = false;
 void DefineSpeedSlider(float& minX, float& maxX, float& y, float& minValue, float& maxValue) {
     minX = 100;
     maxX = 300;
-    y = HEIGHT-25;
+    y = HEIGHT - 25;
     minValue = 45.0f;
     maxValue = 180.0f;
 }
@@ -265,16 +357,39 @@ void DrawSpeedSlider() {
     float minX, maxX, y, minValue, maxValue;
     DefineSpeedSlider(minX, maxX, y, minValue, maxValue);
 
-    DrawRectangle(minX, y - 3, maxX-minX, 6, GRAY);
+    DrawRectangle(minX, y - 3, maxX - minX, 6, GRAY);
 
-    DrawRectangleRounded({ sliderX-10, y - 10, 20, 20}, 0.2f, 20, SOFTWHITE);
+    DrawRectangleRounded({ sliderX - 10, y - 10, 20, 20 }, 0.2f, 20, SOFTWHITE);
 
-    float speedValue = (180.0f-animationSpeed)/90.0f+0.5f;
+    float speedValue = (180.0f - animationSpeed) / 90.0f + 0.5f;
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(2) << speedValue;
-    std::string speedText = oss.str()+"x";
+    std::string speedText = oss.str() + "x";
 
     Vector2 textPos = MeasureTextEx(codeFont, speedText.c_str(), 20, 1);
 
-    DrawTextEx(codeFont, speedText.c_str(), { maxX + 10, y-textPos.y/2.0f }, 20, 1, SOFTWHITE);
+    DrawTextEx(codeFont, speedText.c_str(), { maxX + 10, y - textPos.y / 2.0f }, 20, 1, SOFTWHITE);
+}
+
+void DefinePauseButton(Rectangle& pauseBtn) {
+    float w = 100.0f, h = 30.0f;
+    float startX = (WIDTH - w) / 2, startY = HEIGHT - 25 - h / 2;
+
+    pauseBtn = { startX, startY, w, h };
+}
+
+void DrawPauseButton() {
+    Rectangle pauseBtn;
+    DefinePauseButton(pauseBtn);
+
+    if (isPaused) {
+        if (DrawButton(pauseBtn, "Resume", GREEN, 1, codeFont, 30) || IsKeyPressed(KEY_SPACE)) {
+            isPaused = false;
+        }
+    }
+    else {
+        if (DrawButton(pauseBtn, "Pause", RED, 1, codeFont, 30) || IsKeyPressed(KEY_SPACE)) {
+            isPaused = true;
+        }
+    }
 }

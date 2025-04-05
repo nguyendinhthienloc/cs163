@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include "InputBox.h"
 
 #define WIDTH 1600
 #define HEIGHT 900
@@ -28,6 +29,8 @@
 extern int stateOfCode;
 extern std::string message;
 extern int animationSpeed;
+extern bool isPaused;
+extern int tempFrameCounter;
 
 struct Node {
     Vector2 position;
@@ -45,9 +48,10 @@ struct Edge {
 
 class Graph {
 private:
-    int V=0;
+    int V = 0;
     std::vector<Node> nodes;
     std::vector<Edge> edges;
+    std::vector<std::vector<int>> adjMatrix;
 
     struct DSU {
         std::vector<int> parent;
@@ -63,11 +67,16 @@ private:
     bool mstFinished = false;
 public:
 
+    Graph();
+
     enum State {
         NORMAL, MST
     };
 
     State state = NORMAL;
+
+    std::string edgeListToString();
+    bool stringToEdgeList(const std::string& str);
 
     void ApplySpringForces();
     void RandomGraph();
@@ -84,6 +93,6 @@ public:
     void UpdateKruskalStep();
     bool isMSTFinished() const { return mstFinished; }
 
-    void loadFromFile(std::wifstream& fin);
+    void loadFromFile(std::wifstream& fin, int choice);
 };
 

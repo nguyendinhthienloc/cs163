@@ -5,6 +5,10 @@ int stateOfCode = -1;
 std::string message = "";
 int animationSpeed = 90;
 
+Graph::Graph() {
+    RandomGraph();
+}
+
 void Graph::setVertexCount(int vertexCount) {
     V = vertexCount;
 }
@@ -139,7 +143,7 @@ void Graph::Draw() const {
         Color edgeColor = BLACK;
 
         if (state == MST) {
-            if ((i == kruskalStep && !mstFinished&&stateOfCode >= 2 && stateOfCode <= 5) || edge.inMST) {
+            if ((i == kruskalStep && !mstFinished && stateOfCode >= 2 && stateOfCode <= 5) || edge.inMST) {
                 edgeColor = ORANGE;
             }
             else if (i < kruskalStep && !edge.inMST) {
@@ -185,7 +189,7 @@ void Graph::Draw() const {
         if (state == MST) {
 
             if (state == MST) {
-                if (kruskalStep < edges.size() && !mstFinished&&stateOfCode >= 2 && stateOfCode <= 5) {
+                if (kruskalStep < edges.size() && !mstFinished && stateOfCode >= 2 && stateOfCode <= 5) {
                     const Edge& currentEdge = edges[kruskalStep];
                     if (currentEdge.a == i || currentEdge.b == i) {
                         isInCurrentEdge = true;
@@ -228,11 +232,11 @@ void Graph::Draw() const {
     }
 }
 
-void Graph::DrawGraph(){
+void Graph::DrawGraph() {
     for (int i = 0; i < 1000; i++) {
         ApplySpringForces();
     }
-    if (state==MST) {
+    if (state == MST) {
         UpdateKruskalStep();
     }
     Draw();
@@ -242,6 +246,7 @@ void Graph::clearGraph() {
     V = 0;
     nodes.clear();
     edges.clear();
+    adjMatrix.clear();
     kruskalStep = 0;
     frameCounter = 0;
     state = NORMAL;
@@ -297,11 +302,16 @@ void Graph::StartKruskalAnimation() {
     message = "Sorting Edges ...";
 }
 
+bool isPaused = false;
+
 void Graph::UpdateKruskalStep() {
+    if (isPaused) {
+        return;
+    }
     frameCounter++;
     if (stateOfCode == 1) {
         if (!initialDelayComplete) {
-            if (frameCounter < 2*animationSpeed/3) { // 1.5-second delay for state 1
+            if (frameCounter < 2 * animationSpeed / 3) { // 1.5-second delay for state 1
                 return;
             }
             // Perform initialization and sorting after delay
@@ -312,7 +322,7 @@ void Graph::UpdateKruskalStep() {
             initialDelayComplete = true;
             frameCounter = 0;
         }
-        if (frameCounter < animationSpeed/3) { // Brief pause before moving to loop
+        if (frameCounter < animationSpeed / 3) { // Brief pause before moving to loop
             return;
         }
         stateOfCode = 2; // Move to for loop
@@ -325,8 +335,8 @@ void Graph::UpdateKruskalStep() {
         for (auto edge : edges) {
             if (edge.inMST) cost += edge.w;
         }
-        message = "Total weight "+std::to_string(cost);
-        if (frameCounter < 4*animationSpeed/3) { // 2-second delay
+        message = "Total weight = " + std::to_string(cost);
+        if (frameCounter < 4 * animationSpeed / 3) { // 2-second delay
             frameCounter++;
             return;
         }
@@ -335,12 +345,12 @@ void Graph::UpdateKruskalStep() {
     }
 
     Edge& currentEdge = edges[kruskalStep];
-    if (frameCounter < animationSpeed/3) { // Brief delay before checking edge
+    if (frameCounter < animationSpeed / 3) { // Brief delay before checking edge
         message = "Cheking edge (" + std::to_string(currentEdge.w) + ",(" + std::to_string(currentEdge.a) + "," + std::to_string(currentEdge.b) + "))";
         stateOfCode = 2; // for loop
         return;
     }
-    if (frameCounter < 2*animationSpeed/3) { // Delay for condition check
+    if (frameCounter < 2 * animationSpeed / 3) { // Delay for condition check
         stateOfCode = 3; // if condition
         return;
     }
@@ -383,24 +393,25 @@ void Graph::resetGraph() {
     message = "";
 }
 
-void Graph::loadFromFile(std::wifstream& fin) {
+void Graph::loadFromFile(std::wifstream& fin, int choice) {
     if (!fin) {
         std::cerr << "Error: Failed to open file!\n";
         return;
     }
-    if (fin) {
-        clearGraph();
-        int V; fin >> V;
-        if (fin.fail() || V <= 0) {
-            std::cerr << "Error: Invalid vertex count!\n";
+    clearGraph();
+    if (choice == 1) {
+        int V;
+        if (!(fin >> V) || V <= 0) {
+            message = "Invalid input!";
             return;
         }
-        std::vector<std::vector<int>> adj(V, std::vector<int>(V));
+        adjMatrix.resize(V, std::vector<int>(V));
         setVertexCount(V);
         for (int i = 0; i < V; i++) {
             for (int j = 0; j < V; j++) {
-                if (!(fin >> adj[i][j])) {  // Check each read operation
-                    std::cerr << "Error: Unexpected end of file while reading adjacency matrix!\n";
+                if (!(fin >> adjMatrix[i][j])) {  // Check each read operation
+                    clearGraph();
+                    message = "Invalid input!";
                     return;
                 }
             }
@@ -409,11 +420,109 @@ void Graph::loadFromFile(std::wifstream& fin) {
             addNode(i);
         }
         for (int i = 0; i < V; i++) {
-            for (int j = i + 1; j < V;  j++) {
-                if (adj[i][j]) edges.push_back({ i, j, adj[i][j]});
+            for (int j = i + 1; j < V; j++) {
+                if (adjMatrix[i][j] != adjMatrix[j][i]) {
+                    clearGraph();
+                    message = "Invalid input!";
+                    return;
+                }
+                if (adjMatrix[i][j]) edges.push_back({ i, j, adjMatrix[i][j] });
             }
+        }
+    }
+    else if (choice == 2) {
+        int V, E;
+
+        if (!(fin >> V >> E) || V <= 0 || E < 0) { // Single check for invalid input
+            message = "Invalid input!";
+            return;
+        }
+
+        setVertexCount(V);
+
+        for (int i = 0; i < E; i++) {
+            int u, v, w;
+            if (!(fin >> u >> v >> w) || u >= V || v >= V) { // Single read operation check
+                clearGraph();
+                message = "Invalid input!";
+                return;
+            }
+            addEdge(u, v, w);
+        }
+
+        adjMatrix.resize(V, std::vector<int>(V));
+
+        for (auto edge : edges) {
+            adjMatrix[edge.a][edge.b] = edge.w;
+            adjMatrix[edge.b][edge.a] = edge.w;
+        }
+
+        for (int i = 0; i < V; i++) {
+            addNode(i);
         }
     }
 }
 
+std::string Graph::edgeListToString() {
+    std::string res = "";
+    res += std::to_string(V) + " " + std::to_string(edges.size()) + "\n";
+    for (auto edge : edges) {
+        res += std::to_string(edge.a) + " " + std::to_string(edge.b) + " " + std::to_string(edge.w) + "\n";
+    }
+    return res;
+}
+
+bool Graph::stringToEdgeList(const std::string& str) {
+    std::stringstream ss(str);
+    int vCount, eCount;
+
+    clearGraph();
+
+    // Read V and E
+    if (!(ss >> vCount >> eCount)) {
+        message = "Invalid Edge List! (Invalid V and E counts)";
+        return false;
+    }
+
+    if (vCount <= 0 || eCount < 0) {
+        message = "Invalid Edge List! (V <= 0 or E < 0)";
+        return false;
+    }
+
+    V = vCount;
+    for (int i = 0; i < V; i++) {
+        addNode(i);
+    }
+
+    std::string line;
+    int a, b, w;
+    int edgeCounter = 0;
+
+    // Read edges from subsequent lines
+    std::getline(ss, line); // Skip the rest of the first line (V E)
+
+    while (std::getline(ss, line)) {
+        std::stringstream edgeStream(line);
+        if (!(edgeStream >> a >> b >> w)) {
+            message = "Invalid Edge List! (Invalid edge format)";
+            return false;
+        }
+
+        if (a < 0 || b < 0 || a >= V || b >= V) {
+            message = "Invalid Edge List! (Edge vertices out of bounds)";
+            return false;
+        }
+
+        edges.push_back({ a, b, w });
+        edgeCounter++;
+    }
+
+    // Check if the number of edges matches the expected count
+    if (edgeCounter != eCount) {
+        message = "Invalid Edge List! (Edge count mismatch)";
+        return false;
+    }
+
+    return true;
+}
 

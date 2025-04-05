@@ -18,15 +18,15 @@ int main() {
 
         DrawOutLine();
 
+        G.DrawGraph();
+
+        DrawCodeTable();
         DrawAndHandleButtons();
         DrawChosenAlgo();
         DrawCurrentStep();
         DrawSpeedSlider();
         UpdateSlider();
-
-        G.DrawGraph();
-
-        DrawCodeTable();
+        DrawPauseButton();
 
         EndDrawing();
     }
