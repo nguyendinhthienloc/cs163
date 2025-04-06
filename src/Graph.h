@@ -79,8 +79,11 @@ public:
     State state = NORMAL;
 
     void EdgeToMatrix();
+    void MatrixToEdge();
     std::string edgeListToString();
     bool stringToEdgeList(const std::string& str);
+    std::string MatrixToString();
+    bool stringToMatrix(const std::string& data);
 
     void ApplySpringForces();
     void RandomGraph();

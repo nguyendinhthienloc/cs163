@@ -76,6 +76,9 @@ bool isTextBoxOpen = false;
 Color overlayColor = { 0, 0, 0, 150 };  // Black with some transparency
 ShPTextBox textBox({ 416, 266 }, { 300, 330 }, GRAY, BLACK, 500, 17);
 static bool textInitialized = false;
+static bool shownHelp = false;
+static bool isMatrix = false;
+static bool isEdgeList = true;
 
 void DrawAndHandleButtons() {
     Rectangle randomBtn, LoadFileBtn, mstBtn, openMenuBtn, clearBtn, inputBtn, loadMatrix, loadEdge;
@@ -139,7 +142,12 @@ void DrawAndHandleButtons() {
         isPaused = true;
 
         if (!textInitialized) {
-            textBox.setText(G.edgeListToString());
+            if (isEdgeList) {
+                textBox.setText(G.edgeListToString());
+            }
+            else if (isMatrix) {
+                textBox.setText(G.MatrixToString());
+            }
             textInitialized = true;
         }
 
@@ -151,18 +159,59 @@ void DrawAndHandleButtons() {
             textInitialized = false;
         }
 
-        if (DrawButton(submitBtn, "Submit", GRAY, 1, codeFont, 20)) {
+        if (DrawButton(submitBtn, "Submit", DARKGRAY, 1, codeFont, 20)) {
             // Handle submission...
             textInitialized = false;
             isTextBoxOpen = false;
             isPaused = false;
-            G.stringToEdgeList(textBox.getText());
+            if (isEdgeList) G.stringToEdgeList(textBox.getText());
+            else if (isMatrix) G.stringToMatrix(textBox.getText());
         }
-        if (DrawButton(clearBtn, "Clear", GRAY, 1, codeFont, 20)) {
+        if (DrawButton(clearBtn, "Clear", DARKGRAY, 1, codeFont, 20)) {
             textBox.clearContent();
         }
 
         DrawScrollBtn();
+        DrawChoosingButtons();
+        HandleChoosingButtons();
+    }
+}
+
+void DrawChoosingButtons() {
+    const char* text1 = "Edge List";
+    const char* text2 = "Adjacency Matrix";
+    DrawTextEx(codeFont, text1, { 780, 300 }, 25, 1, BLACK);
+    DrawTextEx(codeFont, text2, { 950, 300 }, 25, 1, BLACK);
+    Vector2 circle1 = { 765, 10 };
+    Vector2 circle2 = { 935, 10 };
+    if (isEdgeList) {
+        DrawCircleLines(circle1.x, 310, circle1.y, BLUE);
+        DrawCircle(circle1.x, 310, 8, BLUE);
+
+        DrawCircleLines(circle2.x, 310, circle2.y, BLACK);
+    }
+    if (isMatrix) {
+        DrawCircleLines(circle2.x, 310, circle2.y, BLUE);
+        DrawCircle(circle2.x, 310, 8, BLUE);
+
+        DrawCircleLines(circle1.x, 310, circle1.y, BLACK);
+    }
+}
+
+void HandleChoosingButtons() {
+    Vector2 circle1 = { 765, 10 };
+    Vector2 circle2 = { 935, 10 };
+    float centerY = 310;
+
+    if (CheckCollisionPointCircle(GetMousePosition(), { circle1.x, centerY }, circle1.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        isEdgeList = true;
+        isMatrix = false;
+        textInitialized = false;
+    }
+    if (CheckCollisionPointCircle(GetMousePosition(), { circle2.x, centerY }, circle2.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        isEdgeList = false;
+        isMatrix = true;
+        textInitialized = false;
     }
 }
 

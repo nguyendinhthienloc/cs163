@@ -174,6 +174,7 @@ int ShPTextBox::getCursorIndexForClick(const std::string& line, int clickPosX) {
         cumulativeWidth += charWidth;
         cursorIndex++;
     }
+
     return cursorIndex;
 }
 
@@ -201,11 +202,24 @@ void ShPTextBox::handleBackspace() {
                 prevLine += currentLine;
                 lines.erase(lines.begin() + m_cursorLine);
 
-                // Rebuild content and update cursor
+                // Update cursor position after merging lines
+                m_cursorLine--; // Move to the previous line
+                m_cursorCharIndex = prevLength; // Place cursor at the end of the merged line
+
                 m_content = rebuildContentFromLines(lines);
-                m_cursorLine--;
-                m_cursorCharIndex = prevLength; // Cursor is placed where the \n used to be
             }
+            // Check if the last line is empty, remove it and move the cursor up
+            if (lines.size() > 0 && lines.back().empty()) {
+                lines.pop_back(); // Remove the empty last line
+                if (m_cursorLine == lines.size()) {
+                    // If we were at the last line, move up one line
+                    m_cursorLine--;
+                    m_cursorCharIndex = lines[m_cursorLine].length(); // Move cursor to the end of the previous line
+                    m_scrollOffset--;
+                }
+            }
+
+            m_content = rebuildContentFromLines(lines); // Rebuild content after adjustments
 
             backspaceTimer = 0.0f;
         }
@@ -369,4 +383,3 @@ void ShPTextBox::DrawScrollBar() {
         }
     }
 }
-

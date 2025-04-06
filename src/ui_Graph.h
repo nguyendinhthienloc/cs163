@@ -24,3 +24,5 @@ void UpdateSlider();
 void DefinePauseButton(Rectangle& pauseBtn);
 void DrawPauseButton();
 void DrawScrollBtn();
+void DrawChoosingButtons();
+void HandleChoosingButtons();

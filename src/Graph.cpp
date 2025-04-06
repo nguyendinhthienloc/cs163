@@ -137,6 +137,8 @@ void Graph::RandomGraph() {
         }
     }
 
+    EdgeToMatrix();
+
     state = NORMAL;
     kruskalStep = 0;
     frameCounter = 0;
@@ -535,6 +537,7 @@ bool Graph::stringToEdgeList(const std::string& str) {
         return false;
     }
 
+    EdgeToMatrix();
     return true;
 }
 
@@ -560,5 +563,61 @@ int Graph::countComponents() {
         }
     }
     return res;
+}
+
+std::string Graph::MatrixToString() {
+    std::string res = std::to_string(V) + '\n';
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            res += std::to_string(adjMatrix[i][j]);
+            if (j < V - 1) res += ' ';
+        }
+        res += '\n';
+    }
+    return res;
+}
+
+bool Graph::stringToMatrix(const std::string& data) {
+    std::stringstream ss(data);
+    clearGraph();
+
+    int Vcount;
+    if (!(ss >> Vcount)) {
+        message = "Invalid V counts";
+        return false;
+    }
+    if (Vcount <= 0) {
+        message = "Invalid Edge List! (V <= 0 or E < 0)";
+        return false;
+    }
+    setVertexCount(Vcount);
+    for (int i = 0; i < V; i++) {
+        addNode(i);
+    }
+
+    adjMatrix.resize(V, std::vector<int>(V));
+    for (int i = 0; i < V; ++i) {
+        for (int j = 0; j < V; ++j) {
+            if (!(ss >> adjMatrix[i][j])) {
+                message = "Invalid matrix";
+                return false;
+            }
+            if (i >= j && adjMatrix[i][j] != adjMatrix[j][i]) {
+                message = "Invalid matrix";
+                return false;
+            }
+        }
+    }
+
+    MatrixToEdge();
+}
+
+void Graph::MatrixToEdge() {
+    edges.clear();
+    for (int i = 0; i < V; i++) {
+        for (int j = i + 1; j < V; j++) {
+            if (adjMatrix[i][j]) edges.push_back({ i, j, adjMatrix[i][j] });
+        }
+    }
 }
 
