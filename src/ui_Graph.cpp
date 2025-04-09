@@ -74,7 +74,7 @@ void DefineButtons(Rectangle& openMenuBtn, Rectangle& randomBtn, Rectangle& Load
 bool isLoadFileOpen = false;
 bool isTextBoxOpen = false;
 Color overlayColor = { 0, 0, 0, 150 };  // Black with some transparency
-ShPTextBox textBox({ 416, 266 }, { 300, 330 }, GRAY, BLACK, 500, 17);
+ShPTextBox textBox({ 416, 266 }, { 480, 330 }, GRAY, BLACK, 500, 17);
 static bool textInitialized = false;
 static bool shownHelp = false;
 static bool isMatrix = false;
@@ -118,6 +118,7 @@ void DrawAndHandleButtons() {
             }
             if (DrawButton(inputBtn, "Input Graph", DARKGREEN, 2, codeFont, 17)) {
                 isTextBoxOpen = true;
+                textBox.m_scrollOffset = 0;
             }
         }
 
@@ -159,6 +160,13 @@ void DrawAndHandleButtons() {
             textInitialized = false;
         }
 
+        if (isEdgeList) {
+            DrawEdgeListHelpBox();
+        }
+        if (isMatrix) {
+            DrawMatrixHelpBox();
+        }
+
         if (DrawButton(submitBtn, "Submit", DARKGRAY, 1, codeFont, 20)) {
             // Handle submission...
             textInitialized = false;
@@ -180,44 +188,127 @@ void DrawAndHandleButtons() {
 void DrawChoosingButtons() {
     const char* text1 = "Edge List";
     const char* text2 = "Adjacency Matrix";
-    DrawTextEx(codeFont, text1, { 780, 300 }, 25, 1, BLACK);
-    DrawTextEx(codeFont, text2, { 950, 300 }, 25, 1, BLACK);
-    Vector2 circle1 = { 765, 10 };
-    Vector2 circle2 = { 935, 10 };
+    DrawTextEx(codeFont, text1, { 940, 270 }, 25, 1, BLACK);
+    DrawTextEx(codeFont, text2, { 940, 300 }, 25, 1, BLACK);
+    Vector2 circle1 = { 280, 10 };
+    Vector2 circle2 = { 310, 10 };
     if (isEdgeList) {
-        DrawCircleLines(circle1.x, 310, circle1.y, BLUE);
-        DrawCircle(circle1.x, 310, 8, BLUE);
+        DrawCircleLines(920, circle1.x, circle1.y, BLUE);
+        DrawCircle(920, circle1.x, 8, BLUE);
 
-        DrawCircleLines(circle2.x, 310, circle2.y, BLACK);
+        DrawCircleLines(920, circle2.x, circle2.y, BLACK);
     }
     if (isMatrix) {
-        DrawCircleLines(circle2.x, 310, circle2.y, BLUE);
-        DrawCircle(circle2.x, 310, 8, BLUE);
+        DrawCircleLines(920, circle2.x, circle2.y, BLUE);
+        DrawCircle(920, circle2.x, 8, BLUE);
 
-        DrawCircleLines(circle1.x, 310, circle1.y, BLACK);
+        DrawCircleLines(920, circle1.x, circle1.y, BLACK);
     }
 }
 
 void HandleChoosingButtons() {
-    Vector2 circle1 = { 765, 10 };
-    Vector2 circle2 = { 935, 10 };
-    float centerY = 310;
+    Vector2 circle1 = { 280, 10 };
+    Vector2 circle2 = { 310, 10 };
+    float centerX = 920;
 
-    if (CheckCollisionPointCircle(GetMousePosition(), { circle1.x, centerY }, circle1.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (CheckCollisionPointCircle(GetMousePosition(), { centerX, circle1.x }, circle1.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         isEdgeList = true;
         isMatrix = false;
         textInitialized = false;
+        textBox.m_scrollOffset = 0;
     }
-    if (CheckCollisionPointCircle(GetMousePosition(), { circle2.x, centerY }, circle2.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (CheckCollisionPointCircle(GetMousePosition(), { centerX, circle2.x }, circle2.y) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         isEdgeList = false;
         isMatrix = true;
         textInitialized = false;
+        textBox.m_scrollOffset = 0;
     }
 }
 
+void DrawEdgeListHelpBox() {
+    // Position the help box below the choosing buttons
+    float w = 295, h = 320; // Size of the help box
+    float startX = 900; // Align with the first choosing button (text1X = 650)
+    float startY = 325; // Just below the choosing buttons (246 + 10 for padding)
+    Rectangle helpBox = { startX, startY, w, h };
+    DrawRectangleRec(helpBox, WHITE);
+    DrawRectangleLinesEx(helpBox, 1, BLACK);
+
+    // Draw the help text
+    float textX = helpBox.x + 10; // Padding inside the box
+    float textY = helpBox.y + 10;
+    float lineSpacing = 24.0f; // Space between lines
+    float fontSize = 18.0f;
+
+    DrawTextEx(codeFont, "The graph is 0-indexed", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Input format for Edge List:", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "V E", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "For each edge:", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "u v w", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Example:", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "4 6 (4 vertices, 6 edges)", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "0 1 10", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "1 2 55", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "1 3 30", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "0 3 33", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "0 2 19", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "3 2 41", { textX, textY }, fontSize, 1, BLACK);
+}
+
+void DrawMatrixHelpBox() {
+    // Position the help box below the choosing buttons
+    float w = 295, h = 320; // Size of the help box
+    float startX = 900; // Align with the first choosing button (text1X = 650)
+    float startY = 325; // Just below the choosing buttons (246 + 10 for padding)
+    Rectangle helpBox = { startX, startY, w, h };
+    DrawRectangleRec(helpBox, WHITE);
+    DrawRectangleLinesEx(helpBox, 1, BLACK);
+
+    // Draw the help text
+    float textX = helpBox.x + 10; // Padding inside the box
+    float textY = helpBox.y + 10;
+    float lineSpacing = 24.0f; // Space between lines
+    float fontSize = 18.0f;
+
+    DrawTextEx(codeFont, "The graph is 0-indexed", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Input format for Adjacency", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Matrix:", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "V", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Adjacency Matrix", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "Example:", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "4 (4 vertices)", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "0  10  19  33", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "10  0  55  30", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "19  55  0  41", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+    DrawTextEx(codeFont, "33  30  41  0", { textX, textY }, fontSize, 1, BLACK);
+    textY += lineSpacing;
+}
+
 void DrawScrollBtn() {
-    Rectangle scrollUpBtn = { 690 , 270, 20, 20 };
-    Rectangle scrollDownBtn = { 690, 572, 20, 20 };
+    Rectangle scrollUpBtn = { 870 , 270, 20, 20 };
+    Rectangle scrollDownBtn = { 870, 572, 20, 20 };
     if (DrawButton(scrollUpBtn, "^", GRAY, 1, codeFont, 20)) {
         textBox.m_isTyping = false;
         textBox.scrollUp();

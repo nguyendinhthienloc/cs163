@@ -26,3 +26,5 @@ void DrawPauseButton();
 void DrawScrollBtn();
 void DrawChoosingButtons();
 void HandleChoosingButtons();
+void DrawEdgeListHelpBox();
+void DrawMatrixHelpBox();

@@ -9,7 +9,8 @@
 
 class ShPTextBox {
 public:
-    bool m_isTyping;            // Whether the textbox is active for typing
+    bool m_isTyping;
+    int m_scrollOffset = 0;
     ShPTextBox(Vector2 position, Vector2 size, Color boxColor, Color textColor, int maxLength, int maxLineLength);
     void update();
     void render();
@@ -27,22 +28,21 @@ public:
     void DrawScrollBar();
 
 private:
-    Rectangle m_box;            // Position and size of the textbox
-    Color m_boxColor;           // Background color
-    Color m_textColor;          // Text color
-    std::string m_content;      // Text content
-    int m_maxLength;            // Maximum allowed characters
-    int m_maxLineLength;        // Maximum allowed characters per line
-    bool m_showBlinker;         // Blinking cursor visibility
-    float m_timer;              // Timer for blinker
-    bool m_isHovering;          // Whether mouse is hovering over textbox
-    size_t m_cursorCharIndex;   // The character index in the current line
-    size_t m_cursorLine;        // The line number where the cursor is
-    int m_scrollOffset = 0;
+    Rectangle m_box;
+    Color m_boxColor;
+    Color m_textColor;
+    std::string m_content;
+    int m_maxLength;
+    int m_maxLineLength;
+    bool m_showBlinker;
+    float m_timer;
+    bool m_isHovering;
+    size_t m_cursorCharIndex;
+    size_t m_cursorLine;
     const int m_maxVisibleLines = 16;
+    bool lastLineWasDeleted = false;
 
-    // Constants for styling (adjust as needed)
-    static const Color textBoxColor;         // Idle color
-    static const Color textBoxColorInputing; // Active color
-    static const int textBoxTextSize;        // Text size
+    static const Color textBoxColor;
+    static const Color textBoxColorInputing;
+    static const int textBoxTextSize;
 };
