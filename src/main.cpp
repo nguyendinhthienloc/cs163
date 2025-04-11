@@ -12,23 +12,7 @@ int main() {
     codeFont = LoadFont("Courier-Bold.ttf");
 
     while (!WindowShouldClose()) {
-
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        DrawOutLine();
-
-        G.DrawGraph();
-
-        DrawCodeTable();
-        DrawAndHandleButtons();
-        DrawChosenAlgo();
-        DrawCurrentStep();
-        DrawSpeedSlider();
-        UpdateSlider();
-        DrawPauseButton();
-
-        EndDrawing();
+        DrawEverything();
     }
 
     CloseWindow();

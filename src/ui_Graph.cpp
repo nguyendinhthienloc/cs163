@@ -554,3 +554,22 @@ void DrawPauseButton() {
         }
     }
 }
+
+void DrawEverything() {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    DrawOutLine();
+
+    G.DrawGraph();
+
+    DrawCodeTable();
+    DrawAndHandleButtons();
+    DrawChosenAlgo();
+    DrawCurrentStep();
+    DrawSpeedSlider();
+    UpdateSlider();
+    DrawPauseButton();
+
+    EndDrawing();
+}

@@ -28,3 +28,4 @@ void DrawChoosingButtons();
 void HandleChoosingButtons();
 void DrawEdgeListHelpBox();
 void DrawMatrixHelpBox();
+void DrawEverything();
