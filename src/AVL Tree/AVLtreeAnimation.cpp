@@ -15,6 +15,9 @@ std::stack<AVLTree> treeRedoState;
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
     inputActive = false;
+    isDragging = false;
+    dragOffset = { 0, 0 };
+    dragStartPos = { 0, 0 };
     handleSpace = { 0, 0, 1600, 80 };
     inputBox     = { 170, 20, 200, 40 };
     insertButton = { 380, 20, 80, 40 };
@@ -25,6 +28,7 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     loadFileButton = {840, 20, 110, 40};
     previousButton = { 1000, 20, 110, 40 };
     nextButton = { 1120, 20, 110, 40 }; 
+	stdViewButton = { 1240, 20, 110, 40 };
 
     currentState = IDLE;
     pathIndex = 0;
@@ -40,11 +44,36 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
 void AVLTreeVisualizer::handleInput() {
     Vector2 mousePos = GetMousePosition();
 
+    bool isOverUI = CheckCollisionPointRec(mousePos, inputBox) ||
+        CheckCollisionPointRec(mousePos, insertButton) ||
+        CheckCollisionPointRec(mousePos, deleteButton) ||
+        CheckCollisionPointRec(mousePos, searchButton) ||
+        CheckCollisionPointRec(mousePos, randomButton) ||
+        CheckCollisionPointRec(mousePos, clearButton) ||
+        CheckCollisionPointRec(mousePos, loadFileButton) ||
+        CheckCollisionPointRec(mousePos, previousButton) ||
+        CheckCollisionPointRec(mousePos, nextButton) ||
+        CheckCollisionPointRec(mousePos, stdViewButton) ||
+        CheckCollisionPointRec(mousePos, { 20, 20, 100, 40 });
+
     if (CheckCollisionPointRec(mousePos, inputBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         inputActive = true;
     }
-    else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !isOverUI) {
+        // Start dragging if not over UI
         inputActive = false;
+        isDragging = true;
+        dragStartPos = mousePos;
+    }
+
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+        isDragging = false;
+    }
+
+    if (isDragging) {
+        dragOffset.x += mousePos.x - dragStartPos.x;
+        dragOffset.y += mousePos.y - dragStartPos.y;
+        dragStartPos = mousePos;
     }
 
     if (inputActive) {
@@ -96,6 +125,10 @@ void AVLTreeVisualizer::handleInput() {
     if (CheckCollisionPointRec(mousePos, nextButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         animateNext();
         inputText.clear();
+    }
+
+    if (CheckCollisionPointRec(mousePos, stdViewButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        dragOffset = { 0, 0 };
     }
 }
 
@@ -156,10 +189,10 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
     }
 }
 
-void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, float offset, const std::set<AVLNode*>& highlight) {
+void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, const std::set<AVLNode*>& highlight) {
     if (!node) return;
 
-    Color nodeColor = (highlight.count(node)) ? YELLOW : WHITE;
+    Color nodeColor = (highlight.count(node)) ? GOLD : WHITE;
     if (currentState == SHOWING_RESULT && node->data == operationValue) {
 
         if (currentOperation == "search" && searchFound) 
@@ -176,7 +209,7 @@ void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, float offset, 
         float startLineX = x - NODE_RADIUS*leftX/hypotenus;
         float startLineY = y + NODE_RADIUS*90.0f/hypotenus;
         DrawLine(startLineX, startLineY, x - leftX, y + 90, BLACK);
-        drawTree(node->left, x - leftX, y + 90, offset / 2, highlight);
+        drawTree(node->left, x - leftX, y + 90, highlight);
     }
     if (node->right) {
         float rightX = tree.getSubtreeWidth(node->right->left);
@@ -184,7 +217,7 @@ void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, float offset, 
         float startLineX = x + NODE_RADIUS * rightX / hypotenus;
         float startLineY = y + NODE_RADIUS * 90.0f / hypotenus;
         DrawLine(startLineX, startLineY, x + rightX, y + 90, BLACK);
-        drawTree(node->right, x + rightX, y + 90, offset / 2, highlight);
+        drawTree(node->right, x + rightX, y + 90, highlight);
     }
 }
 
@@ -219,15 +252,16 @@ void AVLTreeVisualizer::draw() {
 	drawButton(loadFileButton, "Load File", PURPLE);
 	drawButton(previousButton, "Previous", BlueButton);
 	drawButton(nextButton, "Next", BlueButton);
+    drawButton(stdViewButton, "Std View", BlueButton);
 
     if (tree.root) {
-        drawTree(tree.root, GetScreenWidth() / 2, 120, 200, highlightNodes);
+        drawTree(tree.root, GetScreenWidth() / 2 + dragOffset.x, 130 + dragOffset.y, highlightNodes);
     }
 
     if (currentState == SHOWING_RESULT && currentOperation == "search" && !searchFound) {
         std::string messageNotFound = std::to_string(operationValue) + " is not in the tree";
-        int messageSize = MeasureText(messageNotFound.c_str(), 20);
-        DrawText(messageNotFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 30, 20, RED);
+        int messageSize = MeasureText(messageNotFound.c_str(), 40);
+        DrawText(messageNotFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, RED);
     }
 }
 

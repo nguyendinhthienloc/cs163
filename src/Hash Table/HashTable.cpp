@@ -333,7 +333,7 @@ void HashTable::HandleTableDragging() {
     }
     float tableHeight = buttonHeight + 2 * padding + boxHeight + maxNodeHeight;
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mouse, { 20, 20, 100, 40 })) {
         isDragging = true;
         dragStart = mouse;
     }

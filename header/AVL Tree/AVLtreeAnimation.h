@@ -12,7 +12,9 @@ class AVLTreeVisualizer {
 public: 
     AVLTree tree;
     std::string inputText;
-    bool inputActive;
+    bool inputActive, isDragging;
+    Vector2 dragOffset;
+    Vector2 dragStartPos;
     Rectangle handleSpace;
     Rectangle inputBox;
     Rectangle insertButton;
@@ -23,6 +25,7 @@ public:
     Rectangle loadFileButton;
     Rectangle previousButton;
     Rectangle nextButton;
+	Rectangle stdViewButton;
 
     enum AnimationState { IDLE, TRAVERSING, INSERTING, ROTATING, SHOWING_RESULT };
     AnimationState currentState;
@@ -44,7 +47,7 @@ public:
     void updateAnimation(float deltaTime);
     void draw();
     void drawButton(Rectangle rect, const char* text, Color color);
-    void drawTree(AVLNode* node, float x, float y, float offset, const std::set<AVLNode*>& highlight);
+    void drawTree(AVLNode* node, float x, float y, const std::set<AVLNode*>& highlight);
     void animateInsert(int value);
     void animateDelete(int value);
     void animateSearch(int value);

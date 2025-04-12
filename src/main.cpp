@@ -62,8 +62,7 @@ int main() {
         
         else {
             if (fadeAlpha > 0.0f) fadeAlpha -= 0.02f;
-
-            
+           
             DrawUI(linkedList, AVLvisualizer, isFullScreen, inputState);
 
             if (fadeAlpha > 0.0f) {
@@ -140,8 +139,4 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
         DrawGraphProgram();
         DrawBackButton();
     }
-
-    /*if (transitioning) {
-        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, transitionAlpha));
-    }*/
 }
