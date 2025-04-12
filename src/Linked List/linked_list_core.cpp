@@ -1,6 +1,5 @@
 #include "../../header/Linked List/linked_list.h"
 #include <fstream>
-#include <iostream>
 #include <algorithm>
 
 LinkedList::~LinkedList() {
@@ -56,7 +55,6 @@ void LinkedList::InsertTail(int value) {
 
 void LinkedList::InsertAfter(Node* target, int value) {
     if (!target) {
-        std::cout << "InsertAfter: No target node selected!" << std::endl;
         return;
     }
 
@@ -68,7 +66,6 @@ void LinkedList::InsertAfter(Node* target, int value) {
     if (it != nodes.end()) {
         nodes.insert(it + 1, newNode);
     } else {
-        std::cout << "InsertAfter: Target not in nodes vector!" << std::endl;
         delete newNode;
         return;
     }
@@ -84,13 +81,11 @@ void LinkedList::InsertAfter(Node* target, int value) {
     newNode->targetPosition = { adjustedTargetX + nodeSpacing, 400 };
 
     history.push_back(Operation(Operation::Type::INSERT_AFTER, value, newNode->position, target));
-    std::cout << "InsertAfter: Inserted " << value << " after " << target->value << std::endl;
 }
 
 bool LinkedList::LoadFromFile(const char* filename) {
     std::ifstream file(filename); // Use the passed filename instead of hardcoding
     if (!file.is_open()) {
-        std::cout << "Failed to open file: " << filename << std::endl;
         return false;
     }
 
@@ -126,7 +121,6 @@ bool LinkedList::LoadFromFile(const char* filename) {
 
 void LinkedList::Delete(int value) {
     if (!head) {
-        std::cout << "List is empty, nothing to delete!" << std::endl;
         return;
     }
 
@@ -140,7 +134,6 @@ void LinkedList::Delete(int value) {
     }
 
     if (!temp) {
-        std::cout << "Value " << value << " not found for deletion!" << std::endl;
         return;
     }
 

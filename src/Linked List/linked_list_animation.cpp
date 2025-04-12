@@ -6,7 +6,6 @@ void LinkedList::UpdateAnimation(float deltaTime) {
     const float ANIM_DURATION = 0.5f;
     if (animState != AnimState::IDLE) {
         animProgress += deltaTime / ANIM_DURATION;
-        std::cout << "UpdateAnimation: State=" << static_cast<int>(animState) << ", Progress=" << animProgress << std::endl;
     }
 
     static float notFoundTimer = 0;
@@ -31,7 +30,6 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             animPrevNode = nullptr;
             RecalculatePositions(); // Ensure all positions are updated
             animProgress = 0.0f;
-            std::cout << "InsertAfter: Animation completed" << std::endl;
         }
     } else if (animState == AnimState::DELETING && animNode) { 
         animNode->alpha = 1.0f - animProgress;

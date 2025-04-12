@@ -1,7 +1,6 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#include <iostream>
 #include "raylib.h"
 #include "raymath.h"
 #include <vector>

@@ -8,7 +8,6 @@
 #include <random>
 #include <string>
 #include <fstream>
-#include <iostream>
 #include <queue>
 
 #define WIDTH 1600

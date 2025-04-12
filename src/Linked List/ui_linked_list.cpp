@@ -63,14 +63,12 @@ if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos
             if (Vector2Distance(mousePos, adjustedNodePos) < 40) {
                 list.SetSelectedNode(node);
                 selected = true;
-                std::cout << "Node clicked: Value=" << node->value << ", Pos=(" << node->position.x << ", " << node->position.y << ")" << std::endl;
                 break;
             }
         }
     }
     if (!selected) {
         list.SetSelectedNode(nullptr);
-        std::cout << "No node selected" << std::endl;
     }
     // Sync selected flag with selectedNode
     for (int i = 0; i < list.GetSize(); i++) {
@@ -113,19 +111,16 @@ if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing + 30), row1Y, buttonW
     if (ValidateInput(inputState.inputBuffer, value)) {
         Node* selected = list.GetSelectedNode();
         if (selected) {
-            std::cout << "Insert After clicked: Value=" << value << ", Target=" << selected->value << std::endl;
             list.InsertAfter(selected, value);
             feedbackMessage = "Inserted " + std::to_string(value) + " after " + std::to_string(selected->value);
             feedbackTimer = GetTime() + 2.0;
         } else {
-            std::cout << "Insert After failed: No node selected!" << std::endl;
             feedbackMessage = "Error: No node selected!";
             feedbackTimer = GetTime() + 2.0;
         }
         inputState.inputLength = 0;
         inputState.inputBuffer[0] = '\0';
     } else {
-        std::cout << "Invalid input: " << inputState.inputBuffer << std::endl;
         feedbackMessage = "Invalid input: " + std::string(inputState.inputBuffer);
         feedbackTimer = GetTime() + 2.0;
     }

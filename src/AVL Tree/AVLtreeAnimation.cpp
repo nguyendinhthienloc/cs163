@@ -1,7 +1,6 @@
 #include <sstream>
 #include <cstdlib>
 #include <stack>
-#include <iostream>
 #include <cmath>
 #include "../../header/AVL Tree/AVLtreeAnimation.h"
 #include "../../header/Color.h"
@@ -276,7 +275,6 @@ void AVLTreeVisualizer::animateRandom() {
 
     AVLTree treeReplica(tree);
     treeUndoState.push(treeReplica);
-    std::cout << treeUndoState.size() << std::endl;
 
     UnloadRandomSequence(randomValues);
 

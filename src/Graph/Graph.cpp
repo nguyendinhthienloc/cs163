@@ -408,7 +408,6 @@ void Graph::resetGraph() {
 
 void Graph::loadFromFile(std::wifstream& fin, int choice) {
     if (!fin) {
-        std::cerr << "Error: Failed to open file!\n";
         return;
     }
     clearGraph();
