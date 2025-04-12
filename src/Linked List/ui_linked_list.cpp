@@ -4,8 +4,7 @@
 #include <string>
 
 void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedbackMessage, double& feedbackTimer, bool& isDragging, float& dragStartX) {
-    ClearBackground(RAYWHITE);
-    DrawBackButton();
+    
 
     bool hasNodes = list.GetSize() > 0;
     static bool undoInProgress = false;

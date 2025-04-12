@@ -37,12 +37,14 @@ public:
     int operationValue;
     int pendingInsertValue;
 
-    void drawTree(AVLNode* node, float x, float y, float offset, const std::set<AVLNode*>& highlight);
+    
 
     AVLTreeVisualizer();
     void handleInput();
     void updateAnimation(float deltaTime);
     void draw();
+    void drawButton(Rectangle rect, const char* text, Color color);
+    void drawTree(AVLNode* node, float x, float y, float offset, const std::set<AVLNode*>& highlight);
     void animateInsert(int value);
     void animateDelete(int value);
     void animateSearch(int value);

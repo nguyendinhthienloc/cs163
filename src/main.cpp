@@ -1,5 +1,8 @@
 #include "raylib.h"
 #include <string>
+#include <vector>
+#include <cmath>
+
 
 #include "../header/ui_menu.h"
 #include "../header/Color.h"
@@ -14,8 +17,10 @@
 #include "../header/Hash Table/HashTable.h"
 #include "../header/Hash Table/hashtable_ui.h"
 
+#include "../header/Graph/Graph.h"
+#include "../header/Graph/ui_Graph.h"
 
- 
+
 bool showGreeting = true;
 float fadeAlpha = 1.0f;
 bool isFullScreen = false;
@@ -32,10 +37,11 @@ int main() {
     LinkedList linkedList;
     AVLTreeVisualizer AVLvisualizer;
     InputState inputState = { {0}, 0, false };
+    codeFont = LoadFont("Courier-Bold.ttf");
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(CreamyBlueBG);
 
         if (showGreeting) {
             int width1 = MeasureText("Welcome to Group 11's Data Visualizer!", 30);
@@ -76,7 +82,7 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
     list.UpdateAnimation(GetFrameTime());
 
     if (transitioning) {
-        transitionAlpha -= 0.05f;
+        transitionAlpha -= 0.5f;
         if (transitionAlpha <= 0.0f) {
             currentScreen = nextScreen;
             transitioning = false;
@@ -87,7 +93,7 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
     }
 
     if (IsKeyPressed(KEY_F11)) {
-        isFullScreen = !isFullScreen;
+        /*isFullScreen = !isFullScreen;
         if (isFullScreen) {
             int monitor = GetCurrentMonitor();
             SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
@@ -96,18 +102,21 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
         else {
             SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
             ToggleFullscreen();
-        }
+        }*/
+		ToggleFullscreen();
     }
 
     if (currentScreen == MENU) {
+        ClearBackground(CreamyBlueBG);
         DrawMenu();
     }
     else if (currentScreen == LINKED_LIST) {
-        DrawLinkedList(list, inputState, feedbackMessage, feedbackTimer, isDragging, dragStartX);
+        ClearBackground(CreamyBlueBG);
+        DrawLinkedList(list, inputState, feedbackMessage, feedbackTimer, isDragging, dragStartX); 
+        DrawBackButton();
     }
 
     else if (currentScreen == HASH_TABLE) {
-
         DrawHashTable();
         DrawBackButton();
     }
@@ -122,10 +131,12 @@ void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScre
     }
 
     else if (currentScreen == GRAPH) {
-        //init graph program
+        ClearBackground(CreamyBlueBG);
+        DrawGraphProgram();
+        DrawBackButton();
     }
 
-    if (transitioning) {
+    /*if (transitioning) {
         DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, transitionAlpha));
-    }
+    }*/
 }

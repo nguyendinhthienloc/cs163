@@ -58,12 +58,12 @@ int AVLTree::getBalanceFactor(AVLNode* node) {
 }
 
 float AVLTree::getSubtreeWidth(AVLNode* node) {
-    if (!node) return 25.0f;
+    if (!node) return 50.0f;
 
-    int leftWidth = getSubtreeWidth(node->left);
-    int rightWidth = getSubtreeWidth(node->right);
+    float leftWidth = getSubtreeWidth(node->left);
+    float rightWidth = getSubtreeWidth(node->right);
 
-    return leftWidth + rightWidth + 20.0f;
+    return leftWidth + rightWidth + 40.0f;
 }
 
 AVLNode* AVLTree::minValueNode(AVLNode* node) {

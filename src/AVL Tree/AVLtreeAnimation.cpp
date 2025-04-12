@@ -11,21 +11,21 @@
 
 std::stack<AVLTree> treeUndoState;
 std::stack<AVLTree> treeRedoState;
-#define NODE_RADIUS 20.0f
+#define NODE_RADIUS 40.0f
 
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
     inputActive = false;
     handleSpace = { 0, 0, 1600, 75 };
-    inputBox     = { 170, 20, 200, 30 };
-    insertButton = { 380, 20, 80, 30 };
-    deleteButton = { 470, 20, 80, 30 };
-    searchButton = { 560, 20, 90, 30 };
-    randomButton = { 660, 20, 90, 30 };
-    clearButton  = { 760, 20, 70, 30 };
-    loadFileButton = {840, 20, 110, 30};
-    previousButton = { 1000, 20, 105, 30 };
-    nextButton = { 1120, 20, 65, 30 }; 
+    inputBox     = { 170, 20, 200, 40 };
+    insertButton = { 380, 20, 80, 40 };
+    deleteButton = { 470, 20, 80, 40 };
+    searchButton = { 560, 20, 90, 40 };
+    randomButton = { 660, 20, 90, 40 };
+    clearButton  = { 760, 20, 70, 40 };
+    loadFileButton = {840, 20, 110, 40};
+    previousButton = { 1000, 20, 105, 40 };
+    nextButton = { 1120, 20, 65, 40 }; 
 
     currentState = IDLE;
     pathIndex = 0;
@@ -173,20 +173,33 @@ void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, float offset, 
 
     if (node->left) {
         float leftX = tree.getSubtreeWidth(node->left->right);
-        float hypotenus = sqrt(60.0f * 60.0f + leftX * leftX);
+        float hypotenus = sqrt(90.0f * 90.0f + leftX * leftX);
         float startLineX = x - NODE_RADIUS*leftX/hypotenus;
-        float startLineY = y + NODE_RADIUS*60.0f/hypotenus;
-        DrawLine(startLineX, startLineY, x - leftX, y + 60, BLACK);
-        drawTree(node->left, x - leftX, y + 60, offset / 2, highlight);
+        float startLineY = y + NODE_RADIUS*90.0f/hypotenus;
+        DrawLine(startLineX, startLineY, x - leftX, y + 90, BLACK);
+        drawTree(node->left, x - leftX, y + 90, offset / 2, highlight);
     }
     if (node->right) {
         float rightX = tree.getSubtreeWidth(node->right->left);
-        float hypotenus = sqrt(60.0f * 60.0f + rightX * rightX);
+        float hypotenus = sqrt(90.0f * 90.0f + rightX * rightX);
         float startLineX = x + NODE_RADIUS * rightX / hypotenus;
-        float startLineY = y + NODE_RADIUS * 60.0f / hypotenus;
-        DrawLine(startLineX, startLineY, x + rightX, y + 60, BLACK);
-        drawTree(node->right, x + rightX, y + 60, offset / 2, highlight);
+        float startLineY = y + NODE_RADIUS * 90.0f / hypotenus;
+        DrawLine(startLineX, startLineY, x + rightX, y + 90, BLACK);
+        drawTree(node->right, x + rightX, y + 90, offset / 2, highlight);
     }
+}
+
+void AVLTreeVisualizer::drawButton(Rectangle rect, const char* text, Color color) {
+	Vector2 mousePos = GetMousePosition();
+	bool isHover = CheckCollisionPointRec(mousePos, rect);
+
+	DrawRectangleRec(rect, isHover ? Fade(color, 0.7f) : color);
+	DrawRectangleLinesEx(rect, 2, BLACK);
+
+	Vector2 textSize = MeasureTextEx(GetFontDefault(), text, 20, 2);
+	float textX = rect.x + (rect.width - textSize.x) / 2;
+	float textY = rect.y + (rect.height - textSize.y) / 2;
+	DrawText(text, textX, textY, 20, WHITE);
 }
 
 //draw button
@@ -196,25 +209,17 @@ void AVLTreeVisualizer::draw() {
     DrawRectangleRec(handleSpace, HandleInputSpaceBG);
     DrawRectangleRec(inputBox, LIGHTGRAY);
     DrawRectangleLinesEx(inputBox, 2, inputActive ? BLUE : GRAY);
-    DrawText(inputText.c_str(), inputBox.x + 5, inputBox.y + 5, 20, BLACK);
+    DrawText(inputText.c_str(), inputBox.x + 5, inputBox.y + 10, 20, BLACK);
 
-    DrawRectangleRec(insertButton, GREEN);
-    DrawRectangleRec(deleteButton, ORANGE);
-    DrawRectangleRec(searchButton, BLUE);
-    DrawRectangleRec(randomButton, PURPLE);
-    DrawRectangleRec(clearButton, RED);
-    DrawRectangleRec(loadFileButton, MY_TURQUOIS);
-    DrawRectangleRec(previousButton, BlueButton);
-    DrawRectangleRec(nextButton, BlueButton);
 
-    DrawText("Insert", insertButton.x + 10, insertButton.y + 5, 20, WHITE);
-    DrawText("Delete", deleteButton.x + 10, deleteButton.y + 5, 20, WHITE);
-    DrawText("Search", searchButton.x + 10, searchButton.y + 5, 20, WHITE);
-    DrawText("Random", randomButton.x + 10, randomButton.y + 5, 20, WHITE);
-    DrawText("Clear", clearButton.x + 10, clearButton.y + 5, 20, WHITE);
-    DrawText("Load File", loadFileButton.x + 10, loadFileButton.y + 5, 20, WHITE);
-    DrawText("Previous", previousButton.x + 10, previousButton.y + 5, 20, WHITE);
-    DrawText("Next", nextButton.x + 10, nextButton.y + 5, 20, WHITE);
+	drawButton(insertButton, "Insert", GREEN);
+	drawButton(deleteButton, "Delete", RED);
+	drawButton(searchButton, "Search", BLUE);
+	drawButton(randomButton, "Random", ORANGE);
+	drawButton(clearButton, "Clear", RED);
+	drawButton(loadFileButton, "Load File", PURPLE);
+	drawButton(previousButton, "Previous", BlueButton);
+	drawButton(nextButton, "Next", BlueButton);
 
     if (tree.root) {
         drawTree(tree.root, GetScreenWidth() / 2, 120, 200, highlightNodes);
