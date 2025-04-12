@@ -38,17 +38,22 @@ int main() {
     AVLTreeVisualizer AVLvisualizer;
     InputState inputState = { {0}, 0, false };
     codeFont = LoadFont("Courier-Bold.ttf");
+	float time = 0.0f;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(CreamyBlueBG);
 
         if (showGreeting) {
-            int width1 = MeasureText("Welcome to Group 11's Data Visualizer!", 30);
-            int width2 = MeasureText("Press ENTER to continue...", 20);
+            int width1 = MeasureText("Welcome to Group 11's Data Visualizer!", 60);
+            int width2 = MeasureText("Press ENTER to continue...", 40);
 
-            DrawText("Welcome to Group 11's Data Visualizer!", (SCREEN_WIDTH - width1) / 2, 250, 30, DARKBLUE);
-            DrawText("Press ENTER to continue...", (SCREEN_WIDTH - width2) / 2, 350, 20, DARKGRAY);
+			time += GetFrameTime();
+            float sparkleAlpha = (sin(time * 2.5f) + 1.0f) / 2.0f;
+			Color sparkleColor = Fade(DARKGRAY, sparkleAlpha);
+
+            DrawText("Welcome to Group 11's Data Visualizer!", (SCREEN_WIDTH - width1) / 2, 250, 60, DARKBLUE);
+            DrawText("Press ENTER to continue...", (SCREEN_WIDTH - width2) / 2, 400, 40, sparkleColor);
 
             if (IsKeyPressed(KEY_ENTER)) {
                 showGreeting = false;

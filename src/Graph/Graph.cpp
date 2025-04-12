@@ -1,4 +1,5 @@
 #include "../../header/Graph/Graph.h"
+#include "../../header/Color.h"
 
 int stateOfCode = -1;
 std::string message = "";
@@ -144,7 +145,7 @@ void Graph::RandomGraph() {
 }
 
 void Graph::Draw() const {
-    Color SMOKE = { 180, 180, 180, 120 };
+    
 
     // Draw edges
     for (size_t i = 0; i < edges.size(); i++) {
@@ -153,8 +154,9 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if ((i == kruskalStep && !mstFinished && stateOfCode >= 2 && stateOfCode <= 5) || edge.inMST) {
-                edgeColor = ORANGE;
-            }
+                edgeColor = BLUE;
+			}
+		
             else if (i < kruskalStep && !edge.inMST) {
                 edgeColor = SMOKE; // Edge was considered but not chosen
             }
@@ -217,14 +219,14 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if (isInCurrentEdge) {
-                fillColor = ORANGE;
+                fillColor = BLUE;
                 numberColor = WHITE;
-                outlineColor = ORANGE;
+                outlineColor = BLUE;
             }
             else if (hasBeenConsidered) {
                 fillColor = WHITE;
-                numberColor = ORANGE;
-                outlineColor = ORANGE;
+                numberColor = BLUE;
+                outlineColor = BLUE;
             }
         }
 

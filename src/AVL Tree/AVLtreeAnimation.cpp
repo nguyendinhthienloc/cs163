@@ -15,7 +15,7 @@ std::stack<AVLTree> treeRedoState;
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
     inputActive = false;
-    handleSpace = { 0, 0, 1600, 75 };
+    handleSpace = { 0, 0, 1600, 80 };
     inputBox     = { 170, 20, 200, 40 };
     insertButton = { 380, 20, 80, 40 };
     deleteButton = { 470, 20, 80, 40 };
@@ -23,8 +23,8 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     randomButton = { 660, 20, 90, 40 };
     clearButton  = { 760, 20, 70, 40 };
     loadFileButton = {840, 20, 110, 40};
-    previousButton = { 1000, 20, 105, 40 };
-    nextButton = { 1120, 20, 65, 40 }; 
+    previousButton = { 1000, 20, 110, 40 };
+    nextButton = { 1120, 20, 110, 40 }; 
 
     currentState = IDLE;
     pathIndex = 0;

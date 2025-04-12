@@ -80,7 +80,7 @@ if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos
     // Buttons in 3 rows
     float buttonWidth = 100;
     float buttonHeight = 40;
-    float buttonSpacing = 30;
+    float buttonSpacing = 60;
     float startX = 300;
     float row1Y = 20;
     float row2Y = 70;
@@ -95,7 +95,7 @@ if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos
         }
     }
     //Insert Tail Button
-    if (DrawButton({ startX + buttonWidth + buttonSpacing + 30, row1Y, buttonWidth, buttonHeight }, "Insert Tail", GREEN, inputState.inputLength > 0 && !list.IsAnimating())) {
+    if (DrawButton({ startX + buttonWidth + buttonSpacing , row1Y, buttonWidth, buttonHeight}, "Insert Tail", LIME, inputState.inputLength > 0 && !list.IsAnimating())) {
         int value;
         if (ValidateInput(inputState.inputBuffer, value)) {
             list.InsertTail(value);
@@ -106,7 +106,7 @@ if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && !CheckCollisionPointRec(mousePos
     
     // Insert After button
 bool canInsertAfter = list.GetSize() > 0 && list.GetSelectedNode() && inputState.inputLength > 0 && !list.IsAnimating();
-if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing + 30), row1Y, buttonWidth, buttonHeight }, "Insert After", YELLOW, canInsertAfter)) {
+if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row1Y, buttonWidth, buttonHeight }, "Insert After", LIME, canInsertAfter)) {
     int value;
     if (ValidateInput(inputState.inputBuffer, value)) {
         Node* selected = list.GetSelectedNode();
@@ -155,7 +155,7 @@ if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing + 30), row1Y, buttonW
         inputState.inputBuffer[0] = '\0';
     } 
     //Clear button
-    if (DrawButton({ startX, row3Y, buttonWidth, buttonHeight }, "Clear", PURPLE, true)) {
+    if (DrawButton({ startX, row3Y, buttonWidth, buttonHeight }, "Clear", RED, true)) {
         inputState.inputLength = 0;
         inputState.inputBuffer[0] = '\0';
         while (list.GetSize() > 0) {
