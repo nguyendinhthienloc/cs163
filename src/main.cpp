@@ -47,14 +47,27 @@ int main() {
         if (showGreeting) {
             int width1 = MeasureText("Welcome to Group 11's Data Visualizer!", 60);
             int width2 = MeasureText("Press ENTER to continue...", 40);
+			const char* footer = "APCS - 24A02 - [24125032] Van Tuan Khai - [24125061] Phan Minh Khoi - [24125093] Nguyen Dinh Thien Loc";
+			int width3 = MeasureText(footer, 30);
 
 			time += GetFrameTime();
             float sparkleAlpha = (sin(time * 2.5f) + 1.0f) / 2.0f;
 			Color sparkleColor = Fade(DARKGRAY, sparkleAlpha);
 
+            static float textX = SCREEN_WIDTH; 
+            float speed = 200.0f; 
+            textX -= speed * GetFrameTime();
+
+            if (textX < -width3) {
+                textX = SCREEN_WIDTH;
+            }
+
             DrawText("Welcome to Group 11's Data Visualizer!", (SCREEN_WIDTH - width1) / 2, 250, 60, DARKBLUE);
             DrawText("Press ENTER to continue...", (SCREEN_WIDTH - width2) / 2, 400, 40, sparkleColor);
+            DrawText(footer, textX, SCREEN_HEIGHT - 35, 30, DARKBLUE);
 
+
+            
             if (IsKeyPressed(KEY_ENTER)) {
                 showGreeting = false;
             }

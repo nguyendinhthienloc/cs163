@@ -69,9 +69,8 @@ void DrawMenu() {
     Color btn1Color = MAINMENUBTN;
     if (btn1Hover) btn1Color = Fade(btn1Color, 0.9f);
     DrawRectangleRounded({ btn1Rect.x, btn1Rect.y, btn1Rect.width * hoverScale[0], btn1Rect.height * hoverScale[0] }, 0.3f, 5.0f, btn1Color);
-    DrawRectangleRoundedLines(btn1Rect, 0.3f, 5.0f, BLACK);
     int SLLTextWidth = MeasureText("Singly Linked List", textSize);
-    int pushBackSLL = (int)(btn1Rect.width - SLLTextWidth) / 2;
+    int pushBackSLL = (int)(btn1Rect.width * hoverScale[0] - SLLTextWidth) / 2;
     DrawText("Singly Linked List", (int)(btn1Rect.x + pushBackSLL), (int)(btn1Rect.y + 30), textSize, BLACK);
     if (btn1Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
@@ -86,9 +85,8 @@ void DrawMenu() {
     Color btn2Color = MAINMENUBTN;
     if (btn2Hover) btn2Color = Fade(btn2Color, 0.9f);
     DrawRectangleRounded({ btn2Rect.x, btn2Rect.y, btn2Rect.width * hoverScale[1], btn2Rect.height * hoverScale[1] }, 0.3f, 5.0f, btn2Color);
-    DrawRectangleRoundedLines(btn2Rect, 0.3f, 5.0f, BLACK);
     int HashTableTextWidth = MeasureText("Hash Table", textSize);
-    int pushBackHashTable = (int)(btn2Rect.width - HashTableTextWidth) / 2;
+    int pushBackHashTable = (int)(btn2Rect.width * hoverScale[1] - HashTableTextWidth) / 2;
     DrawText("Hash Table", (int)(btn2Rect.x + pushBackHashTable), (int)(btn2Rect.y + 30), textSize, BLACK);
     if (btn2Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
@@ -103,9 +101,8 @@ void DrawMenu() {
     Color btn3Color = MAINMENUBTN;
     if (btn3Hover) btn3Color = Fade(btn3Color, 0.9f);
     DrawRectangleRounded({ btn3Rect.x, btn3Rect.y, btn3Rect.width * hoverScale[2], btn3Rect.height * hoverScale[2] }, 0.3f, 5.0f, btn3Color);
-    DrawRectangleRoundedLines(btn3Rect, 0.3f, 5.0f, BLACK);
     int AVLTextWidth = MeasureText("AVL Tree", textSize);
-    int pushBackAVL = (int)(btn3Rect.width - AVLTextWidth) / 2;
+    int pushBackAVL = (int)(btn3Rect.width * hoverScale[2] - AVLTextWidth) / 2;
     DrawText("AVL Tree", (int)(btn3Rect.x + pushBackAVL), (int)(btn3Rect.y + 30), textSize, BLACK);
     if (btn3Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
@@ -120,9 +117,8 @@ void DrawMenu() {
     Color btn4Color = MAINMENUBTN;
     if (btn4Hover) btn4Color = Fade(btn4Color, 0.9f);
     DrawRectangleRounded({ btn4Rect.x, btn4Rect.y, btn4Rect.width * hoverScale[3], btn4Rect.height * hoverScale[3] }, 0.3f, 5.0f, btn4Color);
-    DrawRectangleRoundedLines(btn4Rect, 0.3f, 5.0f, BLACK);
     int GraphTextWidth = MeasureText("Graph", textSize);
-	int pushBack = (int)(btn4Rect.width - GraphTextWidth) / 2;
+	int pushBack = (int)(btn4Rect.width * hoverScale[3] - GraphTextWidth) / 2;
     DrawText("Graph", (int)(btn4Rect.x + pushBack), (int)(btn4Rect.y + 30), textSize, BLACK);
     if (btn4Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
@@ -137,9 +133,8 @@ void DrawMenu() {
     Color btn5Color = GOLD;
     if (btn5Hover) btn5Color = Fade(btn5Color, 0.9f);
     DrawRectangleRounded({ btn5Rect.x, btn5Rect.y, btn5Rect.width * hoverScale[4], btn5Rect.height * hoverScale[4] }, 0.3f, 5.0f, btn5Color);
-    DrawRectangleRoundedLines(btn5Rect, 0.3f, 5.0f, BLACK);
 	int FullscreenTextWidth = MeasureText("Fullscreen", 25);
-	int pushBackFullscreen = (int)(btn5Rect.width - FullscreenTextWidth) / 2;
+	int pushBackFullscreen = (int)(btn5Rect.width * hoverScale[4] - FullscreenTextWidth) / 2;
 	DrawText("Fullscreen", (int)(btn5Rect.x + pushBackFullscreen), (int)(btn5Rect.y + 15), 25, BLACK);    
     if (btn5Hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && (currentTime - lastClickTime) > CLICK_DELAY) {
         lastClickTime = currentTime;
