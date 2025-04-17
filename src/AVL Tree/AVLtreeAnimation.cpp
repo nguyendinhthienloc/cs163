@@ -29,6 +29,7 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     previousButton = { 1000, 20, 110, 40 };
     nextButton = { 1120, 20, 110, 40 }; 
 	stdViewButton = { 1240, 20, 110, 40 };
+    runAtOnceButton = { 1360, 20, 150, 40 };
 
     currentState = IDLE;
     pathIndex = 0;
@@ -38,9 +39,10 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     resultTimer = 0.0f;
     operationValue = 0;
     pendingInsertValue = 0;
+	isRunAtOnce = false;
 }
 
-//button click
+//button click logic
 void AVLTreeVisualizer::handleInput() {
     Vector2 mousePos = GetMousePosition();
 
@@ -54,6 +56,7 @@ void AVLTreeVisualizer::handleInput() {
         CheckCollisionPointRec(mousePos, previousButton) ||
         CheckCollisionPointRec(mousePos, nextButton) ||
         CheckCollisionPointRec(mousePos, stdViewButton) ||
+        CheckCollisionPointRec(mousePos, runAtOnceButton) ||
         CheckCollisionPointRec(mousePos, { 20, 20, 100, 40 });
 
     if (CheckCollisionPointRec(mousePos, inputBox) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -90,16 +93,58 @@ void AVLTreeVisualizer::handleInput() {
         }
     }
 
+    if (CheckCollisionPointRec(mousePos, runAtOnceButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+		isRunAtOnce = !isRunAtOnce; // Toggle the run at once mode
+    }
+
     if (CheckCollisionPointRec(mousePos, insertButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inputText.empty()) {
-        animateInsert(std::stoi(inputText));
-        inputText.clear();
+		if (!isRunAtOnce) {
+			animateInsert(std::stoi(inputText));
+		}
+		else {
+            AVLTree treeReplica(tree);
+            treeUndoState.push(treeReplica);
+			while (!treeRedoState.empty()) {
+				treeRedoState.pop();
+			}
+			tree.insert(tree.root, std::stoi(inputText));
+            
+		}
+        inputText.clear();       
     }
+
     if (CheckCollisionPointRec(mousePos, deleteButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inputText.empty()) {
-        animateDelete(std::stoi(inputText));
+        if (!isRunAtOnce) {
+            animateDelete(std::stoi(inputText));
+        }
+        else {
+            AVLTree treeReplica(tree);
+            treeUndoState.push(treeReplica);
+            while (!treeRedoState.empty()) {
+                treeRedoState.pop();
+            }
+            tree.remove(tree.root, std::stoi(inputText));
+
+        }
         inputText.clear();
     }
+    
+	
     if (CheckCollisionPointRec(mousePos, searchButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inputText.empty()) {
-        animateSearch(std::stoi(inputText));
+        int value = std::stoi(inputText);
+        if (!isRunAtOnce) {
+            animateSearch(value); 
+        }
+        else {
+            currentOperation = "search";
+            operationValue = value;
+            searchFound = tree.search(value);
+            currentState = SHOWING_RESULT; 
+            resultTimer = 0.0f; 
+            stateTimer = 0.0f;
+            currentPath.clear();
+            pathIndex = 0;
+        }
         inputText.clear();
     }
     if (CheckCollisionPointRec(mousePos, randomButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -150,6 +195,10 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             if (currentOperation == "insert") {
                 currentState = INSERTING; 
             }
+			else if (currentOperation == "delete") {
+				currentState = DELETING;
+			}
+			
             else {
                 currentState = SHOWING_RESULT; 
             }
@@ -162,8 +211,27 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             tree.insert(tree.root, pendingInsertValue); 
             AVLTree treeReplica(tree);
             treeUndoState.push(treeReplica);
+            while (!treeRedoState.empty()) {
+				treeRedoState.pop();
+            }
             currentPath = tree.getInsertionPath(pendingInsertValue); 
             pathIndex = currentPath.size(); 
+            currentState = SHOWING_RESULT;
+            resultTimer = 0.0f;
+            stateTimer = 0.0f;
+        }
+        break;
+
+    case DELETING:
+        if (stateTimer >= 0.5f) {
+            AVLTree treeReplica(tree);
+            treeUndoState.push(treeReplica); 
+            while (!treeRedoState.empty()) {
+                treeRedoState.pop();
+            }
+            tree.remove(tree.root, operationValue); 
+            currentPath.clear();
+            pathIndex = 0;
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
             stateTimer = 0.0f;
@@ -183,7 +251,7 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             rotationNodes.clear();
             pathIndex = 0;
             rotationIndex = 0;
-            searchFound = false; // Reset searchFound after showing result
+            searchFound = false;
         }
         break;
     }
@@ -193,9 +261,11 @@ void AVLTreeVisualizer::drawTree(AVLNode* node, float x, float y, const std::set
     if (!node) return;
 
     Color nodeColor = (highlight.count(node)) ? GOLD : WHITE;
-    if (currentState == SHOWING_RESULT && node->data == operationValue) {
-
-        if (currentOperation == "search" && searchFound) 
+    if (currentState == DELETING && node->data == operationValue) {
+        nodeColor = RED; // Highlight the node being deleted
+    }
+    else if (currentState == SHOWING_RESULT && node->data == operationValue) {
+        if (currentOperation == "search" && searchFound)
             nodeColor = GREEN;
     }
 
@@ -234,7 +304,7 @@ void AVLTreeVisualizer::drawButton(Rectangle rect, const char* text, Color color
 	DrawText(text, textX, textY, 20, WHITE);
 }
 
-//draw button
+//buttons and message are drawn here
 void AVLTreeVisualizer::draw() {
     std::set<AVLNode*> highlightNodes(currentPath.begin(), currentPath.begin() + pathIndex);
 
@@ -253,15 +323,23 @@ void AVLTreeVisualizer::draw() {
 	drawButton(previousButton, "Previous", BlueButton);
 	drawButton(nextButton, "Next", BlueButton);
     drawButton(stdViewButton, "Std View", BlueButton);
+    drawButton(runAtOnceButton, "Run at Once", isRunAtOnce? GREEN : RED);
 
     if (tree.root) {
         drawTree(tree.root, GetScreenWidth() / 2 + dragOffset.x, 130 + dragOffset.y, highlightNodes);
     }
 
-    if (currentState == SHOWING_RESULT && currentOperation == "search" && !searchFound) {
-        std::string messageNotFound = std::to_string(operationValue) + " is not in the tree";
-        int messageSize = MeasureText(messageNotFound.c_str(), 40);
-        DrawText(messageNotFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, RED);
+    if (currentState == SHOWING_RESULT && currentOperation == "search") {
+        if (searchFound) {
+            std::string messageFound = std::to_string(operationValue) + " is in the tree";
+            int messageSize = MeasureText(messageFound.c_str(), 40);
+            DrawText(messageFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, PURPLE);
+        }
+        else {
+            std::string messageNotFound = std::to_string(operationValue) + " is not in the tree";
+            int messageSize = MeasureText(messageNotFound.c_str(), 40);
+            DrawText(messageNotFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, RED);
+        }
     }
 }
 
@@ -280,9 +358,7 @@ void AVLTreeVisualizer::animateDelete(int value) {
     currentPath = tree.getInsertionPath(value);
     pathIndex = 0;
     currentState = TRAVERSING;
-    tree.remove(tree.root, value);
-    AVLTree treeReplica(tree);
-    treeUndoState.push(treeReplica);
+    
 }
 
 void AVLTreeVisualizer::animateSearch(int value) {
@@ -330,6 +406,12 @@ void AVLTreeVisualizer::animateClear() {
     currentState = IDLE;
     stateTimer = 0.0f;
     resultTimer = 0.0f;
+	while (!treeUndoState.empty()) {
+		treeUndoState.pop();
+	}
+	while (!treeRedoState.empty()) {
+		treeRedoState.pop();
+	}
 }
 
 void AVLTreeVisualizer::animateLoadFile() {

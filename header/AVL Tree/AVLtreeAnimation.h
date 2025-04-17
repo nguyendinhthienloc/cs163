@@ -26,8 +26,9 @@ public:
     Rectangle previousButton;
     Rectangle nextButton;
 	Rectangle stdViewButton;
+	Rectangle runAtOnceButton;
 
-    enum AnimationState { IDLE, TRAVERSING, INSERTING, ROTATING, SHOWING_RESULT };
+    enum AnimationState { IDLE, TRAVERSING, INSERTING, DELETING, ROTATING, SHOWING_RESULT };
     AnimationState currentState;
     std::string currentOperation; // "insert", "delete", "search"
     std::vector<AVLNode*> currentPath;
@@ -39,6 +40,7 @@ public:
     float resultTimer;
     int operationValue;
     int pendingInsertValue;
+    bool isRunAtOnce;
 
     
 
