@@ -218,7 +218,7 @@ bool runAtOnce = false;
 
 void RunAtOnceBtn() {
     Rectangle btn = { 1270, 760, 220, 50 };
-    Color color = runAtOnce ? RED : GREEN;
+    Color color = runAtOnce ? GREEN : RED;
     if (DrawButton(btn, "Run At Once", color) ){
         runAtOnce = !runAtOnce;
     }
