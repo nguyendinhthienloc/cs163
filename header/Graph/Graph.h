@@ -97,6 +97,7 @@ public:
     // Kruskal's methods
     void StartKruskalAnimation();
     void UpdateKruskalStep();
+    void RunKruskal();
     bool isMSTFinished() const { return mstFinished; }
 
     void loadFromFile(std::wifstream& fin, int choice);

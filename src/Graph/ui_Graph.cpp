@@ -15,6 +15,7 @@ Graph G;
 bool isOpen = true;
 bool isCodeOpen = false;
 Font codeFont;
+Texture2D tickTexture;
 Color SOFTWHITE = { 230, 230, 230, 255 };
 std::string chosenAlgo = "";
 
@@ -112,7 +113,8 @@ void DrawAndHandleButtons() {
                 isCodeOpen = true;
                 isLoadFileOpen = false;
                 chosenAlgo = "Kruskal's Algorithm";
-                G.StartKruskalAnimation();
+                if (!atOnce) G.StartKruskalAnimation();
+                else G.RunKruskal();
             }
             if (DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17)) {
                 G.clearGraph();
@@ -571,6 +573,40 @@ void DrawGraphProgram() {
     DrawSpeedSlider();
     UpdateSlider();
     DrawPauseButton();
+    DrawRunAtOnceBtn();
 
     //EndDrawing();
+}
+
+bool atOnce = false;
+void DrawRunAtOnceBtn() {
+    const char* text = "Run At Once";
+
+    DrawTextEx(codeFont, text, { 1100, 863}, 25, 1, RAYWHITE);
+
+    Rectangle btn = { 1255, 863, 25, 25 };
+
+    if (CheckCollisionPointRec(GetMousePosition(), btn) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        atOnce = !atOnce;
+    }
+
+    Color color = LIGHTGRAY;
+    if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+        color = Fade(color, 0.7f);
+    }
+
+    DrawRectangleRec(btn, color);
+
+    if (atOnce) {
+        float scale = 25.0f / tickTexture.width;
+
+        float scaledWidth = tickTexture.width * scale;
+        float scaledHeight = tickTexture.height * scale;
+
+        float x = btn.x + (btn.width - scaledWidth) / 2;
+        float y = btn.y + (btn.height - scaledHeight) / 2;
+
+        Vector2 pos = { x, y };
+        DrawTextureEx(tickTexture, pos, 0.0f, scale, WHITE);
+    }
 }

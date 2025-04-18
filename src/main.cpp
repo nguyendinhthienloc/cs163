@@ -38,6 +38,7 @@ int main() {
     AVLTreeVisualizer AVLvisualizer;
     InputState inputState = { {0}, 0, false };
     codeFont = LoadFont("Courier-Bold.ttf");
+    tickTexture = LoadTexture("tick.png");
 	float time = 0.0f;
 
     while (!WindowShouldClose()) {
@@ -86,6 +87,7 @@ int main() {
         EndDrawing();
     }
 
+    UnloadTexture(tickTexture);
     CloseWindow();
     return 0;
 }

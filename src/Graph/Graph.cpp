@@ -398,6 +398,48 @@ void Graph::UpdateKruskalStep() {
     kruskalStep++;
 }
 
+void Graph::RunKruskal() {
+    if (nodes.empty()) return;
+    if (countComponents() > 1) {
+        message = "The graph is not connected";
+        return;
+    }
+
+    // Clear previous MST state
+    for (auto& edge : edges) edge.inMST = false;
+    for (auto& node : nodes) node.isConsidered = false;
+
+    // Sort edges by weight
+    std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
+        return a.w < b.w;
+        });
+
+    // DSU setup
+    DSU dsu;
+    dsu.Initialize(nodes.size());
+
+    int totalWeight = 0;
+
+    for (auto& edge : edges) {
+        int rootA = dsu.find_set(edge.a);
+        int rootB = dsu.find_set(edge.b);
+
+        if (rootA != rootB) {
+            dsu.union_sets(rootA, rootB);
+            edge.inMST = true;
+            nodes[edge.a].isConsidered = true;
+            nodes[edge.b].isConsidered = true;
+            totalWeight += edge.w;
+        }
+    }
+
+    kruskalStep = edges.size();
+    message = "Total weight = " + std::to_string(totalWeight);
+    state = MST;
+    mstFinished = true;
+    stateOfCode = 6;
+}
+
 void Graph::resetGraph() {
     for (auto& node : nodes) {
         node.isConsidered = false;

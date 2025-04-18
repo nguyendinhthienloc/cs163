@@ -5,7 +5,9 @@
 class Graph;
 
 extern Graph G;
+extern Texture2D tickTexture;
 extern Font codeFont;
+extern bool atOnce;
 
 bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font font, float FontSize);
 void DefineButtons(Rectangle& randomBtn, Rectangle& LoadFileBtn, Rectangle& mstBtn, Rectangle& openMenuBtn, Rectangle& clearBtn, Rectangle& inputBtn, Rectangle& loadMatrix, Rectangle& loadEdge);
@@ -29,3 +31,4 @@ void HandleChoosingButtons();
 void DrawEdgeListHelpBox();
 void DrawMatrixHelpBox();
 void DrawGraphProgram();
+void DrawRunAtOnceBtn();
