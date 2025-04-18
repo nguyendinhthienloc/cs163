@@ -12,6 +12,7 @@ extern HashTable ht;
 #include <codecvt>
 
 extern HashTable ht;
+extern bool runAtOnce;
 
 void DrawHashTable();
 void LoadFromFile();

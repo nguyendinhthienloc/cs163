@@ -26,10 +26,14 @@ public:
     }
     int GetPendingValue() const { return pendingValue; }
 
+    int GetNodeCount(int index);
+    void InsertInstantly(int val);
     void Insert(int val, bool isRandom);
     void PerformInsertion(int val, bool isRandom);
+    void DeleteInstantly(int val);
     void Delete(int val);
     void UpdateDeletionAnimation();
+    void StartInstantSearch(int val);
     void StartSearch(int val, bool isInsert);
     void UpdateSearchAnimation();
     void RandomInsert(int maxElements, int minValue, int maxValue);

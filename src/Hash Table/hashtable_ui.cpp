@@ -113,23 +113,37 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
     if (DrawButton(insertBtn, "Insert", GREEN)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
-            ht.StartSearch(v, true); // Shows calculation
-            ht.SetPendingOperation(HashTable::PendingOperation::INSERT, v);
+            if (runAtOnce) {
+                ht.InsertInstantly(v);
+            }
+            else{
+                ht.StartSearch(v, true); // Shows calculation
+                ht.SetPendingOperation(HashTable::PendingOperation::INSERT, v);
+            }
             });
     }
 
     if (DrawButton(deleteBtn, "Delete", RED)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
-            ht.StartSearch(v, false); // Shows calculation
-            ht.SetPendingOperation(HashTable::PendingOperation::DELETE, v);
+            if (runAtOnce) {
+                ht.DeleteInstantly(v);
+            }
+            else {
+                ht.StartSearch(v, false); // Shows calculation
+                ht.SetPendingOperation(HashTable::PendingOperation::DELETE, v);
+            }
             });
     }
 
     if (DrawButton(searchBtn, "Search", BLUE)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
-            ht.StartSearch(v, false); // Shows calculation
+            if (runAtOnce) {
+                ht.StartInstantSearch(v);
+            }
+            else
+                ht.StartSearch(v, false); // Shows calculation
             });
     }
 
@@ -200,12 +214,23 @@ void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
     }
 }
 
+bool runAtOnce = false;
+
+void RunAtOnceBtn() {
+    Rectangle btn = { 1270, 760, 220, 50 };
+    Color color = runAtOnce ? RED : GREEN;
+    if (DrawButton(btn, "Run At Once", color) ){
+        runAtOnce = !runAtOnce;
+    }
+}
+
 void DrawHashTable() {
     Rectangle insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn;
     DefineUIElements(insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn);
 
     DrawAndHandleButtons(insertBtn, deleteBtn, searchBtn, randomBtn, clearBtn, loadFileBtn);
     DrawUndoRedoButtons(undoBtn, redoBtn);
+    RunAtOnceBtn();
 
     ht.HandleTableDragging();
     ht.UpdateDeletionAnimation();
