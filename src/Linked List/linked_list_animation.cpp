@@ -4,11 +4,15 @@
 void LinkedList::UpdateAnimation(float deltaTime) {
     const float TRAVERSAL_SPEED = 0.1f;
     const float ANIM_DURATION = 0.5f;
+    static float notFoundTimer = 0;
+
+    if (stepMode && stepPaused && animState != AnimState::IDLE) {
+        return; // Pause animation in step mode
+    }
+
     if (animState != AnimState::IDLE) {
         animProgress += deltaTime / ANIM_DURATION;
     }
-
-    static float notFoundTimer = 0;
 
     if (animState == AnimState::INSERTING && animNode) {
         animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
@@ -19,6 +23,7 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             animNode = nullptr;
             RecalculatePositions();
             animProgress = 0.0f;
+            if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::INSERTING_AFTER && animNode && animPrevNode) {
         animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
@@ -28,8 +33,9 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             animState = AnimState::IDLE;
             animNode = nullptr;
             animPrevNode = nullptr;
-            RecalculatePositions(); // Ensure all positions are updated
+            RecalculatePositions();
             animProgress = 0.0f;
+            if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::DELETING && animNode) { 
         animNode->alpha = 1.0f - animProgress;
@@ -40,9 +46,9 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             animState = AnimState::IDLE;
             RecalculatePositions();
             animProgress = 0.0f;
+            if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::SEARCHING && cur) {
-        // Search animation
         if (cur->value == animNode->value) {
             foundNode = cur;
             animState = AnimState::IDLE;
@@ -50,6 +56,7 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             highlightTimer = GetTime() + 2.0f;
             delete animNode;
             animNode = nullptr;
+            if (stepMode) stepPaused = true;
         } else if (cur->next) {
             Vector2 target = cur->next->position;
             curPos.x += (target.x - curPos.x) * TRAVERSAL_SPEED;
@@ -57,6 +64,7 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             if (Vector2Distance(curPos, target) < 5.0f) {
                 cur = cur->next;
                 curPos = cur->position;
+                if (stepMode) stepPaused = true;
             }
         } else {
             animState = AnimState::IDLE;
@@ -64,6 +72,7 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             delete animNode;
             animNode = nullptr;
             notFoundTimer = GetTime() + 1.0f;
+            if (stepMode) stepPaused = true;
         }
     }
 
