@@ -3,6 +3,7 @@
 #include "../../header/tinyfiledialogs.h"
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedbackMessage, double& feedbackTimer, bool& isDragging, float& dragStartX) {
     bool hasNodes = list.GetSize() > 0;
@@ -74,7 +75,7 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
         }
     }
 
-    // Buttons in 3 rows with increased size
+    // Buttons in 4 rows
     float buttonWidth = 140;
     float buttonHeight = 50;
     float buttonSpacing = 20;
@@ -131,8 +132,13 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
         int value;
         if (ValidateInput(inputState.inputBuffer, value)) {
             list.Delete(value);
+            feedbackMessage = "Deleting " + std::to_string(value);
+            feedbackTimer = GetTime() + 2.0;
             inputState.inputLength = 0;
             inputState.inputBuffer[0] = '\0';
+        } else {
+            feedbackMessage = "Invalid input: " + std::string(inputState.inputBuffer);
+            feedbackTimer = GetTime() + 2.0;
         }
     }
 

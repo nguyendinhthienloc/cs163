@@ -11,13 +11,20 @@ LinkedList::~LinkedList() {
     nodes.clear();
 }
 
-int LinkedList::GetSize() { return nodes.size(); }
+int LinkedList::GetSize() { 
+    if (nodes.size() > 1000) {  // Arbitrary limit to prevent excessive growth
+        DrawText("Error: List size exceeds safe limit!", 50, 50, 20, RED);
+        return nodes.size();
+    }
+    return nodes.size(); 
+}
 
 void LinkedList::Insert(int value) {
-    InsertTail(value);  // Default insert is now at tail
+    InsertTail(value);
 }
 
 void LinkedList::InsertHead(int value) {
+    if (GetSize() >= 1000) return;  // Prevent excessive growth
     Node* newNode = new Node(value, { 50, 400 });
     animState = AnimState::INSERTING;
     animProgress = 0.0f;
@@ -32,6 +39,7 @@ void LinkedList::InsertHead(int value) {
 }
 
 void LinkedList::InsertTail(int value) {
+    if (GetSize() >= 1000) return;
     float startX = 50 + static_cast<float>(nodes.size()) * nodeSpacing;
     Node* newNode = new Node(value, { startX, 400 });
     animState = AnimState::INSERTING;
@@ -54,6 +62,7 @@ void LinkedList::InsertTail(int value) {
 }
 
 void LinkedList::InsertAfter(Node* target, int value) {
+    if (GetSize() >= 1000) return;
     if (!target) {
         return;
     }
@@ -70,7 +79,6 @@ void LinkedList::InsertAfter(Node* target, int value) {
         return;
     }
 
-    // Adjust start position for scrolling
     float adjustedTargetX = target->position.x + scrollOffsetX;
     animState = AnimState::INSERTING_AFTER;
     animProgress = 0.0f;
@@ -84,12 +92,11 @@ void LinkedList::InsertAfter(Node* target, int value) {
 }
 
 bool LinkedList::LoadFromFile(const char* filename) {
-    std::ifstream file(filename); // Use the passed filename instead of hardcoding
+    std::ifstream file(filename);
     if (!file.is_open()) {
         return false;
     }
 
-    // Clear existing list
     while (head) {
         Node* temp = head;
         head = head->next;
@@ -100,21 +107,23 @@ bool LinkedList::LoadFromFile(const char* filename) {
 
     bool success = false;
     int value;
+    int count = 0;
     while (file >> value) {
         if (file.fail()) {
             file.clear();
             file.ignore(10000, '\n');
             continue;
         }
-        if (value >= 1 && value <= 9999) {
-            InsertTail(value); // Keep animation by not forcing IDLE
+        if (value >= 1 && value <= 9999 && count < 1000) {
+            InsertTail(value);
             success = true;
+            count++;
         }
     }
 
     file.close();
     if (success) {
-        RecalculatePositions(); // Recalculate after all insertions
+        RecalculatePositions();
     }
     return success;
 }
@@ -126,7 +135,6 @@ void LinkedList::Delete(int value) {
 
     Node* temp = head;
     Node* prev = nullptr;
-    cur = head;
 
     while (temp && temp->value != value) {
         prev = temp;
@@ -137,24 +145,13 @@ void LinkedList::Delete(int value) {
         return;
     }
 
-    animState = AnimState::DELETING;
+    animState = AnimState::SEARCHING_FOR_DELETE;
     animProgress = 0.0f;
     animNode = temp;
+    animPrevNode = prev;
     animStartPos = temp->position;
+    cur = temp;
 
-    if (prev) {
-        prev->next = temp->next;
-    } else {
-        head = temp->next;
-    }
-
-    auto it = std::find(nodes.begin(), nodes.end(), temp);
-    if (it != nodes.end()) {
-        nodes.erase(it);
-    }
-    cur = nullptr;
-
-    // Add to history with position and prev node
     history.push_back(Operation(Operation::Type::DELETE, value, temp->position, prev));
 }
 
@@ -185,6 +182,7 @@ Node* LinkedList::GetNodeAt(int index) {
     if (index < 0 || index >= GetSize()) return nullptr;
     Node* current = head;
     for (int i = 0; i < index; ++i) {
+        if (!current) return nullptr;
         current = current->next;
     }
     return current;
@@ -198,12 +196,14 @@ void LinkedList::Undo() {
 
     if (lastOp.type == Operation::Type::INSERT_HEAD) {
         Node* temp = head;
+        if (!temp) return;
         head = head->next;
         animState = AnimState::DELETING;
         animProgress = 0.0f;
         animNode = temp;
         animStartPos = temp->position;
-        nodes.erase(nodes.begin());
+        auto it = std::find(nodes.begin(), nodes.end(), temp);
+        if (it != nodes.end()) nodes.erase(it);
     } else if (lastOp.type == Operation::Type::INSERT_TAIL) {
         if (!head) return;
         Node* temp = head;
@@ -217,9 +217,12 @@ void LinkedList::Undo() {
         animProgress = 0.0f;
         animNode = temp;
         animStartPos = temp->position;
-        nodes.pop_back();
+        auto it = std::find(nodes.begin(), nodes.end(), temp);
+        if (it != nodes.end()) nodes.erase(it);
     } else if (lastOp.type == Operation::Type::INSERT_AFTER) {
+        if (!lastOp.targetNode) return;
         Node* temp = lastOp.targetNode->next;
+        if (!temp) return;
         lastOp.targetNode->next = temp->next;
         animState = AnimState::DELETING;
         animProgress = 0.0f;
@@ -228,6 +231,7 @@ void LinkedList::Undo() {
         auto it = std::find(nodes.begin(), nodes.end(), temp);
         if (it != nodes.end()) nodes.erase(it);
     } else if (lastOp.type == Operation::Type::DELETE) {
+        if (GetSize() >= 1000) return;
         Node* newNode = new Node(lastOp.value, lastOp.position);
         animState = AnimState::INSERTING;
         animProgress = 0.0f;
