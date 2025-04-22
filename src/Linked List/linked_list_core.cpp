@@ -12,7 +12,7 @@ LinkedList::~LinkedList() {
 }
 
 int LinkedList::GetSize() { 
-    if (nodes.size() > 1000) {  // Arbitrary limit to prevent excessive growth
+    if (nodes.size() > 1000) {
         DrawText("Error: List size exceeds safe limit!", 50, 50, 20, RED);
         return nodes.size();
     }
@@ -24,30 +24,29 @@ void LinkedList::Insert(int value) {
 }
 
 void LinkedList::InsertHead(int value) {
-    if (GetSize() >= 1000) return;  // Prevent excessive growth
-    Node* newNode = new Node(value, { 50, 400 });
-    animState = AnimState::INSERTING;
-    animProgress = 0.0f;
-    animNode = newNode;
-    animStartPos = { 50, 200 };
-    newNode->position = animStartPos;
-
+    if (GetSize() >= 1000) return;
+    
+    Node* newNode = new Node(value, { 0, 0 }); // Temporary position
     newNode->next = head;
     head = newNode;
     nodes.insert(nodes.begin(), newNode);
+    
+    RecalculatePositions(); // Update positions immediately after adding the node
+    float initialX = nodes.empty() ? 50 : 50 - nodeSpacing; // Offset to the left of the first node
+    animState = AnimState::GENERATING;
+    animProgress = 0.0f;
+    animNode = newNode;
+    animStartPos = { initialX, 550 }; // Generate below list at y = 550
+    newNode->position = animStartPos;
+    newNode->targetPosition = { 50, 450 }; // Target position updated by RecalculatePositions
+
     history.push_back(Operation(Operation::Type::INSERT_HEAD, value));
 }
 
 void LinkedList::InsertTail(int value) {
     if (GetSize() >= 1000) return;
-    float startX = 50 + static_cast<float>(nodes.size()) * nodeSpacing;
-    Node* newNode = new Node(value, { startX, 400 });
-    animState = AnimState::INSERTING;
-    animProgress = 0.0f;
-    animNode = newNode;
-    animStartPos = { startX, 200 };
-    newNode->position = animStartPos;
-
+    
+    Node* newNode = new Node(value, { 0, 0 }); // Temporary position
     if (!head) {
         head = newNode;
         cur = head;
@@ -56,8 +55,19 @@ void LinkedList::InsertTail(int value) {
         while (temp->next) temp = temp->next;
         temp->next = newNode;
         cur = temp;
+        animPrevNode = temp; // For relinking animation
     }
     nodes.push_back(newNode);
+    
+    RecalculatePositions(); // Update positions immediately after adding the node
+    float startX = nodes.empty() ? 50 : 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing + nodeSpacing; // Offset to the right of the last node
+    animState = AnimState::GENERATING;
+    animProgress = 0.0f;
+    animNode = newNode;
+    animStartPos = { startX, 550 }; // Generate below list at y = 550
+    newNode->position = animStartPos;
+    newNode->targetPosition = { 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing, 450 }; // Target position updated by RecalculatePositions
+
     history.push_back(Operation(Operation::Type::INSERT_TAIL, value));
 }
 
@@ -79,14 +89,16 @@ void LinkedList::InsertAfter(Node* target, int value) {
         return;
     }
 
-    float adjustedTargetX = target->position.x + scrollOffsetX;
-    animState = AnimState::INSERTING_AFTER;
+    RecalculatePositions(); // Update positions immediately after adding the node
+    float adjustedTargetX = target->targetPosition.x + nodeSpacing + nodeSpacing; // Offset to the right of the target node
+    animState = AnimState::GENERATING;
     animProgress = 0.0f;
     animNode = newNode;
     animPrevNode = target;
-    animStartPos = { adjustedTargetX + nodeSpacing, 200 };
+    animNextNode = newNode->next;
+    animStartPos = { adjustedTargetX, 550 }; // Generate below list at y = 550
     newNode->position = animStartPos;
-    newNode->targetPosition = { adjustedTargetX + nodeSpacing, 400 };
+    newNode->targetPosition = { target->targetPosition.x + nodeSpacing, 450 }; // Target position updated by RecalculatePositions
 
     history.push_back(Operation(Operation::Type::INSERT_AFTER, value, newNode->position, target));
 }
@@ -194,6 +206,9 @@ void LinkedList::Undo() {
     Operation lastOp = history.back();
     history.pop_back();
 
+    isUndoing = true;
+    undoOperationType = lastOp.type;
+
     if (lastOp.type == Operation::Type::INSERT_HEAD) {
         Node* temp = head;
         if (!temp) return;
@@ -233,10 +248,10 @@ void LinkedList::Undo() {
     } else if (lastOp.type == Operation::Type::DELETE) {
         if (GetSize() >= 1000) return;
         Node* newNode = new Node(lastOp.value, lastOp.position);
-        animState = AnimState::INSERTING;
+        animState = AnimState::GENERATING;
         animProgress = 0.0f;
         animNode = newNode;
-        animStartPos = { lastOp.position.x, 200 };
+        animStartPos = { lastOp.position.x, 550 }; // Generate below list at y = 550
         newNode->position = animStartPos;
         newNode->targetPosition = lastOp.position;
         if (lastOp.prevNode) {
@@ -251,4 +266,39 @@ void LinkedList::Undo() {
         }
     }
     RecalculatePositions();
+}
+
+void LinkedList::ResetAnimationState() {
+    animState = AnimState::IDLE;
+    animProgress = 0.0f;
+    if (animNode) {
+        auto it = std::find(nodes.begin(), nodes.end(), animNode);
+        if (it == nodes.end()) {
+            delete animNode;
+        }
+        animNode = nullptr;
+    }
+    animPrevNode = nullptr;
+    animNextNode = nullptr;
+    cur = nullptr;
+    foundNode = nullptr;
+    currentPseudoCode = "";
+    stepPaused = false;
+    isUndoing = false;
+}
+
+Node* LinkedList::GetHead() {
+    return head;
+}
+
+void LinkedList::SetHead(Node* newHead) {
+    head = newHead;
+}
+
+std::vector<Node*>& LinkedList::GetNodes() {
+    return nodes;
+}
+
+void LinkedList::ClearHistory() {
+    history.clear();
 }

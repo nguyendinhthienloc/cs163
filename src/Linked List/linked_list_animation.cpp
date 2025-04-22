@@ -19,42 +19,76 @@ void LinkedList::UpdateAnimation(float deltaTime) {
         animProgress += deltaTime / (animState == AnimState::RELINKING ? RELINK_DURATION : ANIM_DURATION);
     }
 
-    if (animState == AnimState::INSERTING && animNode) {
-        SetPseudoCode("Creating and positioning new node");
-        animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
-        animNode->position.y = Lerp(animStartPos.y, animNode->targetPosition.y, animProgress);
+    if (animState == AnimState::GENERATING && animNode) {
+        // Step 1: Node generation
+        if (isUndoing && undoOperationType == Operation::Type::DELETE) {
+            SetPseudoCode("Undo Delete:\nStep 1: Create newNode = new Node(value)");
+        } else {
+            SetPseudoCode("Insert:\nStep 1: Create newNode = new Node(value)");
+        }
+        animNode->alpha = animProgress; // Fade in effect
         if (animProgress >= 1.0f) {
-            animNode->position = animNode->targetPosition;
-            animState = AnimState::IDLE;
-            animNode = nullptr;
-            RecalculatePositions();
+            animNode->alpha = 1.0f;
+            animState = AnimState::MOVING;
             animProgress = 0.0f;
-            currentPseudoCode = "";
             if (stepMode) stepPaused = true;
         }
-    } else if (animState == AnimState::INSERTING_AFTER && animNode && animPrevNode) {
-        SetPseudoCode("Creating and positioning new node after target");
+    } else if (animState == AnimState::MOVING && animNode) {
+        // Step 2: Move node to target position
+        if (isUndoing && undoOperationType == Operation::Type::DELETE) {
+            SetPseudoCode("Undo Delete:\nStep 2: Move newNode to position");
+        } else {
+            SetPseudoCode("Insert:\nStep 2: Move newNode to position");
+        }
         animNode->position.x = Lerp(animStartPos.x, animNode->targetPosition.x, animProgress);
         animNode->position.y = Lerp(animStartPos.y, animNode->targetPosition.y, animProgress);
         if (animProgress >= 1.0f) {
             animNode->position = animNode->targetPosition;
+            animState = AnimState::RELINKING;
+            animProgress = 0.0f;
+            if (stepMode) stepPaused = true;
+        }
+    } else if (animState == AnimState::RELINKING && animNode) {
+        // Step 3: Relink arrows (same state used for both insertion and deletion)
+        if (isUndoing && undoOperationType == Operation::Type::DELETE) {
+            if (undoOperationType == Operation::Type::DELETE) {
+                SetPseudoCode("Undo Delete:\nStep 3: newNode->next = prev->next\nprev->next = newNode");
+            }
+        } else {
+            if (animPrevNode) { // Insert After or Insert Tail
+                SetPseudoCode("Insert:\nStep 3: target->next = newNode\nnewNode->next = nextNode");
+            } else { // Insert Head
+                SetPseudoCode("Insert:\nStep 3: newNode->next = head\nhead = newNode");
+            }
+        }
+
+        if (animProgress >= 1.0f) {
+            if (animPrevNode && animNextNode) { // Insert After
+                // Already linked in InsertAfter
+            } else if (animPrevNode) { // Insert Tail
+                // Already linked in InsertTail
+            } else { // Insert Head
+                // Already linked in InsertHead
+            }
             animState = AnimState::IDLE;
             animNode = nullptr;
             animPrevNode = nullptr;
+            animNextNode = nullptr;
             RecalculatePositions();
             animProgress = 0.0f;
             currentPseudoCode = "";
+            isUndoing = false;
             if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::SEARCHING_FOR_DELETE && animNode) {
-        SetPseudoCode("Preparing to delete node");
+        SetPseudoCode("Delete:\ncurrent = head\nwhile current->value != value:\n    current = current->next");
         animState = AnimState::RELINKING;
         animProgress = 0.0f;
         animNextNode = animNode->next;
         foundNode = animNode;
         if (stepMode) stepPaused = true;
-    } else if (animState == AnimState::RELINKING && animNode) {
-        SetPseudoCode("Relinking pointers");
+    } else if (animState == AnimState::RELINKING && animNode && !animNextNode) { // For deletion
+        SetPseudoCode("Delete:\nif prev:\n    prev->next = current->next\nelse:\n    head = current->next");
         if (animProgress >= 1.0f) {
             if (animPrevNode) {
                 animPrevNode->next = animNextNode;
@@ -65,7 +99,6 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             if (it != nodes.end()) {
                 nodes.erase(it);
             } else {
-                // Log error if node not found in vector
                 DrawText("Error: Node not found in vector during relinking!", 50, 50, 20, RED);
             }
             animState = AnimState::DELETING;
@@ -73,7 +106,11 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::DELETING && animNode) {
-        SetPseudoCode("Removing node");
+        if (isUndoing && (undoOperationType == Operation::Type::INSERT_HEAD || undoOperationType == Operation::Type::INSERT_TAIL || undoOperationType == Operation::Type::INSERT_AFTER)) {
+            SetPseudoCode("Undo Insert:\nif prev:\n    prev->next = nullptr\nelse:\n    head = nullptr");
+        } else {
+            SetPseudoCode("Delete:\ndelete current");
+        }
         animNode->alpha = 1.0f - animProgress;
         animNode->position.y = animStartPos.y + (animProgress * 100);
         if (animProgress >= 1.0f) {
@@ -86,10 +123,11 @@ void LinkedList::UpdateAnimation(float deltaTime) {
             RecalculatePositions();
             animProgress = 0.0f;
             currentPseudoCode = "";
+            isUndoing = false;
             if (stepMode) stepPaused = true;
         }
     } else if (animState == AnimState::SEARCHING && cur) {
-        SetPseudoCode("Searching for value");
+        SetPseudoCode("Search:\ncurrent = head\nwhile current:\n    if current->value == value:\n        return current\n    current = current->next");
         if (cur->next) {
             Vector2 target = cur->next->position;
             curPos.x += (target.x - curPos.x) * TRAVERSAL_SPEED;

@@ -2,6 +2,7 @@
 #include "../../header/ui_menu.h"
 #include "../../header/tinyfiledialogs.h"
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <sstream>
 
@@ -172,14 +173,27 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
 
     // Clear button
     if (DrawButton({ startX, row3Y, buttonWidth, buttonHeight }, "Clear", RED, true)) {
-        inputState.inputLength = 0;
-        inputState.inputBuffer[0] = '\0';
+        // Stop any ongoing animations
+        list.ResetAnimationState();
+        // Directly clear the list without animations
         while (list.GetSize() > 0) {
-            list.Delete(list.GetNodeAt(0)->value);
+            Node* temp = list.GetHead();
+            if (!temp) break;
+            list.SetHead(temp->next);
+            auto it = std::find(list.GetNodes().begin(), list.GetNodes().end(), temp);
+            if (it != list.GetNodes().end()) {
+                list.GetNodes().erase(it);
+            }
+            delete temp;
         }
         list.SetFoundNode(nullptr);
         list.SetScrollOffsetX(0);
+        list.ClearHistory();
+        inputState.inputLength = 0;
+        inputState.inputBuffer[0] = '\0';
         undoInProgress = false;
+        feedbackMessage = "List cleared!";
+        feedbackTimer = GetTime() + 2.0;
     }
 
     // Undo button
@@ -190,11 +204,22 @@ void DrawLinkedList(LinkedList& list, InputState& inputState, std::string& feedb
 
     // Random button
     if (DrawButton({ startX + 2 * (buttonWidth + buttonSpacing), row3Y, buttonWidth, buttonHeight }, "Random", PINK, !list.IsAnimating())) {
-        while (list.GetSize() > 0) list.Delete(list.GetNodeAt(0)->value);
+        list.ResetAnimationState();
+        while (list.GetSize() > 0) {
+            Node* temp = list.GetHead();
+            if (!temp) break;
+            list.SetHead(temp->next);
+            auto it = std::find(list.GetNodes().begin(), list.GetNodes().end(), temp);
+            if (it != list.GetNodes().end()) {
+                list.GetNodes().erase(it);
+            }
+            delete temp;
+        }
         int numNodes = GetRandomValue(3, 10);
         for (int i = 0; i < numNodes; i++) {
             list.InsertTail(GetRandomValue(1, 9999));
         }
+        list.ClearHistory();
         undoInProgress = false;
     }
 
