@@ -1,6 +1,6 @@
 #include "../../header/Linked List/ui_linked_list.h"
 #include "../../header/ui_menu.h"
-#include "../../header/tinyfiledialogs.h"
+#include "../../resource/tinyfiledialogs.h"
 #include <algorithm>
 #include <cstring>
 #include <string>
