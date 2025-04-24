@@ -301,7 +301,7 @@ void HashTable::Draw() {
 
 void HashTable::DrawBucketIndexes(float startX, float indexY, float boxWidth, float boxHeight) {
     for (int i = 0; i < HT_SIZE; i++) {
-        DrawText(TextFormat("%d", i), startX + i * boxWidth + boxWidth / 3, indexY, boxHeight / 2, BLACK);
+        DrawText(TextFormat("%d", i), startX + i * boxWidth + boxWidth / 3+10, indexY, boxHeight / 2, BLACK);
     }
 }
 

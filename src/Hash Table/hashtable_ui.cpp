@@ -8,21 +8,27 @@ bool DrawButton(Rectangle rect, const char* text, Color color) {
     Vector2 mouse = GetMousePosition();
     bool isHover = CheckCollisionPointRec(mouse, rect);
 
-    // Change button color on hover
+    // Draw button background and border
     DrawRectangleRec(rect, isHover ? Fade(color, 0.7f) : color);
     DrawRectangleLinesEx(rect, 2, BLACK);
 
     // Dynamically adjust text size based on button height
-    int textSize = rect.height * 0.5; // 50% of button height
-    Vector2 textSizeMeasure = MeasureTextEx(GetFontDefault(), text, textSize, 1);
+    float textSize = rect.height * 0.5f; // 50% of button height
+    Font font = GetFontDefault(); // Use default font for consistency
+    float spacing = 1.0f; // Font spacing for measurement
 
-    // Center the text within the button
-    float textX = rect.x + (rect.width - textSizeMeasure.x) / 2;
-    float textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
+    // Measure text size
+    Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, spacing);
 
-    DrawText(text, textX, textY, textSize, BLACK);
+    // Calculate centered text position
+    float textX = rect.x + (rect.width - textSizeMeasure.x) / 2.0f;
+    float textY = rect.y + (rect.height - textSizeMeasure.y) / 2.0f;
 
-    return (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)); // Return true if clicked
+    // Draw centered text
+    DrawTextEx(font, text, { textX, textY }, textSize, spacing, BLACK);
+
+    // Return true if the button is clicked
+    return isHover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 // Global text input buffer
@@ -98,11 +104,10 @@ void DefineUIElements(Rectangle& insertBtn, Rectangle& deleteBtn, Rectangle& sea
     searchBtn = { startX + 2 * (buttonWidth + padding), startY, buttonWidth, buttonHeight };
     inputBox = { startX + 3 * (buttonWidth + padding), startY, screenWidth / 3, buttonHeight };
 
-    randomBtn = { padding, screenHeight - buttonHeight - padding, buttonWidth, buttonHeight };
-    clearBtn = { randomBtn.x + buttonWidth + padding, randomBtn.y, buttonWidth, buttonHeight };
+     clearBtn = { padding, screenHeight - buttonHeight - padding, buttonWidth, buttonHeight };
+     randomBtn = { clearBtn.x + buttonWidth + padding, clearBtn.y, buttonWidth, buttonHeight };
 
-    float loadFileWidth = 2 * buttonWidth + padding;
-    loadFileBtn = { padding, randomBtn.y - buttonHeight - padding, loadFileWidth, buttonHeight };
+    loadFileBtn = { padding, randomBtn.y - buttonHeight - padding, buttonWidth, buttonHeight };
 
     redoBtn = { screenWidth - padding - buttonWidth, screenHeight - buttonHeight - padding, buttonWidth, buttonHeight };
     undoBtn = { redoBtn.x - buttonWidth - padding, redoBtn.y, buttonWidth, buttonHeight };
@@ -217,7 +222,13 @@ void DrawUndoRedoButtons(const Rectangle& undoBtn, const Rectangle& redoBtn) {
 bool runAtOnce = false;
 
 void RunAtOnceBtn() {
-    Rectangle btn = { 1270, 760, 220, 50 };
+    float screenWidth = GetScreenWidth();
+    float screenHeight = GetScreenHeight();
+    float buttonWidth = screenWidth / 8;
+    float buttonHeight = screenHeight / 15;
+    float padding = screenWidth / 100;
+
+    Rectangle btn = { padding*2+buttonWidth, screenHeight - buttonHeight*2 - padding*2, buttonWidth, buttonHeight };
     Color color = runAtOnce ? GREEN : RED;
     if (DrawButton(btn, "Run At Once", color) ){
         runAtOnce = !runAtOnce;
