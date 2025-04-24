@@ -2,6 +2,7 @@
 
 class HashTable;
 extern HashTable ht;
+extern bool open;
 
 #include "raylib.h"
 #include "../../header/Hash Table/HashTable.h"

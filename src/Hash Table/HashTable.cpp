@@ -1,5 +1,7 @@
 #include "../../header/Hash Table/HashTable.h"
 
+int state = -1;
+
 HashTable::HashTable() {
     table.resize(HT_SIZE);
     for (int i = 0; i < HT_SIZE; i++) table[i] = nullptr;
@@ -39,6 +41,7 @@ void HashTable::InsertInstantly(int val) {
         if (temp->val == val) {
             foundNode = temp; // Highlight the existing node
             searchMessage = TextFormat("%d already exists.", val);
+            state = 4;
             return;
         }
         temp = temp->next;
@@ -64,6 +67,7 @@ void HashTable::InsertInstantly(int val) {
     highlightTimer = highlightDuration;
 
     searchMessage = TextFormat("Inserted %d successfully.", val);
+    state = 6;
 }
 
 int HashTable::GetNodeCount(int index) {
@@ -136,6 +140,7 @@ void HashTable::DeleteInstantly(int val) {
                 prev->next = curr->next;
             }
 
+            state = 4;
             searchMessage = TextFormat("Deleted %d successfully.", val);
             return;
         }
@@ -146,6 +151,7 @@ void HashTable::DeleteInstantly(int val) {
     nodeToDelete = nullptr;
     deleteTimer = 0.0f;
     searchMessage = TextFormat("Value %d not found!", val);
+    state = 6;
 }
 
 
@@ -207,6 +213,7 @@ void HashTable::StartInstantSearch(int val) {
                 foundNode = visitedNode;
                 searchMessage = TextFormat("Value %d found!", searchValue);
                 highlightSearch = hashFunction(val);  // Highlight the found node
+                state = 4;
                 break;
             }
             visitedNode = visitedNode->next;
@@ -216,6 +223,7 @@ void HashTable::StartInstantSearch(int val) {
     // If no node is found, set the message to indicate the value is not found
     if (!visitedNode) {
         searchMessage = TextFormat("Value %d not found!", searchValue);
+        state = 6;
         highlightSearch = -1;  // No node to highlight if not found
     }
 }
@@ -228,36 +236,59 @@ void HashTable::StartSearch(int val, bool isInsert) {
     highlightSearch = hashFunction(val);
     searchTimer = GetTime();
     searchMessage = TextFormat("%d %% %d = %d", searchValue, HT_SIZE, highlightSearch);
+    state = 0;
+    checkWhileCondition = 0;
 }
 
 void HashTable::UpdateSearchAnimation() {
     if (searching && GetTime() - searchTimer >= 0.5) {
-        if (!visitedNode) {
-            searchMessage = TextFormat("Value %d not found!", searchValue);
-            searching = false;
-            highlightSearch = -1;
-        }
-        else if (visitedNode->val == searchValue) {
-            foundNode = visitedNode;
-            if (pendingOp != PendingOperation::DELETE) {
-                searchMessage = TextFormat("Value %d found!", searchValue);
-            }
-            visitedNode = nullptr;
-            searching = false;
-            highlightSearch = -1;
-        }
-        else {
-            visitedNode = visitedNode->next;
+        if (checkWhileCondition == 0) {
+            state = 1; // Highlight "while (HT[i] && HT[i]->val != key)"
             if (!visitedNode) {
+                state = 6; // Not found
                 searchMessage = TextFormat("Value %d not found!", searchValue);
                 searching = false;
                 highlightSearch = -1;
+                checkWhileCondition = 0;
+            }
+            else if (visitedNode->val == searchValue) {
+                foundNode = visitedNode;
+                state = 4; //    Found
+                if (pendingOp != PendingOperation::DELETE) {
+                    searchMessage = TextFormat("Value %d found!", searchValue);
+                }
+                visitedNode = nullptr;
+                searching = false;
+                highlightSearch = -1;
+                checkWhileCondition = 0;
+            }
+            else {
+                checkWhileCondition = 1; // Next cycle: advance pointer
+            }
+        }
+        else if (checkWhileCondition == 1) {
+            state = 2; // Highlight "HT[i] = HT[i]->next"
+            visitedNode = visitedNode->next;
+            checkWhileCondition = 2; // Next cycle: if check
+        }
+        else if (checkWhileCondition == 2) {
+            if (visitedNode) {
+                //state = 3; // Highlight "if (HT[i] != nullptr)"
+                checkWhileCondition = 0; // Next cycle: while condition
+            }
+            else {
+                state = 6; //  not found
+                searchMessage = TextFormat("Value %d not found!", searchValue);
+                searching = false;
+                highlightSearch = -1;
+                checkWhileCondition = 0;
             }
         }
         searchTimer = GetTime();
         if (!searching) {
             if (pendingOp == PendingOperation::INSERT) {
                 if (!WasValueFound()) {
+                    state = 6;
                     PerformInsertion(pendingValue, false);
                     insertedNode = table[hashFunction(pendingValue)];
                     highlightInsert = hashFunction(pendingValue);
@@ -265,18 +296,21 @@ void HashTable::UpdateSearchAnimation() {
                     searchMessage = TextFormat("Inserted %d successfully.", pendingValue);
                 }
                 else {
+                    state = 4;
                     searchMessage = TextFormat("%d already exists.", pendingValue);
                 }
             }
             else if (pendingOp == PendingOperation::DELETE) {
                 if (WasValueFound()) {
+                    state = 4;
                     Delete(pendingValue);
                 }
                 else {
+                    state = 6;
                     searchMessage = TextFormat("%d does not exist!", pendingValue);
                 }
             }
-            pendingOp = PendingOperation::NONE;
+            //pendingOp = PendingOperation::NONE;
             pendingValue = -1;
         }
     }

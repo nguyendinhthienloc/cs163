@@ -118,12 +118,13 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
     if (DrawButton(insertBtn, "Insert", GREEN)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
+            open = true;
+            ht.SetPendingOperation(PendingOperation::INSERT, v);
             if (runAtOnce) {
                 ht.InsertInstantly(v);
             }
             else{
                 ht.StartSearch(v, true); // Shows calculation
-                ht.SetPendingOperation(HashTable::PendingOperation::INSERT, v);
             }
             });
     }
@@ -131,12 +132,13 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
     if (DrawButton(deleteBtn, "Delete", RED)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
+            ht.SetPendingOperation(PendingOperation::DELETE, v);
+            open = true;
             if (runAtOnce) {
                 ht.DeleteInstantly(v);
             }
             else {
                 ht.StartSearch(v, false); // Shows calculation
-                ht.SetPendingOperation(HashTable::PendingOperation::DELETE, v);
             }
             });
     }
@@ -144,6 +146,8 @@ void DrawAndHandleButtons(const Rectangle& insertBtn, const Rectangle& deleteBtn
     if (DrawButton(searchBtn, "Search", BLUE)) {
         ProcessButtonClick([](int v) {
             ht.ResetColors();
+            ht.SetPendingOperation(PendingOperation::SEARCH, v);
+            open = true;
             if (runAtOnce) {
                 ht.StartInstantSearch(v);
             }
@@ -235,6 +239,97 @@ void RunAtOnceBtn() {
     }
 }
 
+bool DrawButton2(Rectangle rect, const char* text, Color color, int shift, Font font, float FontSize) {
+    Vector2 mouse = GetMousePosition();
+    bool isHover = CheckCollisionPointRec(mouse, rect);
+
+    // Change button color on hover
+    DrawRectangleRec(rect, isHover ? Fade(color, 0.7f) : color);
+    //DrawRectangleLinesEx(rect, 2, BLACK);
+
+    float textX, textY;
+    int textSize = FontSize;
+
+    if (shift == 1) {
+        // Dynamically adjust text size based on button height
+       //textSize = rect.height * 0.1; // 50% of button height
+        Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, 1);
+
+        // Center the text within the button
+        textX = rect.x + (rect.width - textSizeMeasure.x) / 2;
+        textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
+    }
+    else {
+        //textSize = 17;// rect.height * 0.3;
+        Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, 1);
+
+        textX = rect.x + rect.width * 0.05;
+        textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
+    }
+
+    DrawTextEx(font, text, { textX, textY }, textSize, 1.0f, WHITE);
+
+    return (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)); // Return true if clicked
+}
+
+bool open = false;
+
+void DrawCodeRun() {
+    int HEIGHT = GetScreenHeight(), WIDTH = GetScreenWidth();
+    int w = 50, h = 280;
+    Rectangle openBtn = { WIDTH - w, HEIGHT - h - 100, w, h };
+
+    if (open) {
+        if (DrawButton2(openBtn, ">", BLACK, 1, GetFontDefault(), 30)) open = false;
+        if (open) {
+            int width = 360, height = 40;
+            int startX = WIDTH - w - 20-width;
+            int startY = openBtn.y;
+            const char* text[] = { "i = key % HT.length", "while (HT[i] && HT[i] -> val != key)", "   HT[i] = HT[i] -> next", "if key already exists", "", "else if key does not exist" , ""};
+            const char* case1[] = { "   return found", "   do nothing", "   remove key from list"};
+            const char* case2[] = { "   return not found", "   insert key to the head of list", "   do nothing" };
+            for (int i = 0; i < 7; i++) {
+                Rectangle rect = { startX, startY +height*i , width, height };
+                DrawButton2(rect, "", BLACK, 2, GetFontDefault(), 20);
+
+                if (i == 4) {
+                    if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
+                        DrawButton2(rect, case1[0], (state!=4)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                    }
+                    if (ht.GetPendingOperation() == PendingOperation::INSERT ) {
+                        DrawButton2(rect, case1[1], (state!=4)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                    }
+                    else if(ht.GetPendingOperation() == PendingOperation::DELETE) {
+                        DrawButton2(rect, case1[2], (state != 4) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+                    }
+                }
+                else if (i == 6) {
+                    if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
+                        DrawButton2(rect, case2[0], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                    }
+                    if ((ht.GetPendingOperation() == PendingOperation::INSERT) ){
+                        DrawButton2(rect, case2[1], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                    }
+                    else if ((ht.GetPendingOperation() == PendingOperation::DELETE)) {
+                        DrawButton2(rect, case2[2], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                    }
+                }
+                else if (i == 5) {
+                    DrawButton2(rect, text[i], (state != 6) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+                }
+                else if (i == 3) {
+                    DrawButton2(rect, text[i], (state != 4) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+
+                }
+                else DrawButton2(rect, text[i], (state!=i)?BLACK:GRAY, 2, GetFontDefault(), 20);
+            }
+        }
+    }
+    else {
+        if (DrawButton2(openBtn, "<", BLACK, 1, GetFontDefault(), 20)) open = true;
+    }
+}
+
 void DrawHashTable() {
     Rectangle insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn;
     DefineUIElements(insertBtn, deleteBtn, searchBtn, inputBox, randomBtn, clearBtn, undoBtn, redoBtn, loadFileBtn);
@@ -250,4 +345,6 @@ void DrawHashTable() {
 
     DrawInputBox(inputBox);
     HandleTextInput();
+
+    DrawCodeRun();
 }

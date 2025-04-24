@@ -6,6 +6,9 @@
 #include <cstdlib>
 #include <ctime>
 
+enum class PendingOperation { NONE, INSERT, DELETE, SEARCH };
+extern int state;
+
 class HashTable {
 public:
     HashTable();
@@ -18,7 +21,6 @@ public:
     bool WasValueFound() const { return foundNode != nullptr; }
     void ResetColors();
 
-    enum class PendingOperation { NONE, INSERT, DELETE };
     PendingOperation GetPendingOperation() const { return pendingOp; }
     void SetPendingOperation(PendingOperation op, int val) {
         pendingOp = op;
@@ -89,4 +91,5 @@ private:
     int searchValue = -1;
     float searchTimer = 0.0f;
     Node* foundNode = nullptr;
+    int checkWhileCondition = 0;
 };
