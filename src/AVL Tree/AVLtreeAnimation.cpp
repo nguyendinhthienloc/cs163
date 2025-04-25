@@ -11,6 +11,7 @@
 std::stack<AVLTree> treeUndoState;
 std::stack<AVLTree> treeRedoState;
 #define NODE_RADIUS 40.0f
+int option = 0;
 
 AVLTreeVisualizer::AVLTreeVisualizer() {
     inputText = "";
@@ -108,6 +109,9 @@ void AVLTreeVisualizer::handleInput() {
 			while (!treeRedoState.empty()) {
 				treeRedoState.pop();
 			}
+            currentOperation = "insert";
+            currentState = SHOWING_RESULT;
+            codeState = tree.search(std::stoi(inputText)) ? 6 : 1;
 			tree.insert(tree.root, std::stoi(inputText));
             
 		}
@@ -124,6 +128,9 @@ void AVLTreeVisualizer::handleInput() {
             while (!treeRedoState.empty()) {
                 treeRedoState.pop();
             }
+            currentOperation = "delete";
+            currentState = SHOWING_RESULT;
+            codeState = tree.search(std::stoi(inputText)) ? 1 : 6;
             tree.remove(tree.root, std::stoi(inputText));
 
         }
@@ -140,6 +147,7 @@ void AVLTreeVisualizer::handleInput() {
             currentOperation = "search";
             operationValue = value;
             searchFound = tree.search(value);
+            codeState = searchFound ? 1 : 6;
             currentState = SHOWING_RESULT; 
             resultTimer = 0.0f; 
             stateTimer = 0.0f;
@@ -234,28 +242,72 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
                 }
                 else {
                     currentState = SHOWING_RESULT;
-                    //codeState = -1; // No code highlighted
                 }
                 stateTimer = 0.0f;
             }
         }
-        else {
-            // Handle other operations (delete, search)
-            if (stateTimer >= 0.5f && pathIndex < currentPath.size()) {
-                pathIndex++;
-                stateTimer = 0.0f;
+
+        else if (currentOperation == "delete" || currentOperation == "search") {
+            if (pathIndex < currentPath.size()) {
+                AVLNode* currentNode = currentPath[pathIndex];
+                if (stateTimer >= 0.5f) {
+                    // Check the comparison at the current node
+                    if (pendingInsertValue < currentNode->data) {
+                        codeState = 2; // "if value to be inserted < this key"
+                    }
+                    else if (pendingInsertValue > currentNode->data) {
+                        codeState = 4; // "else if value to be inserted > this key"
+                    }
+                    else {
+                        codeState = 1; 
+                        duplicateFound = true;
+                    }
+                    pathIndex++;
+                    stateTimer = 0.0f;
+                }
+                // After incrementing pathIndex, set the traversal direction
+                if (pathIndex < currentPath.size()) {
+                    if (pendingInsertValue < currentNode->data) {
+                        codeState = 3; // "go left"
+                    }
+                    else if (pendingInsertValue > currentNode->data) {
+                        codeState = 5; // "go right"
+                    }
+                }
+                else if (!duplicateFound) {
+                    codeState = 6; // "else do nothing"
+                }
             }
             if (pathIndex >= currentPath.size()) {
                 if (currentOperation == "delete") {
-                    currentState = DELETING;
+                    if (!duplicateFound) {
+                        currentState = SHOWING_RESULT; 
+                        codeState = 6; // Keep "else do nothing" highlighted
+                    }
+                    else {
+                        currentState = DELETING;
+                        codeState = 1; // "create new vertex"
+                        //duplicateFound = false;
+                    }
+                }
+
+                else if (currentOperation == "search") {
+                    if (!duplicateFound) {
+                        currentState = SHOWING_RESULT;
+                        codeState = 6; // Keep "else do nothing" highlighted
+                    }
+                    else {
+                        currentState = SHOWING_RESULT;
+                        codeState = 1; // "highligh vertex"
+                    }
                 }
                 else {
                     currentState = SHOWING_RESULT;
                 }
-                //codeState = -1; // No code highlighted
                 stateTimer = 0.0f;
             }
         }
+
         break;
 
     case INSERTING:
@@ -271,7 +323,6 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
             stateTimer = 0.0f;
-            //codeState = -1; // No code highlighted after insertion
             duplicateFound = false; // Reset duplicate flag
         }
         break;
@@ -286,17 +337,18 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             tree.remove(tree.root, operationValue);
             currentPath.clear();
             pathIndex = 0;
+            /*currentPath = tree.getInsertionPath(pendingInsertValue);
+            pathIndex = currentPath.size();*/
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
             stateTimer = 0.0f;
-            //codeState = -1; // No code highlighted
+            duplicateFound = false;
         }
         break;
 
     case ROTATING:
         currentState = SHOWING_RESULT;
         resultTimer = 0.0f;
-        //codeState = -1; // No code highlighted
         break;
 
     case SHOWING_RESULT:
@@ -308,7 +360,6 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
             pathIndex = 0;
             rotationIndex = 0;
             searchFound = false;
-            //codeState = -1; // No code highlighted
             duplicateFound = false; // Reset duplicate flag
         }
         break;
@@ -399,7 +450,7 @@ bool DrawButton2_(Rectangle rect, const char* text, Color color, int shift, Font
 
 int codeState = -1;
 
-void DrawCodeBox() {
+void AVLTreeVisualizer::DrawCodeBox() {
     int HEIGHT = GetScreenHeight(), WIDTH = GetScreenWidth();
     int w = 50, h = 280;
     Rectangle openBtn = { WIDTH - w, HEIGHT - h-10, w, h };
@@ -411,11 +462,28 @@ void DrawCodeBox() {
         int startX = WIDTH - w - 10 - width;
         int startY = openBtn.y;
 
-        const char* text[] = { "if insertion point is found", "  create new vertex", "if value to be inserted < this key", "  go left", "else if value to be inserted > this key", "  go right", "else do nothing" };
+        const char* text[3][7] = { {"if insertion point is found", "  create new vertex", "if value to be inserted < this key",
+                                "  go left", "else if value to be inserted > this key", "  go right", "else do nothing" },
+                                                       {"if deletion point is found", "  delete this vertex", "if value to be inserted < this key",
+                                "  go left", "else if value to be inserted > this key", "  go right", "else do nothing" },
+                                                       {"if search point is found", "  highlight vertex", "if value to be inserted < this key",
+                                "  go left", "else if value to be inserted > this key", "  go right", "else do nothing" } };
+
+        
+        if (currentOperation == "insert") {
+            option = 0;
+        }
+		else if (currentOperation == "delete") {
+			option = 1;
+		}
+		else if (currentOperation == "search") {
+			option = 2;
+		}
+
         for (int i = 0; i < 7; i++) {
             Rectangle rect = { startX, startY + height * i , width, height };
 
-            DrawButton2_(rect, text[i], (codeState==i)?GRAY:BLACK, 2, codeFont, 20);
+            DrawButton2_(rect, text[option][i], (codeState == i) ? GRAY : BLACK, 2, codeFont, 20);
         }
     }
 }
@@ -472,6 +540,7 @@ void AVLTreeVisualizer::animateInsert(int value) {
 void AVLTreeVisualizer::animateDelete(int value) {
     currentOperation = "delete";
     operationValue = value;
+    pendingInsertValue = value;
     currentPath = tree.getInsertionPath(value);
     pathIndex = 0;
     currentState = TRAVERSING;

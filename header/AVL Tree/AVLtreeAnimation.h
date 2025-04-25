@@ -53,6 +53,7 @@ public:
     void draw();
     void drawButton(Rectangle rect, const char* text, Color color);
     void drawTree(AVLNode* node, float x, float y, const std::set<AVLNode*>& highlight);
+    void DrawCodeBox();
     void animateInsert(int value);
     void animateDelete(int value);
     void animateSearch(int value);
