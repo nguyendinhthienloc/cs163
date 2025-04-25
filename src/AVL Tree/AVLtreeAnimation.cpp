@@ -455,7 +455,7 @@ void AVLTreeVisualizer::DrawCodeBox() {
     int w = 50, h = 280;
     Rectangle openBtn = { WIDTH - w, HEIGHT - h-10, w, h };
 
-    if(DrawButton2_(openBtn, "<", BLACK, 1, codeFont, 30)) isCodeOpen_=!isCodeOpen_;
+    if(DrawButton2_(openBtn, "<", BlueButton, 1, codeFont, 30)) isCodeOpen_=!isCodeOpen_;
 
     if (isCodeOpen_) {
         int width = 470, height = 40;
@@ -482,8 +482,12 @@ void AVLTreeVisualizer::DrawCodeBox() {
 
         for (int i = 0; i < 7; i++) {
             Rectangle rect = { startX, startY + height * i , width, height };
+            Color codeBoxColor = BlueButton;
+            if (codeState == i) {
+                codeBoxColor = Fade(codeBoxColor, 0.7f);
+            }
 
-            DrawButton2_(rect, text[option][i], (codeState == i) ? GRAY : BLACK, 2, codeFont, 20);
+            DrawButton2_(rect, text[option][i], codeBoxColor, 2, codeFont, 20);
         }
     }
 }
