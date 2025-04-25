@@ -273,6 +273,105 @@ bool DrawButton2(Rectangle rect, const char* text, Color color, int shift, Font 
     return (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)); // Return true if clicked
 }
 
+bool openUpdateBtn = false;
+std::string oldValueInput = "";
+std::string newValueInput = "";
+bool editingOldValue = false;
+bool editingNewValue = false;
+
+void DrawUpdateBtn() {
+    float screenWidth = GetScreenWidth();
+    float screenHeight = GetScreenHeight();
+    float buttonWidth = screenWidth / 8;
+    float buttonHeight = screenHeight / 15;
+    float padding = screenWidth / 100;
+
+    float totalWidth = 3 * (buttonWidth + padding) + (screenWidth / 3);
+    float startX = screenWidth - totalWidth - padding;
+    float startY = padding;
+
+    Rectangle updateBtn = { startX - padding - buttonWidth, startY, buttonWidth, buttonHeight };
+
+    if (DrawButton(updateBtn, "Update", PURPLE)) {
+        openUpdateBtn = !openUpdateBtn;
+        if (!openUpdateBtn) {
+            oldValueInput = "";
+            newValueInput = "";
+            editingOldValue = false;
+            editingNewValue = false;
+        }
+    }   
+
+    if (openUpdateBtn) {
+        float startXpos = startX - buttonWidth - 4*padding;
+        float startYpos = startY + buttonHeight + padding * 1.5f;
+        DrawTextEx(codeFont, "Replace", { startXpos, startYpos }, 25, 1, BLACK);
+        
+        Rectangle box1 = { startXpos + 6.5*padding, startYpos-0.5*padding, 130, 40 };
+        Color box1Color = editingOldValue ? Fade(YELLOW, 0.3f) : WHITE;
+        DrawRectangleRec(box1, box1Color);
+        DrawRectangleLinesEx(box1, 1, DARKGRAY);
+        DrawTextEx(codeFont, oldValueInput.c_str(), { box1.x + 5, box1.y + 5 }, 25, 1, BLACK);
+
+        DrawTextEx(codeFont, "with", { startXpos + 15.0f * padding, startYpos }, 25, 1, BLACK);
+
+        Rectangle box2 = { startXpos + 19.0f * padding, startYpos - 0.5f * padding, 130, 40 };
+        Color box2Color = editingNewValue ? Fade(YELLOW, 0.3f) : WHITE;
+        DrawRectangleRec(box2, box2Color);
+        DrawRectangleLinesEx(box2, 1, DARKGRAY);
+        DrawTextEx(codeFont, newValueInput.c_str(), { box2.x + 5, box2.y + 5 }, 25, 1, BLACK);
+
+        // Handle input box selection
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (CheckCollisionPointRec(GetMousePosition(), box1)) {
+                editingOldValue = true;
+                editingNewValue = false;
+            }
+            else if (CheckCollisionPointRec(GetMousePosition(), box2)) {
+                editingOldValue = false;
+                editingNewValue = true;
+            }
+            else {
+                editingOldValue = false;
+                editingNewValue = false;
+            }
+        }
+
+        // Handle text input
+        int key = GetCharPressed();
+        while (key > 0) {
+            if ((key >= '0' && key <= '9') ) {
+                if (editingOldValue && oldValueInput.length() < 9) {
+                    oldValueInput += (char)key;
+                }
+                else if (editingNewValue && newValueInput.length() < 9) {
+                    newValueInput += (char)key;
+                }
+            }
+            key = GetCharPressed();
+        }
+
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (editingOldValue && !oldValueInput.empty()) {
+                oldValueInput.pop_back();
+            }
+            else if (editingNewValue && !newValueInput.empty()) {
+                newValueInput.pop_back();
+            }
+        }
+
+        Rectangle confirmBtn = {box2.x+box2.width+padding, box2.y, box2.width, box2.height};
+        if (DrawButton(confirmBtn, "Confirm", GRAY)) {
+            if (oldValueInput == "" || newValueInput == "") return;
+            int oldValue = std::stoi(oldValueInput);
+            int newValue = std::stoi(newValueInput);
+            open = true;
+            if (!runAtOnce) ht.UpdateValueAnimation(oldValue, newValue);
+            else ht.UpdateValueInstantly(oldValue, newValue);
+        }
+    }
+}
+
 bool open = false;
 
 void DrawCodeRun() {
@@ -287,8 +386,8 @@ void DrawCodeRun() {
             int startX = WIDTH - w - 20-width;
             int startY = openBtn.y;
             const char* text[] = { "i = key % HT.length", "while (HT[i] && HT[i] -> val != key)", "   HT[i] = HT[i] -> next", "if key already exists", "", "else if key does not exist" , ""};
-            const char* case1[] = { "   return found", "   do nothing", "   remove key from list"};
-            const char* case2[] = { "   return not found", "   insert key to the head of list", "   do nothing" };
+            const char* case1[] = { "   return found", "   do nothing", "   remove key from list", "  replace", "  do nothing"};
+            const char* case2[] = { "   return not found", "   insert key to the head of list", "   do nothing", "  do nothing", "  check value want to replace"};
             for (int i = 0; i < 7; i++) {
                 Rectangle rect = { startX, startY +height*i , width, height };
                 DrawButton2(rect, "", BLACK, 2, codeFont, 20);
@@ -303,6 +402,12 @@ void DrawCodeRun() {
                     else if(ht.GetPendingOperation() == PendingOperation::DELETE) {
                         DrawButton2(rect, case1[2], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
                     }
+                    else if (ht.GetPendingOperation() == PendingOperation::UPDATE) {
+                        DrawButton2(rect, case1[3], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
+                    }
+                    else if (ht.GetPendingOperation() == PendingOperation::CHECK_NEW_VALUE) {
+                        DrawButton2(rect, case1[4], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
+                    }
                 }
                 else if (i == 6) {
                     if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
@@ -313,6 +418,12 @@ void DrawCodeRun() {
                     }
                     else if ((ht.GetPendingOperation() == PendingOperation::DELETE)) {
                         DrawButton2(rect, case2[2], (state!=6)?BLACK:GRAY, 2, codeFont, 20);
+                    }
+                    else if (ht.GetPendingOperation() == PendingOperation::UPDATE) {
+                        DrawButton2(rect, case2[3], (state != 6) ? BLACK : GRAY, 2, codeFont, 20);
+                    }
+                    else if (ht.GetPendingOperation() == PendingOperation::CHECK_NEW_VALUE) {
+                        DrawButton2(rect, case2[4], (state != 6) ? BLACK : GRAY, 2, codeFont, 20);
                     }
                 }
                 else if (i == 5) {
@@ -338,6 +449,7 @@ void DrawHashTable() {
     DrawAndHandleButtons(insertBtn, deleteBtn, searchBtn, randomBtn, clearBtn, loadFileBtn);
     DrawUndoRedoButtons(undoBtn, redoBtn);
     RunAtOnceBtn();
+    DrawUpdateBtn();
 
     ht.HandleTableDragging();
     ht.UpdateDeletionAnimation();

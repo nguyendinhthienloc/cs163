@@ -6,8 +6,6 @@
 #include "../../header/Color.h"
 #include "../../resource/tinyfiledialogs.h"
 
-
-
 std::stack<AVLTree> treeUndoState;
 std::stack<AVLTree> treeRedoState;
 #define NODE_RADIUS 40.0f
