@@ -298,10 +298,10 @@ void AVLTreeVisualizer::drawButton(Rectangle rect, const char* text, Color color
 	DrawRectangleRec(rect, isHover ? Fade(color, 0.7f) : color);
 	DrawRectangleLinesEx(rect, 2, BLACK);
 
-	Vector2 textSize = MeasureTextEx(GetFontDefault(), text, 20, 2);
-	float textX = rect.x + (rect.width - textSize.x) / 2;
-	float textY = rect.y + (rect.height - textSize.y) / 2;
-	DrawText(text, textX, textY, 20, WHITE);
+	Vector2 textSize = MeasureTextEx(codeFont, text, 20, 2);
+	float textX = rect.x + (rect.width - textSize.x) / 2.0f+2;
+	float textY = rect.y + (rect.height - textSize.y) / 2.0f;
+    DrawTextEx(codeFont, text, { textX, textY }, 20, 1, WHITE);
 }
 
 //buttons and message are drawn here
@@ -311,7 +311,7 @@ void AVLTreeVisualizer::draw() {
     DrawRectangleRec(handleSpace, HandleInputSpaceBG);
     DrawRectangleRec(inputBox, LIGHTGRAY);
     DrawRectangleLinesEx(inputBox, 2, inputActive ? BLUE : GRAY);
-    DrawText(inputText.c_str(), inputBox.x + 5, inputBox.y + 10, 20, BLACK);
+    DrawTextEx(codeFont, inputText.c_str(), { inputBox.x + 5, inputBox.y + 10 }, 20, 1, BLACK);
 
 
 	drawButton(insertButton, "Insert", GREEN);
@@ -333,12 +333,12 @@ void AVLTreeVisualizer::draw() {
         if (searchFound) {
             std::string messageFound = std::to_string(operationValue) + " is in the tree";
             int messageSize = MeasureText(messageFound.c_str(), 40);
-            DrawText(messageFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, PURPLE);
+            DrawTextEx(codeFont, messageFound.c_str(), { (GetScreenWidth() - messageSize) / 2.0f, (float)(GetScreenHeight() - 50) }, 40, 1, PURPLE);
         }
         else {
             std::string messageNotFound = std::to_string(operationValue) + " is not in the tree";
             int messageSize = MeasureText(messageNotFound.c_str(), 40);
-            DrawText(messageNotFound.c_str(), (GetScreenWidth() - messageSize) / 2, GetScreenHeight() - 50, 40, RED);
+            DrawTextEx(codeFont, messageNotFound.c_str(), { (GetScreenWidth() - messageSize) / 2.0f, (float)(GetScreenHeight() - 50) }, 40, 1, RED);
         }
     }
 }

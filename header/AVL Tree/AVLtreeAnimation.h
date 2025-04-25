@@ -5,6 +5,7 @@
 #include <set>
 #include <algorithm>
 #include "../../resource/tinyfiledialogs.h"
+#include "../Font.h"
 #include <locale>
 #include <codecvt>
 

@@ -64,7 +64,7 @@ int main() {
                 textX = SCREEN_WIDTH;
             }
 
-            DrawText("Welcome to Group 11's Data Visualizer!", (SCREEN_WIDTH - width1) / 2, 250, 60, DARKBLUE);
+            DrawText("Welcome to Group 11's Data Visualizer!",  (SCREEN_WIDTH - width1) / 2.0f, 250 , 60, DARKBLUE);
             DrawText("Press ENTER to continue...", (SCREEN_WIDTH - width2) / 2, 400, 40, sparkleColor);
             DrawText(footer, textX, SCREEN_HEIGHT - 35, 30, DARKBLUE);
 
