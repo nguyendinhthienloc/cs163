@@ -40,6 +40,7 @@ AVLTreeVisualizer::AVLTreeVisualizer() {
     operationValue = 0;
     pendingInsertValue = 0;
 	isRunAtOnce = false;
+    duplicateFound = false; // Initialize new flag
 }
 
 //button click logic
@@ -180,6 +181,8 @@ void AVLTreeVisualizer::handleInput() {
 //timing algorithms
 void AVLTreeVisualizer::updateAnimation(float deltaTime) {
     if (currentState == IDLE) {
+        codeState = -1; // No code highlighted when idle
+        duplicateFound = false; // Reset duplicate flag
         return;
     }
 
@@ -187,71 +190,126 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
 
     switch (currentState) {
     case TRAVERSING:
-        if (stateTimer >= 0.5f && pathIndex < currentPath.size()) {
-            pathIndex++;
-            stateTimer = 0.0f;
+        if (currentOperation == "insert") {
+            if (pathIndex < currentPath.size()) {
+                AVLNode* currentNode = currentPath[pathIndex];
+                if (stateTimer >= 0.5f) {
+                    // Check the comparison at the current node
+                    if (pendingInsertValue < currentNode->data) {
+                        codeState = 2; // "if value to be inserted < this key"
+                    }
+                    else if (pendingInsertValue > currentNode->data) {
+                        codeState = 4; // "else if value to be inserted > this key"
+                    }
+                    else {
+                        codeState = 6; // "else do nothing"
+                        duplicateFound = true;
+                    }
+                    pathIndex++;
+                    stateTimer = 0.0f;
+                }
+                // After incrementing pathIndex, set the traversal direction
+                if (pathIndex < currentPath.size()) {
+                    if (pendingInsertValue < currentNode->data) {
+                        codeState = 3; // "go left"
+                    }
+                    else if (pendingInsertValue > currentNode->data) {
+                        codeState = 5; // "go right"
+                    }
+                }
+                else if (!duplicateFound) {
+                    codeState = 0; // "if insertion point is found"
+                }
+            }
+            if (pathIndex >= currentPath.size()) {
+                if (currentOperation == "insert") {
+                    if (duplicateFound) {
+                        currentState = SHOWING_RESULT; // Skip insertion for duplicates
+                        codeState = 6; // Keep "else do nothing" highlighted
+                    }
+                    else {
+                        currentState = INSERTING;
+                        codeState = 1; // "create new vertex"
+                    }
+                }
+                else {
+                    currentState = SHOWING_RESULT;
+                    //codeState = -1; // No code highlighted
+                }
+                stateTimer = 0.0f;
+            }
         }
-        if (pathIndex >= currentPath.size()) {
-            if (currentOperation == "insert") {
-                currentState = INSERTING; 
+        else {
+            // Handle other operations (delete, search)
+            if (stateTimer >= 0.5f && pathIndex < currentPath.size()) {
+                pathIndex++;
+                stateTimer = 0.0f;
             }
-			else if (currentOperation == "delete") {
-				currentState = DELETING;
-			}
-			
-            else {
-                currentState = SHOWING_RESULT; 
+            if (pathIndex >= currentPath.size()) {
+                if (currentOperation == "delete") {
+                    currentState = DELETING;
+                }
+                else {
+                    currentState = SHOWING_RESULT;
+                }
+                //codeState = -1; // No code highlighted
+                stateTimer = 0.0f;
             }
-            stateTimer = 0.0f;
         }
         break;
 
     case INSERTING:
         if (stateTimer >= 0.5f) {
-            tree.insert(tree.root, pendingInsertValue); 
+            tree.insert(tree.root, pendingInsertValue);
             AVLTree treeReplica(tree);
             treeUndoState.push(treeReplica);
             while (!treeRedoState.empty()) {
-				treeRedoState.pop();
+                treeRedoState.pop();
             }
-            currentPath = tree.getInsertionPath(pendingInsertValue); 
-            pathIndex = currentPath.size(); 
+            currentPath = tree.getInsertionPath(pendingInsertValue);
+            pathIndex = currentPath.size();
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
             stateTimer = 0.0f;
+            //codeState = -1; // No code highlighted after insertion
+            duplicateFound = false; // Reset duplicate flag
         }
         break;
 
     case DELETING:
         if (stateTimer >= 0.5f) {
             AVLTree treeReplica(tree);
-            treeUndoState.push(treeReplica); 
+            treeUndoState.push(treeReplica);
             while (!treeRedoState.empty()) {
                 treeRedoState.pop();
             }
-            tree.remove(tree.root, operationValue); 
+            tree.remove(tree.root, operationValue);
             currentPath.clear();
             pathIndex = 0;
             currentState = SHOWING_RESULT;
             resultTimer = 0.0f;
             stateTimer = 0.0f;
+            //codeState = -1; // No code highlighted
         }
         break;
 
     case ROTATING:
         currentState = SHOWING_RESULT;
         resultTimer = 0.0f;
+        //codeState = -1; // No code highlighted
         break;
 
     case SHOWING_RESULT:
-        resultTimer += deltaTime;
+        //resultTimer += deltaTime;
         if (resultTimer >= 2.0f) {
             currentState = IDLE;
-            currentPath.clear();
+            /*currentPath.clear();*/
             rotationNodes.clear();
             pathIndex = 0;
             rotationIndex = 0;
             searchFound = false;
+            //codeState = -1; // No code highlighted
+            duplicateFound = false; // Reset duplicate flag
         }
         break;
     }
@@ -304,6 +362,64 @@ void AVLTreeVisualizer::drawButton(Rectangle rect, const char* text, Color color
     DrawTextEx(codeFont, text, { textX, textY }, 20, 1, WHITE);
 }
 
+bool isCodeOpen_ = false;
+
+bool DrawButton2_(Rectangle rect, const char* text, Color color, int shift, Font font, float FontSize) {
+    Vector2 mouse = GetMousePosition();
+    bool isHover = CheckCollisionPointRec(mouse, rect);
+
+    // Change button color on hover
+    DrawRectangleRec(rect, isHover ? Fade(color, 0.7f) : color);
+    //DrawRectangleLinesEx(rect, 2, BLACK);
+
+    float textX, textY;
+    int textSize = FontSize;
+
+    if (shift == 1) {
+        // Dynamically adjust text size based on button height
+       //textSize = rect.height * 0.1; // 50% of button height
+        Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, 1);
+
+        // Center the text within the button
+        textX = rect.x + (rect.width - textSizeMeasure.x) / 2;
+        textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
+    }
+    else {
+        //textSize = 17;// rect.height * 0.3;
+        Vector2 textSizeMeasure = MeasureTextEx(font, text, textSize, 1);
+
+        textX = rect.x + rect.width * 0.05;
+        textY = rect.y + (rect.height - textSizeMeasure.y) / 2;
+    }
+
+    DrawTextEx(font, text, { textX, textY }, textSize, 1.0f, WHITE);
+
+    return (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)); // Return true if clicked
+}
+
+int codeState = -1;
+
+void DrawCodeBox() {
+    int HEIGHT = GetScreenHeight(), WIDTH = GetScreenWidth();
+    int w = 50, h = 280;
+    Rectangle openBtn = { WIDTH - w, HEIGHT - h-10, w, h };
+
+    if(DrawButton2_(openBtn, "<", BLACK, 1, codeFont, 30)) isCodeOpen_=!isCodeOpen_;
+
+    if (isCodeOpen_) {
+        int width = 470, height = 40;
+        int startX = WIDTH - w - 10 - width;
+        int startY = openBtn.y;
+
+        const char* text[] = { "if insertion point is found", "  create new vertex", "if value to be inserted < this key", "  go left", "else if value to be inserted > this key", "  go right", "else do nothing" };
+        for (int i = 0; i < 7; i++) {
+            Rectangle rect = { startX, startY + height * i , width, height };
+
+            DrawButton2_(rect, text[i], (codeState==i)?GRAY:BLACK, 2, codeFont, 20);
+        }
+    }
+}
+
 //buttons and message are drawn here
 void AVLTreeVisualizer::draw() {
     std::set<AVLNode*> highlightNodes(currentPath.begin(), currentPath.begin() + pathIndex);
@@ -324,6 +440,7 @@ void AVLTreeVisualizer::draw() {
 	drawButton(nextButton, "Next", BlueButton);
     drawButton(stdViewButton, "Std View", BlueButton);
     drawButton(runAtOnceButton, "Run at Once", isRunAtOnce? GREEN : RED);
+    DrawCodeBox();
 
     if (tree.root) {
         drawTree(tree.root, GetScreenWidth() / 2 + dragOffset.x, 130 + dragOffset.y, highlightNodes);

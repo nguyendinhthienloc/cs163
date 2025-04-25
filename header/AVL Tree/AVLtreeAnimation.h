@@ -9,11 +9,13 @@
 #include <locale>
 #include <codecvt>
 
+extern int codeState;
+
 class AVLTreeVisualizer {
 public: 
     AVLTree tree;
     std::string inputText;
-    bool inputActive, isDragging;
+    bool inputActive, isDragging, duplicateFound;;
     Vector2 dragOffset;
     Vector2 dragStartPos;
     Rectangle handleSpace;
