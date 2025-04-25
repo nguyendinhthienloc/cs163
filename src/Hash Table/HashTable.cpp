@@ -404,7 +404,8 @@ void HashTable::DrawCalculationText(float screenWidth, float screenHeight) {
         float textWidth = MeasureText(calculationText.c_str(), screenHeight / 25);
         float messageX = (screenWidth - textWidth) / 2;
         float messageY = screenHeight - screenHeight / 10 - 30;
-        DrawText(calculationText.c_str(), messageX, messageY, screenHeight / 25, GREEN);
+        //DrawText(calculationText.c_str(), messageX, messageY, screenHeight / 25, GREEN);
+        DrawTextEx(codeFont, calculationText.c_str(), { messageX, messageY }, screenHeight / 25, 1, BLACK);
 
         highlightTimer -= GetFrameTime();
         if (highlightTimer <= 0.0f) {
@@ -419,7 +420,8 @@ void HashTable::DrawSearchMessage(float screenWidth, float screenHeight) {
     if (!searchMessage.empty()) {
         float messageX = screenWidth / 2 - MeasureText(searchMessage.c_str(), screenHeight / 25) / 2;
         float messageY = screenHeight - screenHeight / 10;
-        DrawText(searchMessage.c_str(), messageX, messageY, screenHeight / 25, BLACK);
+        //DrawText(searchMessage.c_str(), messageX, messageY, screenHeight / 25, BLACK);
+        DrawTextEx(codeFont, searchMessage.c_str(), { messageX, messageY }, screenHeight / 25, 1, BLACK);
     }
 }
 

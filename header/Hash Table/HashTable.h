@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"  // Using raylib.h directly
+#include "../Font.h"
 #include <vector>
 #include <string>
 #include <stack>

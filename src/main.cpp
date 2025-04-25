@@ -24,6 +24,7 @@
 bool showGreeting = true;
 float fadeAlpha = 1.0f;
 bool isFullScreen = false;
+Font codeFont;
 
 void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScreen, InputState& inputState);
 

@@ -1,12 +1,12 @@
 #pragma once
 #include "raylib.h"
 #include "InputBox.h"
+#include "../Font.h"
 
 class Graph;
 
 extern Graph G;
 extern Texture2D tickTexture;
-extern Font codeFont;
 extern bool atOnce;
 
 bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font font, float FontSize);

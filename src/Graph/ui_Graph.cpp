@@ -14,7 +14,6 @@
 Graph G;
 bool isOpen = true;
 bool isCodeOpen = false;
-Font codeFont;
 Texture2D tickTexture;
 Color SOFTWHITE = { 230, 230, 230, 255 };
 std::string chosenAlgo = "";

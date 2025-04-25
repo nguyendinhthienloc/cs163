@@ -7,6 +7,7 @@ extern bool open;
 #include "raylib.h"
 #include "../../header/Hash Table/HashTable.h"
 #include "../../resource/tinyfiledialogs.h"
+#include "../Font.h"
 #include <string>
 #include <fstream>
 #include <locale>   

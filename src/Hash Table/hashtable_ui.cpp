@@ -14,7 +14,7 @@ bool DrawButton(Rectangle rect, const char* text, Color color) {
 
     // Dynamically adjust text size based on button height
     float textSize = rect.height * 0.5f; // 50% of button height
-    Font font = GetFontDefault(); // Use default font for consistency
+    Font font = codeFont; // Use default font for consistency
     float spacing = 1.0f; // Font spacing for measurement
 
     // Measure text size
@@ -54,10 +54,11 @@ void DrawInputBox(Rectangle inputBox) {
     DrawRectangleRec(inputBox, boxColor);
     DrawRectangleLinesEx(inputBox, 2, borderColor);
 
-    Vector2 textPos = MeasureTextEx(GetFontDefault(), textInput, 40, 1);
+    Vector2 textPos = MeasureTextEx(codeFont, textInput, 40, 1);
     float padding = inputBox.x / 100;
 
-    DrawText(textInput, inputBox.x+padding, inputBox.y+(inputBox.height - textPos.y) / 2.0, 40, BLACK);
+    //DrawText(textInput, inputBox.x+padding, inputBox.y+(inputBox.height - textPos.y) / 2.0, 40, BLACK);
+    DrawTextEx(codeFont, textInput, { inputBox.x + padding, (float)(inputBox.y + (inputBox.height - textPos.y) / 2.0) }, 40, 1, BLACK);
 }
 
 // Function to handle text input
@@ -280,9 +281,9 @@ void DrawCodeRun() {
     Rectangle openBtn = { WIDTH - w, HEIGHT - h - 100, w, h };
 
     if (open) {
-        if (DrawButton2(openBtn, ">", BLACK, 1, GetFontDefault(), 30)) open = false;
+        if (DrawButton2(openBtn, ">", BLACK, 1, codeFont, 30)) open = false;
         if (open) {
-            int width = 360, height = 40;
+            int width = 440, height = 40;
             int startX = WIDTH - w - 20-width;
             int startY = openBtn.y;
             const char* text[] = { "i = key % HT.length", "while (HT[i] && HT[i] -> val != key)", "   HT[i] = HT[i] -> next", "if key already exists", "", "else if key does not exist" , ""};
@@ -290,43 +291,43 @@ void DrawCodeRun() {
             const char* case2[] = { "   return not found", "   insert key to the head of list", "   do nothing" };
             for (int i = 0; i < 7; i++) {
                 Rectangle rect = { startX, startY +height*i , width, height };
-                DrawButton2(rect, "", BLACK, 2, GetFontDefault(), 20);
+                DrawButton2(rect, "", BLACK, 2, codeFont, 20);
 
                 if (i == 4) {
                     if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
-                        DrawButton2(rect, case1[0], (state!=4)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case1[0], (state!=4)?BLACK:GRAY, 2, codeFont, 20);
                     }
                     if (ht.GetPendingOperation() == PendingOperation::INSERT ) {
-                        DrawButton2(rect, case1[1], (state!=4)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case1[1], (state!=4)?BLACK:GRAY, 2, codeFont, 20);
                     }
                     else if(ht.GetPendingOperation() == PendingOperation::DELETE) {
-                        DrawButton2(rect, case1[2], (state != 4) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case1[2], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
                     }
                 }
                 else if (i == 6) {
                     if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
-                        DrawButton2(rect, case2[0], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case2[0], (state!=6)?BLACK:GRAY, 2, codeFont, 20);
                     }
                     if ((ht.GetPendingOperation() == PendingOperation::INSERT) ){
-                        DrawButton2(rect, case2[1], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case2[1], (state!=6)?BLACK:GRAY, 2, codeFont, 20);
                     }
                     else if ((ht.GetPendingOperation() == PendingOperation::DELETE)) {
-                        DrawButton2(rect, case2[2], (state!=6)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                        DrawButton2(rect, case2[2], (state!=6)?BLACK:GRAY, 2, codeFont, 20);
                     }
                 }
                 else if (i == 5) {
-                    DrawButton2(rect, text[i], (state != 6) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+                    DrawButton2(rect, text[i], (state != 6) ? BLACK : GRAY, 2, codeFont, 20);
                 }
                 else if (i == 3) {
-                    DrawButton2(rect, text[i], (state != 4) ? BLACK : GRAY, 2, GetFontDefault(), 20);
+                    DrawButton2(rect, text[i], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
 
                 }
-                else DrawButton2(rect, text[i], (state!=i)?BLACK:GRAY, 2, GetFontDefault(), 20);
+                else DrawButton2(rect, text[i], (state!=i)?BLACK:GRAY, 2, codeFont, 20);
             }
         }
     }
     else {
-        if (DrawButton2(openBtn, "<", BLACK, 1, GetFontDefault(), 20)) open = true;
+        if (DrawButton2(openBtn, "<", BLACK, 1, codeFont, 20)) open = true;
     }
 }
 
