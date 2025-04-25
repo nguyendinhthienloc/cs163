@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 
-enum class PendingOperation { NONE, INSERT, DELETE, SEARCH };
+enum class PendingOperation { NONE, INSERT, DELETE, SEARCH, UPDATE, CHECK_NEW_VALUE };
 extern int state;
 
 class HashTable {
@@ -45,6 +45,8 @@ public:
     void Undo();
     void Redo();
     void cleanUp();
+    void UpdateValueAnimation(int oldVal, int newVal);
+    void UpdateValueInstantly(int oldVal, int newVal);
 
 private:
     static const int HT_SIZE = 13;
@@ -93,4 +95,6 @@ private:
     float searchTimer = 0.0f;
     Node* foundNode = nullptr;
     int checkWhileCondition = 0;
+    Node* oldValueNode=nullptr;
+    int newValueForUpdate = -1;
 };

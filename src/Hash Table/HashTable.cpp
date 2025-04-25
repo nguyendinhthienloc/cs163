@@ -240,6 +240,79 @@ void HashTable::StartSearch(int val, bool isInsert) {
     checkWhileCondition = 0;
 }
 
+void HashTable::UpdateValueAnimation(int oldVal, int newVal) {
+    ResetColors();
+    undoStack.push(CopyTable());
+    while (!redoStack.empty()) redoStack.pop();
+
+    int index = hashFunction(oldVal);
+    if (hashFunction(oldVal) != hashFunction(newVal)) {
+        searchMessage = TextFormat("%d and %d have different hash values!", oldVal, newVal);
+        state = 6;
+        return;
+    }
+
+    // Start first search: check if new value exists
+    searching = true;
+    searchValue = newVal; // Check new value first
+    pendingValue = oldVal; // Store old value for second search
+    newValueForUpdate = newVal;
+    visitedNode = table[index];
+    highlightSearch = index;
+    searchTimer = GetTime();
+    searchMessage = TextFormat("Checking if %d exists: %d %% %d = %d", newVal, newVal, HT_SIZE, index);
+    state = 0;
+    checkWhileCondition = 0;
+    pendingOp = PendingOperation::CHECK_NEW_VALUE; // New operation for first search
+}
+
+void HashTable::UpdateValueInstantly(int oldVal, int newVal) {
+    ResetColors();
+    undoStack.push(CopyTable());
+    while (!redoStack.empty()) redoStack.pop();
+
+    int index = hashFunction(oldVal);
+    if (hashFunction(oldVal) != hashFunction(newVal)) {
+        searchMessage = TextFormat("%d and %d have different hash values!", oldVal, newVal);
+        state = -1;
+        return;
+    }
+
+    pendingOp = PendingOperation::CHECK_NEW_VALUE;
+    // Check for new value first
+    Node* curr = table[index];
+    while (curr) {
+        if (curr->val == newVal) {
+            foundNode = curr;
+            searchMessage = TextFormat("New value %d already exists!", newVal);
+            highlightSearch = index;
+            state = 4;
+            return;
+        }
+        curr = curr->next;
+    }
+
+    // New value not found, check for old value
+    pendingOp = PendingOperation::UPDATE;
+    curr = table[index];
+    while (curr) {
+        if (curr->val == oldVal) {
+            curr->val = newVal;
+            foundNode = curr;
+            searchMessage = TextFormat("Updated %d to %d successfully.", oldVal, newVal);
+            highlightSearch = index;
+            highlightTimer = highlightDuration; // Highlight updated node
+            state = 4;
+            return;
+        }
+        curr = curr->next;
+    }
+
+    // Old value not found
+    searchMessage = TextFormat("Value %d not found!", oldVal);
+    state = 6;
+}
+
 void HashTable::UpdateSearchAnimation() {
     if (searching && GetTime() - searchTimer >= 0.5) {
         if (checkWhileCondition == 0) {
@@ -253,10 +326,8 @@ void HashTable::UpdateSearchAnimation() {
             }
             else if (visitedNode->val == searchValue) {
                 foundNode = visitedNode;
-                state = 4; //    Found
-                if (pendingOp != PendingOperation::DELETE) {
-                    searchMessage = TextFormat("Value %d found!", searchValue);
-                }
+                state = 4; // Found
+                searchMessage = TextFormat("Value %d found!", searchValue);
                 visitedNode = nullptr;
                 searching = false;
                 highlightSearch = -1;
@@ -273,20 +344,62 @@ void HashTable::UpdateSearchAnimation() {
         }
         else if (checkWhileCondition == 2) {
             if (visitedNode) {
-                //state = 3; // Highlight "if (HT[i] != nullptr)"
                 checkWhileCondition = 0; // Next cycle: while condition
             }
             else {
-                state = 6; //  not found
+                state = 6; // Not found
                 searchMessage = TextFormat("Value %d not found!", searchValue);
                 searching = false;
                 highlightSearch = -1;
                 checkWhileCondition = 0;
             }
         }
+
         searchTimer = GetTime();
         if (!searching) {
-            if (pendingOp == PendingOperation::INSERT) {
+            if (pendingOp == PendingOperation::CHECK_NEW_VALUE) {
+                if (state == 4) {
+                    // New value found, stop
+                    searchMessage = TextFormat(" % d already exists!", searchValue);
+                    //pendingOp = PendingOperation::NONE;
+                    pendingValue = -1;
+                    newValueForUpdate = -1;
+                }
+                else {
+                    // New value not found, start second search for old value
+                    int oldVal = pendingValue;
+                    int index = hashFunction(oldVal);
+                    searching = true;
+                    searchValue = oldVal;
+                    pendingValue = searchValue; // Will be updated to new value later
+                    visitedNode = table[index];
+                    highlightSearch = index;
+                    searchTimer = GetTime();
+                    searchMessage = TextFormat("Checking if %d exists: %d %% %d = %d", oldVal, oldVal, HT_SIZE, index);
+                    state = 0;
+                    checkWhileCondition = 0;
+                    pendingOp = PendingOperation::UPDATE;
+                }
+            }
+            else if (pendingOp == PendingOperation::UPDATE) {
+                if (state == 4) {
+                    // Old value found, update to new value
+                    foundNode->val = newValueForUpdate; // Update will be handled below
+                    searchMessage = TextFormat("Updated %d to %d successfully.", pendingValue, newValueForUpdate);
+                    highlightTimer = highlightDuration;
+                    //pendingOp = PendingOperation::NONE;
+                    pendingValue = -1;
+                    newValueForUpdate = -1;
+                }
+                else {
+                    // Old value not found
+                    searchMessage = TextFormat("Value %d not found!", searchValue);
+                    pendingOp = PendingOperation::NONE;
+                    pendingValue = -1;
+                    newValueForUpdate = -1;
+                }
+            }
+            else if (pendingOp == PendingOperation::INSERT) {
                 if (!WasValueFound()) {
                     state = 6;
                     PerformInsertion(pendingValue, false);
@@ -310,8 +423,10 @@ void HashTable::UpdateSearchAnimation() {
                     searchMessage = TextFormat("%d does not exist!", pendingValue);
                 }
             }
-            //pendingOp = PendingOperation::NONE;
-            pendingValue = -1;
+            if (pendingOp != PendingOperation::UPDATE && pendingOp != PendingOperation::CHECK_NEW_VALUE) {
+                //pendingOp = PendingOperation::NONE;
+                pendingValue = -1;
+            }
         }
     }
 }
