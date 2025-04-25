@@ -432,13 +432,13 @@ void DrawCodeTable() {
         const char* forloop = "for ( i = 0; i < edgeList.size; i++)";
         DrawButton(forLoop, forloop, (stateOfCode == 2) ? BLACK : BLUE, 2, codeFont, 17);
 
-        const char* conditionText = "   if adding e = edgeList[i] does not form a cycle";
+        const char* conditionText = "  if adding e = edgeList[i] does not form a cycle";
         DrawButton(condition, conditionText, (stateOfCode == 3) ? BLACK : BLUE, 2, codeFont, 17);
 
-        const char* addText = "       add e to T";
+        const char* addText = "    add e to T";
         DrawButton(add, addText, (stateOfCode == 4) ? BLACK : BLUE, 2, codeFont, 17);
 
-        const char* skipText = "   else ignore e";
+        const char* skipText = "  else ignore e";
         DrawButton(skip, skipText, (stateOfCode == 5) ? BLACK : BLUE, 2, codeFont, 17);
 
         const char* doneText = "MST = T";

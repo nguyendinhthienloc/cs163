@@ -42,7 +42,7 @@ void Graph::EdgeToMatrix() {
 
 // Function to apply forces using the spring algorithm
 void Graph::ApplySpringForces() {
-    Vector2 center = { WIDTH / 2.0f, HEIGHT / 2.0f };
+    Vector2 center = { WIDTH / 2.0f, HEIGHT / 9.0f*0.5f };
 
     // Repulsion force (Coulomb's Law)
     for (size_t i = 0; i < nodes.size(); i++) {
@@ -120,7 +120,7 @@ void Graph::RandomGraph() {
     clearGraph();
     std::random_device rd;  // Seed with a hardware random device
     std::mt19937 gen(rd()); // Mersenne Twister 19937 generator
-    std::uniform_int_distribution<int> dist(3, 15); // Range [0, 19]
+    std::uniform_int_distribution<int> dist(3, 12); // Range [0, 19]
     std::uniform_int_distribution<int> weightDist(1, 99);
 
     V = dist(gen);

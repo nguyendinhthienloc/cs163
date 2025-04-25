@@ -25,7 +25,7 @@ bool DrawButton(Rectangle rect, const char* text, Color color) {
     float textY = rect.y + (rect.height - textSizeMeasure.y) / 2.0f;
 
     // Draw centered text
-    DrawTextEx(font, text, { textX, textY }, textSize, spacing, BLACK);
+    DrawTextEx(font, text, {textX, textY}, textSize, spacing, BLACK);
 
     // Return true if the button is clicked
     return isHover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
