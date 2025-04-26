@@ -1,10 +1,14 @@
 #pragma once
 #include "raylib.h"  // Using raylib.h directly
+#include "../Font.h"
 #include <vector>
 #include <string>
 #include <stack>
 #include <cstdlib>
 #include <ctime>
+
+enum class PendingOperation { NONE, INSERT, DELETE, SEARCH, UPDATE, CHECK_NEW_VALUE };
+extern int state;
 
 class HashTable {
 public:
@@ -18,7 +22,6 @@ public:
     bool WasValueFound() const { return foundNode != nullptr; }
     void ResetColors();
 
-    enum class PendingOperation { NONE, INSERT, DELETE };
     PendingOperation GetPendingOperation() const { return pendingOp; }
     void SetPendingOperation(PendingOperation op, int val) {
         pendingOp = op;
@@ -26,10 +29,14 @@ public:
     }
     int GetPendingValue() const { return pendingValue; }
 
+    int GetNodeCount(int index);
+    void InsertInstantly(int val);
     void Insert(int val, bool isRandom);
     void PerformInsertion(int val, bool isRandom);
+    void DeleteInstantly(int val);
     void Delete(int val);
     void UpdateDeletionAnimation();
+    void StartInstantSearch(int val);
     void StartSearch(int val, bool isInsert);
     void UpdateSearchAnimation();
     void RandomInsert(int maxElements, int minValue, int maxValue);
@@ -38,6 +45,8 @@ public:
     void Undo();
     void Redo();
     void cleanUp();
+    void UpdateValueAnimation(int oldVal, int newVal);
+    void UpdateValueInstantly(int oldVal, int newVal);
 
 private:
     static const int HT_SIZE = 13;
@@ -85,4 +94,7 @@ private:
     int searchValue = -1;
     float searchTimer = 0.0f;
     Node* foundNode = nullptr;
+    int checkWhileCondition = 0;
+    Node* oldValueNode=nullptr;
+    int newValueForUpdate = -1;
 };

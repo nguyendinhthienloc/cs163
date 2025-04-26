@@ -42,7 +42,7 @@ void Graph::EdgeToMatrix() {
 
 // Function to apply forces using the spring algorithm
 void Graph::ApplySpringForces() {
-    Vector2 center = { WIDTH / 2.0f, HEIGHT / 2.0f };
+    Vector2 center = { WIDTH / 2.0f, HEIGHT / 9.0f*0.5f };
 
     // Repulsion force (Coulomb's Law)
     for (size_t i = 0; i < nodes.size(); i++) {
@@ -120,7 +120,7 @@ void Graph::RandomGraph() {
     clearGraph();
     std::random_device rd;  // Seed with a hardware random device
     std::mt19937 gen(rd()); // Mersenne Twister 19937 generator
-    std::uniform_int_distribution<int> dist(3, 15); // Range [0, 19]
+    std::uniform_int_distribution<int> dist(3, 12); // Range [0, 19]
     std::uniform_int_distribution<int> weightDist(1, 99);
 
     V = dist(gen);
@@ -144,6 +144,8 @@ void Graph::RandomGraph() {
     frameCounter = 0;
 }
 
+Color mutedOrange = { 230, 140, 90, 255 };
+
 void Graph::Draw() const {
     
 
@@ -154,7 +156,7 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if ((i == kruskalStep && !mstFinished && stateOfCode >= 2 && stateOfCode <= 5) || edge.inMST) {
-                edgeColor = BLUE;
+                edgeColor = mutedOrange;
 			}
 		
             else if (i < kruskalStep && !edge.inMST) {
@@ -219,14 +221,14 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if (isInCurrentEdge) {
-                fillColor = BLUE;
+                fillColor = mutedOrange;
                 numberColor = WHITE;
-                outlineColor = BLUE;
+                outlineColor = mutedOrange;
             }
             else if (hasBeenConsidered) {
                 fillColor = WHITE;
-                numberColor = BLUE;
-                outlineColor = BLUE;
+                numberColor = mutedOrange;
+                outlineColor = mutedOrange;
             }
         }
 
@@ -396,6 +398,48 @@ void Graph::UpdateKruskalStep() {
 
     frameCounter = 0;
     kruskalStep++;
+}
+
+void Graph::RunKruskal() {
+    if (nodes.empty()) return;
+    if (countComponents() > 1) {
+        message = "The graph is not connected";
+        return;
+    }
+
+    // Clear previous MST state
+    for (auto& edge : edges) edge.inMST = false;
+    for (auto& node : nodes) node.isConsidered = false;
+
+    // Sort edges by weight
+    std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
+        return a.w < b.w;
+        });
+
+    // DSU setup
+    DSU dsu;
+    dsu.Initialize(nodes.size());
+
+    int totalWeight = 0;
+
+    for (auto& edge : edges) {
+        int rootA = dsu.find_set(edge.a);
+        int rootB = dsu.find_set(edge.b);
+
+        if (rootA != rootB) {
+            dsu.union_sets(rootA, rootB);
+            edge.inMST = true;
+            nodes[edge.a].isConsidered = true;
+            nodes[edge.b].isConsidered = true;
+            totalWeight += edge.w;
+        }
+    }
+
+    kruskalStep = edges.size();
+    message = "Total weight = " + std::to_string(totalWeight);
+    state = MST;
+    mstFinished = true;
+    stateOfCode = 6;
 }
 
 void Graph::resetGraph() {

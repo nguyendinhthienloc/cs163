@@ -24,6 +24,7 @@
 bool showGreeting = true;
 float fadeAlpha = 1.0f;
 bool isFullScreen = false;
+Font codeFont;
 
 void DrawUI(LinkedList& list, AVLTreeVisualizer& AVLvisualizer, bool& isFullScreen, InputState& inputState);
 
@@ -38,6 +39,7 @@ int main() {
     AVLTreeVisualizer AVLvisualizer;
     InputState inputState = { {0}, 0, false };
     codeFont = LoadFont("Courier-Bold.ttf");
+    tickTexture = LoadTexture("tick.png");
 	float time = 0.0f;
 
     while (!WindowShouldClose()) {
@@ -62,7 +64,7 @@ int main() {
                 textX = SCREEN_WIDTH;
             }
 
-            DrawText("Welcome to Group 11's Data Visualizer!", (SCREEN_WIDTH - width1) / 2, 250, 60, DARKBLUE);
+            DrawText("Welcome to Group 11's Data Visualizer!",  (SCREEN_WIDTH - width1) / 2.0f, 250 , 60, DARKBLUE);
             DrawText("Press ENTER to continue...", (SCREEN_WIDTH - width2) / 2, 400, 40, sparkleColor);
             DrawText(footer, textX, SCREEN_HEIGHT - 35, 30, DARKBLUE);
 
@@ -86,6 +88,7 @@ int main() {
         EndDrawing();
     }
 
+    UnloadTexture(tickTexture);
     CloseWindow();
     return 0;
 }

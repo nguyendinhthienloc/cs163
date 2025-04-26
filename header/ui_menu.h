@@ -2,6 +2,7 @@
 #define UI_MENU_H
 
 #include "raylib.h"
+#include "Font.h"
 #include <string>
 
 // Enum for managing different screens
