@@ -53,59 +53,49 @@ void LinkedList::UpdateAnimation(float deltaTime) {
         foundNode = animNode;
         if (stepMode) stepPaused = true;
     } else if (animState == AnimState::RELINKING && animNode) {
-        // Handle both insertion and deletion relinking
+        // Handle insertion and deletion relinking
         if (isUndoing && undoOperationType == Operation::Type::DELETE) {
             SetPseudoCode("Undo Delete:\nStep 3: newNode->next = prev->next\nprev->next = newNode");
-        } else if (undoOperationType == Operation::Type::INSERT_HEAD || 
-                   undoOperationType == Operation::Type::INSERT_TAIL || 
-                   undoOperationType == Operation::Type::INSERT_AFTER) {
+        } else if (isUndoing && (undoOperationType == Operation::Type::INSERT_HEAD ||
+                                 undoOperationType == Operation::Type::INSERT_TAIL ||
+                                 undoOperationType == Operation::Type::INSERT_AFTER)) {
             SetPseudoCode("Undo Insert:\nStep 3: Disconnect inserted node");
-        } else if (animPrevNode) {
-            SetPseudoCode("Delete:\nprev->next = current->next");
+        } else if (undoOperationType == Operation::Type::DELETE && !isUndoing) {
+            SetPseudoCode(animPrevNode ? "Delete:\nprev->next = current->next" : "Delete:\nhead = current->next");
         } else {
-            SetPseudoCode("Delete:\nhead = current->next");
+            // Regular insertion (InsertHead, InsertTail, InsertAfter)
+            SetPseudoCode("Insert:\nStep 3: Link newNode to list");
         }
 
         if (animProgress >= 1.0f) {
-            if (!isUndoing) {
-                // Handle deletion
-                if (undoOperationType == Operation::Type::DELETE || animState == AnimState::SEARCHING_FOR_DELETE) {
-                    if (animPrevNode) {
-                        animPrevNode->next = animNode->next;
-                    } else {
-                        head = animNode->next;
-                    }
-
-                    auto it = std::find(nodes.begin(), nodes.end(), animNode);
-                    if (it != nodes.end()) {
-                        nodes.erase(it);
-                    }
-
-                    animNextNode = animNode->next; // For animation continuity
-                    animState = AnimState::DELETING;
-                    animProgress = 0.0f;
+            if (undoOperationType == Operation::Type::DELETE && !isUndoing) {
+                // Deletion logic
+                if (animPrevNode) {
+                    animPrevNode->next = animNode->next;
                 } else {
-                    // Complete insertion (InsertHead, InsertTail, InsertAfter)
-                    animState = AnimState::IDLE;
-                    animProgress = 0.0f;
-                    animNode->alpha = 1.0f;
-                    animNode = nullptr;
-                    animPrevNode = nullptr;
-                    animNextNode = nullptr;
-                    currentPseudoCode = "";
-                    RecalculatePositions();
+                    head = animNode->next;
                 }
+
+                auto it = std::find(nodes.begin(), nodes.end(), animNode);
+                if (it != nodes.end()) {
+                    nodes.erase(it);
+                }
+
+                animNextNode = animNode->next; // For animation continuity
+                animState = AnimState::DELETING;
+                animProgress = 0.0f;
             } else {
-                // Handle undo operations
+                // Insertion or undo completion
                 animState = AnimState::IDLE;
+                animProgress = 0.0f;
                 animNode->alpha = 1.0f;
                 animNode = nullptr;
                 animPrevNode = nullptr;
                 animNextNode = nullptr;
-                RecalculatePositions();
-                animProgress = 0.0f;
                 currentPseudoCode = "";
                 isUndoing = false;
+                undoOperationType = Operation::Type::INSERT; // Reset to default
+                RecalculatePositions();
             }
 
             if (stepMode) stepPaused = true;

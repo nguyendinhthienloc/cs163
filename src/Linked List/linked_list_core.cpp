@@ -36,9 +36,13 @@ void LinkedList::InsertHead(int value) {
     animState = AnimState::GENERATING;
     animProgress = 0.0f;
     animNode = newNode;
+    animPrevNode = nullptr;
+    animNextNode = head ? head->next : nullptr;
     animStartPos = { initialX, 550 };
     newNode->position = animStartPos;
     newNode->targetPosition = { 50, 450 };
+    isUndoing = false;
+    undoOperationType = Operation::Type::INSERT_HEAD;
 
     history.push_back(Operation(Operation::Type::INSERT_HEAD, value));
 }
@@ -47,28 +51,33 @@ void LinkedList::InsertTail(int value) {
     if (GetSize() >= 1000) return;
     
     Node* newNode = new Node(value, { 0, 0 });
+    Node* prev = nullptr;
     if (!head) {
         head = newNode;
         cur = head;
-        nodes.push_back(newNode);
     } else {
         Node* temp = head;
-        while (temp->next) temp = temp->next;
+        while (temp->next) {
+            prev = temp;
+            temp = temp->next;
+        }
         temp->next = newNode;
         cur = temp;
-        animPrevNode = temp;
-        nodes.push_back(newNode);
     }
+    nodes.push_back(newNode);
     
     RecalculatePositions();
     float startX = nodes.size() == 1 ? 50 : 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing;
     animState = AnimState::GENERATING;
     animProgress = 0.0f;
-    animNodeReturns:
     animNode = newNode;
+    animPrevNode = prev;
+    animNextNode = nullptr;
     animStartPos = { startX, 550 };
     newNode->position = animStartPos;
     newNode->targetPosition = { 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing, 450 };
+    isUndoing = false;
+    undoOperationType = Operation::Type::INSERT_TAIL;
 
     history.push_back(Operation(Operation::Type::INSERT_TAIL, value));
 }
@@ -98,6 +107,8 @@ void LinkedList::InsertAfter(Node* target, int value) {
     animStartPos = { adjustedTargetX, 550 };
     newNode->position = animStartPos;
     newNode->targetPosition = { target->targetPosition.x + nodeSpacing, 450 };
+    isUndoing = false;
+    undoOperationType = Operation::Type::INSERT_AFTER;
 
     history.push_back(Operation(Operation::Type::INSERT_AFTER, value, newNode->position, target));
 }
@@ -162,6 +173,8 @@ void LinkedList::Delete(int value) {
     animPrevNode = prev;
     animStartPos = temp->position;
     cur = temp;
+    isUndoing = false;
+    undoOperationType = Operation::Type::DELETE;
 
     history.push_back(Operation(Operation::Type::DELETE, value, temp->position, prev));
 }
@@ -176,6 +189,8 @@ bool LinkedList::Search(int value) {
     animProgress = 0.0f;
     animNode = new Node(value, {0, 0});
     searchAttempted = true;
+    isUndoing = false;
+    undoOperationType = Operation::Type::INSERT;
 
     return true;
 }
@@ -270,13 +285,15 @@ void LinkedList::Undo() {
 void LinkedList::ResetAnimationState() {
     animState = AnimState::IDLE;
     animProgress = 0.0f;
-    if (animNode) {
+    if (animNode && animState != AnimState::GENERATING && animState != AnimState::MOVING && 
+        animState != AnimState::RELINKING && animState != AnimState::DELETING && 
+        animState != AnimState::SEARCHING_FOR_DELETE) {
         auto it = std::find(nodes.begin(), nodes.end(), animNode);
         if (it == nodes.end()) {
             delete animNode;
         }
-        animNode = nullptr;
     }
+    animNode = nullptr;
     animPrevNode = nullptr;
     animNextNode = nullptr;
     cur = nullptr;
@@ -284,6 +301,7 @@ void LinkedList::ResetAnimationState() {
     currentPseudoCode = "";
     stepPaused = false;
     isUndoing = false;
+    undoOperationType = Operation::Type::INSERT;
 }
 
 Node* LinkedList::GetHead() {
