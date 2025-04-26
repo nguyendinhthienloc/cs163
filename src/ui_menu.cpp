@@ -14,13 +14,13 @@ bool DrawButton(Rectangle rect, const char* text, Color color, bool enabled) {
     bool isHover = enabled && CheckCollisionPointRec(mouse, rect);
     if (isHover) color = Fade(color, 0.8f);
 
-    Vector2 textSize = MeasureTextEx(GetFontDefault(), text, 20.0f, 1.0f);
+    Vector2 textSize = MeasureTextEx(codeFont, text, 20.0f, 1.0f);
     float buttonWidth = textSize.x + 40;
     rect.width = buttonWidth;
 
     DrawRectangleRounded(rect, 0.3f, 5.0f, color);
     DrawRectangleRoundedLines(rect, 0.3f, 5.0f, BLACK);
-    DrawText(text, (int)(rect.x + 10), (int)(rect.y + 10), 20, WHITE);
+    DrawTextEx(codeFont, text, { (float)(rect.x + 10), (float)(rect.y + 10) }, 20, 1, WHITE);
 
     static double lastClickTime = 0;
     double currentTime = GetTime();

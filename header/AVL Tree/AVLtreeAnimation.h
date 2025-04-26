@@ -5,14 +5,17 @@
 #include <set>
 #include <algorithm>
 #include "../../resource/tinyfiledialogs.h"
+#include "../Font.h"
 #include <locale>
 #include <codecvt>
+
+extern int codeState;
 
 class AVLTreeVisualizer {
 public: 
     AVLTree tree;
     std::string inputText;
-    bool inputActive, isDragging;
+    bool inputActive, isDragging, duplicateFound;;
     Vector2 dragOffset;
     Vector2 dragStartPos;
     Rectangle handleSpace;
@@ -26,8 +29,9 @@ public:
     Rectangle previousButton;
     Rectangle nextButton;
 	Rectangle stdViewButton;
+	Rectangle runAtOnceButton;
 
-    enum AnimationState { IDLE, TRAVERSING, INSERTING, ROTATING, SHOWING_RESULT };
+    enum AnimationState { IDLE, TRAVERSING, INSERTING, DELETING, ROTATING, SHOWING_RESULT };
     AnimationState currentState;
     std::string currentOperation; // "insert", "delete", "search"
     std::vector<AVLNode*> currentPath;
@@ -39,6 +43,7 @@ public:
     float resultTimer;
     int operationValue;
     int pendingInsertValue;
+    bool isRunAtOnce;
 
     
 
@@ -48,6 +53,7 @@ public:
     void draw();
     void drawButton(Rectangle rect, const char* text, Color color);
     void drawTree(AVLNode* node, float x, float y, const std::set<AVLNode*>& highlight);
+    void DrawCodeBox();
     void animateInsert(int value);
     void animateDelete(int value);
     void animateSearch(int value);

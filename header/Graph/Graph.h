@@ -19,9 +19,9 @@
 #define REPULSION_STRENGTH 5000
 #define DAMPING 0.95f
 #define MARGIN 80 
-#define CENTERING_FORCE 0.0005f
+#define CENTERING_FORCE 0.00005f
 #define TOP_MARGIN 100
-#define BOTTOM_MARGIN 150
+#define BOTTOM_MARGIN 400
 #define MIN_DISTANCE 30.0f 
 #define LEFT_MARGIN 100
 #define RIGHT_MARGIN 100
@@ -97,6 +97,7 @@ public:
     // Kruskal's methods
     void StartKruskalAnimation();
     void UpdateKruskalStep();
+    void RunKruskal();
     bool isMSTFinished() const { return mstFinished; }
 
     void loadFromFile(std::wifstream& fin, int choice);

@@ -1,11 +1,13 @@
 #pragma once
 #include "raylib.h"
 #include "InputBox.h"
+#include "../Font.h"
 
 class Graph;
 
 extern Graph G;
-extern Font codeFont;
+extern Texture2D tickTexture;
+extern bool atOnce;
 
 bool DrawButton(Rectangle rect, const char* text, Color color, int shift, Font font, float FontSize);
 void DefineButtons(Rectangle& randomBtn, Rectangle& LoadFileBtn, Rectangle& mstBtn, Rectangle& openMenuBtn, Rectangle& clearBtn, Rectangle& inputBtn, Rectangle& loadMatrix, Rectangle& loadEdge);
@@ -29,3 +31,4 @@ void HandleChoosingButtons();
 void DrawEdgeListHelpBox();
 void DrawMatrixHelpBox();
 void DrawGraphProgram();
+void DrawRunAtOnceBtn();
