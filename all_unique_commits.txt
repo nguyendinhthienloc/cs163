@@ -1,0 +1,210 @@
+commit ed8ff0a5e2433c5c9dc3c7390c3100c20de20492
+ed8ff0a | nguyendinhthienloc | 2025-04-26 | index on master: 2091835 Merge branch 'master' of https://github.com/nguyendinhthienloc/cs163
+commit 0f01b8625e8060903e085ac8eef5c1a9ebdfe48f
+0f01b86 | khoiLearnsToCode | 2025-04-26 | Minor AVL codeBox bug fix
+commit f2733e2628603527f42a476aca393a760f98da6b
+f2733e2 | nguyendinhthienloc | 2025-04-26 | Fix Deletion and Insertion
+commit b2661f6ccc4201d5d7c2ca6467b12fa16a0e7679
+b2661f6 | khoiLearnsToCode | 2025-04-26 | Fix bug for search codeBox
+commit e5410abf3142bc407d8462cbbae9b96a21e9b2f9
+e5410ab | nguyendinhthienloc | 2025-04-26 | Changed my directory and Added fixes to Linked List
+commit e2cc43cd4e898028710fd398d400a983cc79a585
+e2cc43c | tuankhai2006 | 2025-04-26 | minor change
+commit 0f98c57ee881c9c46f60537eee4cc216f9054997
+0f98c57 | khoiLearnsToCode | 2025-04-25 | Color modification for ht and AVL codeBox
+commit e539f971cfe5cd373b4949a6a795c388017531f5
+e539f97 | tuankhai2006 | 2025-04-25 | add update for ht
+commit 3e18701301526b493a645a07cbeaae98f64b456f
+3e18701 | khoiLearnsToCode | 2025-04-25 | Some new feature for AVL codeBox
+commit d5cbda74ae57cea0769368cbd720faa32a1a931c
+d5cbda7 | nguyendinhthienloc | 2025-04-25 | LaTeX files for Report
+commit bdcae4f49c470769f63a9bd170e25534d3002509
+bdcae4f | tuankhai2006 | 2025-04-25 | add codeBox for avl
+commit dccf915546a99d889231ff36f218fe6c15adacbd
+dccf915 | nguyendinhthienloc | 2025-04-25 | Fix deletion
+commit 42814c7bdb6f31d8093f54590d02ca38ab5f0119
+42814c7 | tuankhai2006 | 2025-04-25 | better font for avl
+commit 3dee6d5499f032bcdca015ea5a04da963b84c187
+3dee6d5 | tuankhai2006 | 2025-04-25 | better font for ht
+commit 980df3b107a5c3d44aa544517810972b9bf6dea5
+980df3b | tuankhai2006 | 2025-04-25 | change graph representation
+commit 151b34d75b40172bacf5b598227214716bb258bf
+151b34d | tuankhai2006 | 2025-04-24 | add highlight code for hashtable
+commit 4e17468269e6de76150b843bc6fab3fe3a1850f0
+4e17468 | tuankhai2006 | 2025-04-24 | change button position in hashtable
+commit 1356f67508a3dbe53540f2961a33cf96855860f0
+1356f67 | khoiLearnsToCode | 2025-04-24 | Fix file locating problem for tinyfiledialog.h
+commit d0a3700480d7583e83fc2175c70b12c50367640e
+d0a3700 | nguyendinhthienloc | 2025-04-22 | Add Pseudo Code illustration  + Smoother transition
+commit 0c21473db59cb5c1925e7229665eb182779b270f
+0c21473 | nguyendinhthienloc | 2025-04-21 | Enhance the step-by-step
+commit 25570d21cf7d5bed9efce829d0a9888bdca50d63
+25570d2 | nguyendinhthienloc | 2025-04-21 | Added necessary changes to Linked List
+commit 992978bc61c85c05e5153e8f8433d92154b0bd31
+992978b | khoiLearnsToCode | 2025-04-18 | Minor color fix for hashtable
+commit e3c98bbfe7b2903df28e9eb93b7db13293cb5d2a
+e3c98bb | tuankhai2006 | 2025-04-18 | add run at once for hashtable
+commit 6b042a335f606fb87b7184b7bfd28d343ee9904d
+6b042a3 | tuankhai2006 | 2025-04-18 | Add run at once for graph
+commit f69aa8bc92eb783dedd6620fe7354167da0c62b9
+f69aa8b | nguyendinhthienloc | 2025-04-18 | Update README.MD
+commit 5689500c5d94753db1854717b4417cddd448a35c
+5689500 | khoiLearnsToCode | 2025-04-17 | Add run-at-once function and fix stack bugs for AVL Tree
+commit e0f184f87a14f18515e8f98e3333bca9dda2476f
+e0f184f | khoiLearnsToCode | 2025-04-15 | Move exe, ttf and dll files into App folder
+commit 6209122d91f91e7b65d3f5d018abea91717f2ce3
+6209122 | khoiLearnsToCode | 2025-04-15 | Add exe and ddl files
+commit 9ef35adb5e3b64d5a106958d28dea49ba488466e
+9ef35ad | khoiLearnsToCode | 2025-04-13 | Delete exe file (not working)
+commit 64fd168c8b712a81a657cc9d53b3e525890480fa
+64fd168 | khoiLearnsToCode | 2025-04-13 | Need these 2 .ddl file for .exe file to run
+commit a787c41bdba19352082ab1955088cff27b48128d
+a787c41 | khoiLearnsToCode | 2025-04-13 | Done!
+commit 37b7ed68f7d2eef68f02d6c7f8642057f8d0d76e
+37b7ed6 | khoiLearnsToCode | 2025-04-12 | Minor bug fix
+commit e3786b64e731ebd734ebd639c07b864507cabe19
+e3786b6 | khoiLearnsToCode | 2025-04-12 | Upscale buttons and AVLTree, fix color
+commit b2d05bd7bbc880bb284d7ddecbe9379cc639b5f3
+b2d05bd | khoiLearnsToCode | 2025-04-12 | Erase <iostream> and unnecessary animations
+commit 415d6139df62cca19e775e2acae717bd058c5f98
+415d613 | khoiLearnsToCode | 2025-04-12 | merge graph successfully
+commit 3c37e786c7cc58a76622a540fa1151ea29be634f
+3c37e78 | tuankhai2006 | 2025-04-11 | add main function
+commit 9fb2f94c8d6b46dd9aae2347b38ece85d4d29041
+9fb2f94 | tuankhai2006 | 2025-04-09 | update input box and add instruction table
+commit 17e9815ff6f9be8b4a2f1e9d686178556a69ede0
+17e9815 | tuankhai2006 | 2025-04-06 | add matrix input
+commit 91bba0f5ca0fcb3e745f9cbe4598c703319c33fa
+91bba0f | tuankhai2006 | 2025-04-05 | update input box and graph check
+commit 12c971be7d42ef73483b7d414ce525397d8143b8
+12c971b | tuankhai2006 | 2025-04-05 | update input box
+commit 377057d51d6f73eded73531f2e7ff224dc17d868
+377057d | tuankhai2006 | 2025-04-05 | add input box
+commit ec49060289e9a2ddbaf5047bc41c9786213c601d
+ec49060 | khoiLearnsToCode | 2025-04-05 | add and merge hashtable
+commit 46f56e7e196c02d2a8db04cc04dc15451d2dab08
+46f56e7 | tuankhai2006 | 2025-04-04 | Change screen size with small modification
+commit 8cad2853d11be45de9b4d2664d20debdedf6cc22
+8cad285 | khoiLearnsToCode | 2025-04-03 | Merge ll and avltree
+commit 5ebd7b31e2d135ee204e5b9d1ee6a99d5442e444
+5ebd7b3 | khoiLearnsToCode | 2025-04-03 | Done
+commit d15d55a21b4d76521877a02608d37ab6f5d9de08
+d15d55a | tuankhai2006 | 2025-04-01 | min spanning tree visualization
+commit 3b5594f9673c221aa0e0b987e92646dd8eee492a
+3b5594f | tuankhai2006 | 2025-04-01 | clear graph branch
+commit ffd7f8d80cfd45960d564bbd98fdc46a0255274c
+ffd7f8d | nguyendinhthienloc | 2025-03-28 | Delete src/ui-linkedlist/README.md
+commit 555c1b07870046185d9a050e5c0bf5c84cbeddd6
+555c1b0 | nguyendinhthienloc | 2025-03-28 | Delete src/ui-linkedlist/main.cpp
+commit 96e82cd03589c0a3063abbb48fdcf9ea8aec9902
+96e82cd | nguyendinhthienloc | 2025-03-28 | Add Linked List files
+commit 04a3ebaf0b0fa1976fffafc6c56cdb311eaf2529
+04a3eba | khoiLearnsToCode | 2025-03-28 | add initAVLprogram
+commit ca75572066d0347fbc8481ed05f9dfe5ceed9de2
+ca75572 | khoiLearnsToCode | 2025-03-28 | small update main.cpp
+commit 6d4a2b4352261de0c5063939e1aeebb18de415ea
+6d4a2b4 | nguyendinhthienloc | 2025-03-27 | Delete src directory
+commit 6319c428751fd0cf8792396305c8ecd525a31182
+6319c42 | khoiLearnsToCode | 2025-03-27 | Update gitignore for VS
+commit e619ca1a41ae26405fc8b6dcd5421cd9a81ac7ee
+e619ca1 | nguyendinhthienloc | 2025-03-26 | Added Insert After feature
+commit 79373eba96192673c8f5df82cdbadb489a22d9ad
+79373eb | khoiLearnsToCode | 2025-03-26 | Add load file function
+commit 7c7a724567ea56b01a834c874748dfdf2630bea1
+7c7a724 | khoiLearnsToCode | 2025-03-26 | add color and <load file> button
+commit 624daeda10f9727af481687f9a371f5f8879d19a
+624daed | nguyendinhthienloc | 2025-03-22 | Delete src/linked_list.cpp
+commit 111666c21e161c98a3a553c66ed938ceb4f26e9b
+111666c | nguyendinhthienloc | 2025-03-22 | Delete src/ui.cpp
+commit c339058769a6dd2dc27e1d961e93b8f6b9f194a5
+c339058 | tuankhai2006 | 2025-03-21 | minor change
+commit 616c83e686929886a8fa2838eb2b355536bd766d
+616c83e | tuankhai2006 | 2025-03-21 | better file organize
+commit 20600ce96a4f6424db8ca040c1c854bdfb66fd47
+20600ce | nguyendinhthienloc | 2025-03-21 | Deleted files outside src
+commit 7cc946cd18b83cf7df5f391a6df9557229bb1eab
+7cc946c | nguyendinhthienloc | 2025-03-21 | Reorganize files
+commit ee1be5930f340da671b1eecc50dad16117df2406
+ee1be59 | nguyendinhthienloc | 2025-03-21 | Remove duplicate Linked List files from root directory
+commit 8e2fe879d804ce4d12e7aac50f20b1e7b76f2a00
+8e2fe87 | nguyendinhthienloc | 2025-03-21 | Divide the UI files into smaller files
+commit 7101841e23959f106d3fe5fbaef289f0a0bb9087
+7101841 | nguyendinhthienloc | 2025-03-21 | Delete .gitignore
+commit dd253fb59dceebf456c5cb705fcb0ae20654b980
+dd253fb | nguyendinhthienloc | 2025-03-21 | Delete Makefile.mak
+commit 229cb977c5d847cfcf46c6f53d6baaaeba2473a6
+229cb97 | nguyendinhthienloc | 2025-03-21 | Fixed undo button and make buttons more responsive
+commit 315346d51cb33ce5baaca2888dde6b9fcd089f48
+315346d | nguyendinhthienloc | 2025-03-21 | Delete src directory as we dont need it yet
+commit e88d9ad14a06fa4238bafcfd3ac6a038dd627737
+e88d9ad | nguyendinhthienloc | 2025-03-21 | Delete .gitignore cause its pretty useless
+commit d8e5a5e83422aa3826d96ccd2d3fa180767df2dc
+d8e5a5e | nguyendinhthienloc | 2025-03-21 | Update README.md
+commit df45dd1e21c71626033cb940126ba6ae972a0d9f
+df45dd1 | nguyendinhthienloc | 2025-03-20 | Added new features, debugged and completed Linked List =))
+commit 4b7b3f4451bd1bd8fe7da8b2a3226b4cf76c265f
+4b7b3f4 | nguyendinhthienloc | 2025-03-20 | Delete linked_list.cpp as I have alreadly split
+commit cf24772ffa95a054857eccccb11e8a496ddd0c74
+cf24772 | nguyendinhthienloc | 2025-03-20 | Split files and optimize further <33
+commit a7ad8f8b67acdffbfc1f018a9cb43a51a80b9ef9
+a7ad8f8 | nguyendinhthienloc | 2025-03-20 | Add files for Linked List visualization and UI
+commit bdb36df08842e5b16541c99caa0c0656edb100d2
+bdb36df | nguyendinhthienloc | 2025-03-20 | Switched to Visual Studio and created the sub-program to test LinkedList
+commit 0d978dc0d5ff07e910b326a1ee15583d83bd0ca8
+0d978dc | tuankhai2006 | 2025-03-20 | minor change in drawing function
+commit 5b88e2a9c78e124bd1de84b01397f0d9cdefde0a
+5b88e2a | khoiLearnsToCode | 2025-03-20 | Fixed collision, fixed line collision within the node
+commit 79f7db9da6918fe396879c500190bf69ab81f578
+79f7db9 | tuankhai2006 | 2025-03-19 | update load from file function
+commit b906c2ac4efe42201f14f35c1ddae7ed6c189085
+b906c2a | khoiLearnsToCode | 2025-03-19 | Insert animation fixed. Added state stacks (undo & redo).
+commit 346011b309dd062403f30f03ddeff7597758d5d1
+346011b | khoiLearnsToCode | 2025-03-18 | Delete and search animation fixed, but insert animation got bugged. Need rotate animation and state stacks.
+commit 21b4d484a4e50943c52c568aa5091358153fb0e3
+21b4d48 | tuankhai2006 | 2025-03-18 | add load from file button
+commit 939dd8c41e5eff04e07b296188d07ce7548eb255
+939dd8c | tuankhai2006 | 2025-03-18 | Updated insertion and deletion animations
+commit aa2b80d72b0d71941dd1b153c871bd8a6594ed17
+aa2b80d | nguyendinhthienloc | 2025-03-18 | Update .gitignore and add required changes
+commit e1dfcdc9c2afb77d296b286b96cae87cfae9ef4b
+e1dfcdc | nguyendinhthienloc | 2025-03-18 | Move ui.h and ui.cpp from ui-linkedlist to dev branch
+commit f0be45d991df2ef65d64b816e1a00243f4ed6100
+f0be45d | nguyendinhthienloc | 2025-03-17 | Removed w64devkit
+commit ef58095150d3cec4309e12406016834353431095
+ef58095 | nguyendinhthienloc | 2025-03-17 | Removed Makefile.mak from master
+commit 571ceb214b285f9ece5afb52930a615fb35b3eb6
+571ceb2 | nguyendinhthienloc | 2025-03-17 | Removed w64devkit from dev
+commit ba6c37d1f19eca89529a3488558ca28f64859baf
+ba6c37d | khoiLearnsToCode | 2025-03-17 | Debug random, delete logic successfully. Need fixing delete animation and add random animation.
+commit ef5393edc2006c71609b678989bf90268272abbd
+ef5393e | nguyendinhthienloc | 2025-03-17 | Moved Makefile from master to dev
+commit 5ed30b7b009746f3b5dbf2929e2b41bf835079a0
+5ed30b7 | nguyendinhthienloc | 2025-03-17 | Moved main.cpp to dev branch
+commit e8da482a12db3c8ab0efca4968ba06aa6d2fb5c6
+e8da482 | nguyendinhthienloc | 2025-03-17 | Initial UI & Linked List Integration: Insert, Delete, Search, Update + UI Transitions
+commit cc33b837845b8b133344d9bdfe34ab3ef63f96dc
+cc33b83 | nguyendinhthienloc | 2025-03-17 | Linked List updated with 3 files
+commit 0d50aff841d33b4d0e6dd9cacafc4f5352da5213
+0d50aff | nguyendinhthienloc | 2025-03-17 | Remove TestAVL folder from ui-linkedlist
+commit b594168cff6859bbe9009b366df25bfc1bcb0c54
+b594168 | nguyendinhthienloc | 2025-03-17 | Remove UI files from master to keep it clean
+commit 446bd11dcc79fec03cd213ecfc03563cfac57c9d
+446bd11 | nguyendinhthienloc | 2025-03-17 | Move UI files related to Linked List to ui-linkedlist branch
+commit dca3f16a5934d9c209a121d8bfdda72f8c73c2d8
+dca3f16 | nguyendinhthienloc | 2025-03-17 | Move Linked List files to ui-linkedlist branch
+commit d6fb462e10c827646f296fb8bf6cebb84eae1eff
+d6fb462 | nguyendinhthienloc | 2025-03-17 | Remove AVL Tree files from master to keep it clean
+commit 81e0f8888b5e818668ea1f39bbd55b1638e66e88
+81e0f88 | khoiLearnsToCode | 2025-03-16 | Insert animation almost finished, need rotate animation, fix deletion's and random's bugs.
+commit bc90504e3d3cbe2eae98b301b820baa91b5a412f
+bc90504 | tuankhai2006 | 2025-03-16 | Minor change
+commit 7edc45298a7abc1d40215456e3429e8ac7701de5
+7edc452 | tuankhai2006 | 2025-03-15 | Updated hash table implementation
+commit 2eb71ecb8100b00e9f703badaa11756eef5b79b6
+2eb71ec | nguyendinhthienloc | 2025-03-02 | Initial commit: Cleaned up project structure, added src and README
+commit 6d0f3b26e31d00bc27179c5d175e27bc8364038d
+6d0f3b2 | nguyendinhthienloc | 2025-03-02 | Removed unnecessary files
+commit bbf334a6cf7efc7d4eb3a10dc0abc5e6dbb404c8
+bbf334a | nguyendinhthienloc | 2025-03-02 | Updated visuals and fullscreen mode
+commit 711764a7e76f8041dfce38dc3009881dbe8ab529
+711764a | Loc | 2025-02-17 | Added linked list and main window files
