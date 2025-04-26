@@ -26,19 +26,19 @@ void LinkedList::Insert(int value) {
 void LinkedList::InsertHead(int value) {
     if (GetSize() >= 1000) return;
     
-    Node* newNode = new Node(value, { 0, 0 }); // Temporary position
+    Node* newNode = new Node(value, { 0, 0 });
     newNode->next = head;
     head = newNode;
     nodes.insert(nodes.begin(), newNode);
     
-    RecalculatePositions(); // Update positions immediately after adding the node
-    float initialX = nodes.empty() ? 50 : 50 - nodeSpacing; // Offset to the left of the first node
+    RecalculatePositions();
+    float initialX = nodes.size() == 1 ? 50 : 50 - nodeSpacing;
     animState = AnimState::GENERATING;
     animProgress = 0.0f;
     animNode = newNode;
-    animStartPos = { initialX, 550 }; // Generate below list at y = 550
+    animStartPos = { initialX, 550 };
     newNode->position = animStartPos;
-    newNode->targetPosition = { 50, 450 }; // Target position updated by RecalculatePositions
+    newNode->targetPosition = { 50, 450 };
 
     history.push_back(Operation(Operation::Type::INSERT_HEAD, value));
 }
@@ -46,36 +46,35 @@ void LinkedList::InsertHead(int value) {
 void LinkedList::InsertTail(int value) {
     if (GetSize() >= 1000) return;
     
-    Node* newNode = new Node(value, { 0, 0 }); // Temporary position
+    Node* newNode = new Node(value, { 0, 0 });
     if (!head) {
         head = newNode;
         cur = head;
+        nodes.push_back(newNode);
     } else {
         Node* temp = head;
         while (temp->next) temp = temp->next;
         temp->next = newNode;
         cur = temp;
-        animPrevNode = temp; // For relinking animation
+        animPrevNode = temp;
+        nodes.push_back(newNode);
     }
-    nodes.push_back(newNode);
     
-    RecalculatePositions(); // Update positions immediately after adding the node
-    float startX = nodes.empty() ? 50 : 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing + nodeSpacing; // Offset to the right of the last node
+    RecalculatePositions();
+    float startX = nodes.size() == 1 ? 50 : 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing;
     animState = AnimState::GENERATING;
     animProgress = 0.0f;
+    animNodeReturns:
     animNode = newNode;
-    animStartPos = { startX, 550 }; // Generate below list at y = 550
+    animStartPos = { startX, 550 };
     newNode->position = animStartPos;
-    newNode->targetPosition = { 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing, 450 }; // Target position updated by RecalculatePositions
+    newNode->targetPosition = { 50 + static_cast<float>(nodes.size() - 1) * nodeSpacing, 450 };
 
     history.push_back(Operation(Operation::Type::INSERT_TAIL, value));
 }
 
 void LinkedList::InsertAfter(Node* target, int value) {
-    if (GetSize() >= 1000) return;
-    if (!target) {
-        return;
-    }
+    if (GetSize() >= 1000 || !target) return;
 
     Node* newNode = new Node(value, { 0, 0 });
     newNode->next = target->next;
@@ -89,16 +88,16 @@ void LinkedList::InsertAfter(Node* target, int value) {
         return;
     }
 
-    RecalculatePositions(); // Update positions immediately after adding the node
-    float adjustedTargetX = target->targetPosition.x + nodeSpacing + nodeSpacing; // Offset to the right of the target node
+    RecalculatePositions();
+    float adjustedTargetX = target->targetPosition.x + nodeSpacing;
     animState = AnimState::GENERATING;
     animProgress = 0.0f;
     animNode = newNode;
     animPrevNode = target;
     animNextNode = newNode->next;
-    animStartPos = { adjustedTargetX, 550 }; // Generate below list at y = 550
+    animStartPos = { adjustedTargetX, 550 };
     newNode->position = animStartPos;
-    newNode->targetPosition = { target->targetPosition.x + nodeSpacing, 450 }; // Target position updated by RecalculatePositions
+    newNode->targetPosition = { target->targetPosition.x + nodeSpacing, 450 };
 
     history.push_back(Operation(Operation::Type::INSERT_AFTER, value, newNode->position, target));
 }
@@ -251,7 +250,7 @@ void LinkedList::Undo() {
         animState = AnimState::GENERATING;
         animProgress = 0.0f;
         animNode = newNode;
-        animStartPos = { lastOp.position.x, 550 }; // Generate below list at y = 550
+        animStartPos = { lastOp.position.x, 550 };
         newNode->position = animStartPos;
         newNode->targetPosition = lastOp.position;
         if (lastOp.prevNode) {

@@ -56,7 +56,9 @@ void LinkedList::UpdateAnimation(float deltaTime) {
         // Handle both insertion and deletion relinking
         if (isUndoing && undoOperationType == Operation::Type::DELETE) {
             SetPseudoCode("Undo Delete:\nStep 3: newNode->next = prev->next\nprev->next = newNode");
-        } else if (undoOperationType == Operation::Type::INSERT_HEAD || undoOperationType == Operation::Type::INSERT_TAIL || undoOperationType == Operation::Type::INSERT_AFTER) {
+        } else if (undoOperationType == Operation::Type::INSERT_HEAD || 
+                   undoOperationType == Operation::Type::INSERT_TAIL || 
+                   undoOperationType == Operation::Type::INSERT_AFTER) {
             SetPseudoCode("Undo Insert:\nStep 3: Disconnect inserted node");
         } else if (animPrevNode) {
             SetPseudoCode("Delete:\nprev->next = current->next");
@@ -65,24 +67,38 @@ void LinkedList::UpdateAnimation(float deltaTime) {
         }
 
         if (animProgress >= 1.0f) {
-            // 🔧 DELETE RELINKING FIX
             if (!isUndoing) {
-                if (animPrevNode) {
-                    animPrevNode->next = animNode->next;
+                // Handle deletion
+                if (undoOperationType == Operation::Type::DELETE || animState == AnimState::SEARCHING_FOR_DELETE) {
+                    if (animPrevNode) {
+                        animPrevNode->next = animNode->next;
+                    } else {
+                        head = animNode->next;
+                    }
+
+                    auto it = std::find(nodes.begin(), nodes.end(), animNode);
+                    if (it != nodes.end()) {
+                        nodes.erase(it);
+                    }
+
+                    animNextNode = animNode->next; // For animation continuity
+                    animState = AnimState::DELETING;
+                    animProgress = 0.0f;
                 } else {
-                    head = animNode->next;
+                    // Complete insertion (InsertHead, InsertTail, InsertAfter)
+                    animState = AnimState::IDLE;
+                    animProgress = 0.0f;
+                    animNode->alpha = 1.0f;
+                    animNode = nullptr;
+                    animPrevNode = nullptr;
+                    animNextNode = nullptr;
+                    currentPseudoCode = "";
+                    RecalculatePositions();
                 }
-
-                auto it = std::find(nodes.begin(), nodes.end(), animNode);
-                if (it != nodes.end()) {
-                    nodes.erase(it);
-                }
-
-                animNextNode = animNode->next; // For animation continuity
-                animState = AnimState::DELETING;
-                animProgress = 0.0f;
             } else {
+                // Handle undo operations
                 animState = AnimState::IDLE;
+                animNode->alpha = 1.0f;
                 animNode = nullptr;
                 animPrevNode = nullptr;
                 animNextNode = nullptr;
