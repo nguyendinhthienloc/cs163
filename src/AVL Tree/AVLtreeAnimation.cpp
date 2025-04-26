@@ -284,13 +284,13 @@ void AVLTreeVisualizer::updateAnimation(float deltaTime) {
                     }
                     else {
                         currentState = DELETING;
-                        codeState = 1; // "create new vertex"
+                        codeState = 1; // "delete this vertex"
                         //duplicateFound = false;
                     }
                 }
 
                 else if (currentOperation == "search") {
-                    if (!duplicateFound) {
+                    if (!tree.search(operationValue)) {
                         currentState = SHOWING_RESULT;
                         codeState = 6; // Keep "else do nothing" highlighted
                     }
