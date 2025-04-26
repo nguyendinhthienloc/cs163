@@ -111,6 +111,10 @@ void AVLTreeVisualizer::handleInput() {
             currentState = SHOWING_RESULT;
             codeState = tree.search(std::stoi(inputText)) ? 6 : 1;
 			tree.insert(tree.root, std::stoi(inputText));
+            resultTimer = 0.0f;
+            stateTimer = 0.0f;
+            currentPath.clear();
+            pathIndex = 0;
             
 		}
         inputText.clear();       
@@ -127,9 +131,14 @@ void AVLTreeVisualizer::handleInput() {
                 treeRedoState.pop();
             }
             currentOperation = "delete";
+            operationValue = std::stoi(inputText);
             currentState = SHOWING_RESULT;
             codeState = tree.search(std::stoi(inputText)) ? 1 : 6;
             tree.remove(tree.root, std::stoi(inputText));
+            resultTimer = 0.0f;
+            stateTimer = 0.0f;
+            currentPath.clear();
+            pathIndex = 0;
 
         }
         inputText.clear();
@@ -510,7 +519,7 @@ void AVLTreeVisualizer::draw() {
 	drawButton(nextButton, "Next", BlueButton);
     drawButton(stdViewButton, "Std View", BlueButton);
     drawButton(runAtOnceButton, "Run at Once", isRunAtOnce? GREEN : RED);
-    DrawCodeBox();
+    
 
     if (tree.root) {
         drawTree(tree.root, GetScreenWidth() / 2 + dragOffset.x, 130 + dragOffset.y, highlightNodes);
@@ -528,6 +537,8 @@ void AVLTreeVisualizer::draw() {
             DrawTextEx(codeFont, messageNotFound.c_str(), { (GetScreenWidth() - messageSize) / 2.0f, (float)(GetScreenHeight() - 50) }, 40, 1, RED);
         }
     }
+
+    DrawCodeBox();
 }
 
 void AVLTreeVisualizer::animateInsert(int value) {
@@ -553,6 +564,7 @@ void AVLTreeVisualizer::animateSearch(int value) {
     currentOperation = "search";
     operationValue = value;
     currentPath = tree.getInsertionPath(value); 
+    pendingInsertValue = value;
     pathIndex = 0;
     searchFound = tree.search(value); 
     currentState = TRAVERSING;
