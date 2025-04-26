@@ -9,6 +9,7 @@
 #include "../../header/Graph/ui_Graph.h"
 #include "../../header/Graph/Graph.h"
 #include "../../resource/tinyfiledialogs.h"
+#include "../../header/Color.h"
 
 
 Graph G;
@@ -86,28 +87,29 @@ void DrawAndHandleButtons() {
     DefineButtons(openMenuBtn, randomBtn, LoadFileBtn, mstBtn, clearBtn, inputBtn, loadMatrix, loadEdge);
 
     //Color GOLDENROD = { 218, 165, 32, 255 };
+    Color navy = { 0, 51, 102, 255 };
 
     if (isOpen) {
         if (!isTextBoxOpen) {
-            if (DrawButton(openMenuBtn, "<", DARKGREEN, 1, codeFont, 0.1f * openMenuBtn.height)) {
+            if (DrawButton(openMenuBtn, "<", navy, 1, codeFont, 0.1f * openMenuBtn.height)) {
                 isOpen = false;
                 isLoadFileOpen = false;
             }
-            if (DrawButton(randomBtn, "Random", DARKGREEN, 2, codeFont, 17)) {
+            if (DrawButton(randomBtn, "Random", navy, 2, codeFont, 17)) {
                 G.RandomGraph();
             }
-            if (DrawButton(LoadFileBtn, "Load File", DARKGREEN, 2, codeFont, 17)) {
+            if (DrawButton(LoadFileBtn, "Load File", navy, 2, codeFont, 17)) {
                 isLoadFileOpen = !isLoadFileOpen;
             }
             if (isLoadFileOpen) {
-                if (DrawButton(loadMatrix, "Matrix", DARKGREEN, 2, codeFont, 17)) {
+                if (DrawButton(loadMatrix, "Matrix", navy, 2, codeFont, 17)) {
                     LoadFileGraph(1);
                 }
-                if (DrawButton(loadEdge, "Edge list", DARKGREEN, 2, codeFont, 17)) {
+                if (DrawButton(loadEdge, "Edge list", navy, 2, codeFont, 17)) {
                     LoadFileGraph(2);
                 }
             }
-            if (DrawButton(mstBtn, "Run Kruskal", DARKGREEN, 2, codeFont, 17)) {
+            if (DrawButton(mstBtn, "Run Kruskal", navy, 2, codeFont, 17)) {
                 isOpen = false;
                 isCodeOpen = true;
                 isLoadFileOpen = false;
@@ -115,28 +117,28 @@ void DrawAndHandleButtons() {
                 if (!atOnce) G.StartKruskalAnimation();
                 else G.RunKruskal();
             }
-            if (DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17)) {
+            if (DrawButton(clearBtn, "Clear", navy, 2, codeFont, 17)) {
                 G.clearGraph();
             }
-            if (DrawButton(inputBtn, "Input Graph", DARKGREEN, 2, codeFont, 17)) {
+            if (DrawButton(inputBtn, "Input Graph", navy, 2, codeFont, 17)) {
                 isTextBoxOpen = true;
                 textBox.m_scrollOffset = 0;
             }
         }
 
         if (isTextBoxOpen) {
-            if (DrawButton(openMenuBtn, "<", DARKGREEN, 1, codeFont, 0.1f * openMenuBtn.height)) {
+            if (DrawButton(openMenuBtn, "<", navy, 1, codeFont, 0.1f * openMenuBtn.height)) {
                 isOpen = false;
             }
-            DrawButton(randomBtn, "Random", DARKGREEN, 2, codeFont, 17);
-            DrawButton(LoadFileBtn, "Load File", DARKGREEN, 2, codeFont, 17);
-            DrawButton(mstBtn, "Run Kruskal", DARKGREEN, 2, codeFont, 17);
-            DrawButton(clearBtn, "Clear", DARKGREEN, 2, codeFont, 17);
-            DrawButton(inputBtn, "Input Graph", DARKGREEN, 2, codeFont, 17);
+            DrawButton(randomBtn, "Random", navy, 2, codeFont, 17);
+            DrawButton(LoadFileBtn, "Load File", navy, 2, codeFont, 17);
+            DrawButton(mstBtn, "Run Kruskal", navy, 2, codeFont, 17);
+            DrawButton(clearBtn, "Clear", navy, 2, codeFont, 17);
+            DrawButton(inputBtn, "Input Graph", navy, 2, codeFont, 17);
         }
     }
     else {
-        if (DrawButton(openMenuBtn, ">", DARKGREEN, 1, codeFont, openMenuBtn.height * 0.1f)) {
+        if (DrawButton(openMenuBtn, ">", navy, 1, codeFont, openMenuBtn.height * 0.1f)) {
             isOpen = true;
         }
     }
@@ -417,34 +419,36 @@ void DefineCodeTableElements(Rectangle& openBtn, Rectangle& startAlgo1, Rectangl
 void DrawCodeTable() {
     Rectangle openBtn, startAlgo1, startAlgo2, forLoop, condition, add, skip, done;
     DefineCodeTableElements(openBtn, startAlgo1, startAlgo2, forLoop, condition, add, skip, done);
+    Color codeBoxColor = BlueButton;
+
     if (isCodeOpen) {
-        if (DrawButton(openBtn, ">", BLUE, 1, codeFont, openBtn.height * 0.1f)) {
+        if (DrawButton(openBtn, ">", codeBoxColor, 1, codeFont, openBtn.height * 0.1f)) {
             isCodeOpen = false;
         }
 
         const char* algo1 = "Sort edges by increasing weight";
-        DrawButton(startAlgo1, algo1, (stateOfCode == 1) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(startAlgo1, algo1, (stateOfCode == 1) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* algo2 = "T={ }";
-        DrawButton(startAlgo2, algo2, (stateOfCode == 1) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(startAlgo2, algo2, (stateOfCode == 1) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* forloop = "for ( i = 0; i < edgeList.size; i++)";
-        DrawButton(forLoop, forloop, (stateOfCode == 2) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(forLoop, forloop, (stateOfCode == 2) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* conditionText = "  if adding e = edgeList[i] does not form a cycle";
-        DrawButton(condition, conditionText, (stateOfCode == 3) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(condition, conditionText, (stateOfCode == 3) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* addText = "    add e to T";
-        DrawButton(add, addText, (stateOfCode == 4) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(add, addText, (stateOfCode == 4) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* skipText = "  else ignore e";
-        DrawButton(skip, skipText, (stateOfCode == 5) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(skip, skipText, (stateOfCode == 5) ? BLACK : codeBoxColor, 2, codeFont, 17);
 
         const char* doneText = "MST = T";
-        DrawButton(done, doneText, (stateOfCode == 6) ? BLACK : BLUE, 2, codeFont, 17);
+        DrawButton(done, doneText, (stateOfCode == 6) ? BLACK : codeBoxColor, 2, codeFont, 17);
     }
     else {
-        if (DrawButton(openBtn, "<", BLUE, 1, codeFont, openBtn.height * 0.1f)) {
+        if (DrawButton(openBtn, "<", codeBoxColor, 1, codeFont, openBtn.height * 0.1f)) {
             isCodeOpen = true;
         }
     }
@@ -467,12 +471,12 @@ void DrawChosenAlgo() {
 }
 
 void DrawCurrentStep() {
-    float h = 50.0f, w = 2 * WIDTH / 3.0;
+    float h = 50.0f, w =  WIDTH;
     float startX = 0, startY = HEIGHT - 50 - h;
 
     Rectangle rect = { startX, startY, w, h };
 
-    float textSize = 40; // 50% of button height
+    float textSize = 30; // 50% of button height
     Vector2 textSizeMeasure = MeasureTextEx(codeFont, message.c_str(), textSize, 1);
 
     // Center the text within the button

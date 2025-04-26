@@ -393,51 +393,51 @@ void DrawCodeRun() {
                 Rectangle rect = { startX, startY +height*i , width, height };
                 DrawButton2(rect, "", BlueButton, 2, codeFont, 20);
                 Color codeBoxColor = BlueButton;
-                Color fadeBoxColor = FadeBlueButton;
+                //Color BLACK = FadeBlueButton;
 
                 if (i == 4) {
 					
                     if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
-                        DrawButton2(rect, case1[0], (state!=4)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case1[0], (state!=4)? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     if (ht.GetPendingOperation() == PendingOperation::INSERT ) {
-                        DrawButton2(rect, case1[1], (state!=4)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case1[1], (state!=4)? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if(ht.GetPendingOperation() == PendingOperation::DELETE) {
-                        DrawButton2(rect, case1[2], (state != 4) ? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case1[2], (state != 4) ? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if (ht.GetPendingOperation() == PendingOperation::UPDATE) {
-                        DrawButton2(rect, case1[3], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
+                        DrawButton2(rect, case1[3], (state != 4) ? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if (ht.GetPendingOperation() == PendingOperation::CHECK_NEW_VALUE) {
-                        DrawButton2(rect, case1[4], (state != 4) ? BLACK : GRAY, 2, codeFont, 20);
+                        DrawButton2(rect, case1[4], (state != 4) ? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                 }
                 else if (i == 6) {
                     if (ht.GetPendingOperation() == PendingOperation::SEARCH) {
-                        DrawButton2(rect, case2[0], (state!=6)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case2[0], (state!=6)? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     if ((ht.GetPendingOperation() == PendingOperation::INSERT) ){
-                        DrawButton2(rect, case2[1], (state!=6)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case2[1], (state!=6)? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if ((ht.GetPendingOperation() == PendingOperation::DELETE)) {
-                        DrawButton2(rect, case2[2], (state!=6)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                        DrawButton2(rect, case2[2], (state!=6)? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if (ht.GetPendingOperation() == PendingOperation::UPDATE) {
-                        DrawButton2(rect, case2[3], (state != 6) ? BLACK : GRAY, 2, codeFont, 20);
+                        DrawButton2(rect, case2[3], (state != 6) ? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                     else if (ht.GetPendingOperation() == PendingOperation::CHECK_NEW_VALUE) {
-                        DrawButton2(rect, case2[4], (state != 6) ? BLACK : GRAY, 2, codeFont, 20);
+                        DrawButton2(rect, case2[4], (state != 4) ? codeBoxColor : BLACK, 2, codeFont, 20);
                     }
                 }
                 else if (i == 5) {
-                    DrawButton2(rect, text[i], (state != 6) ? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                    DrawButton2(rect, text[i], (state != 6) ? codeBoxColor : BLACK, 2, codeFont, 20);
                 }
                 else if (i == 3) {
-                    DrawButton2(rect, text[i], (state != 4) ? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                    DrawButton2(rect, text[i], (state != 4) ? codeBoxColor : BLACK, 2, codeFont, 20);
 
                 }
-                else DrawButton2(rect, text[i], (state!=i)? codeBoxColor : fadeBoxColor, 2, codeFont, 20);
+                else DrawButton2(rect, text[i], (state!=i)? codeBoxColor : BLACK, 2, codeFont, 20);
             }
         }
     }

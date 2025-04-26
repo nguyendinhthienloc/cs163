@@ -248,7 +248,7 @@ void HashTable::UpdateValueAnimation(int oldVal, int newVal) {
     int index = hashFunction(oldVal);
     if (hashFunction(oldVal) != hashFunction(newVal)) {
         searchMessage = TextFormat("%d and %d have different hash values!", oldVal, newVal);
-        state = 6;
+        state = -1;
         return;
     }
 
@@ -360,7 +360,7 @@ void HashTable::UpdateSearchAnimation() {
             if (pendingOp == PendingOperation::CHECK_NEW_VALUE) {
                 if (state == 4) {
                     // New value found, stop
-                    searchMessage = TextFormat(" % d already exists!", searchValue);
+                    searchMessage = TextFormat(" Value %d already exists!", searchValue);
                     //pendingOp = PendingOperation::NONE;
                     pendingValue = -1;
                     newValueForUpdate = -1;
@@ -410,7 +410,7 @@ void HashTable::UpdateSearchAnimation() {
                 }
                 else {
                     state = 4;
-                    searchMessage = TextFormat("%d already exists.", pendingValue);
+                    searchMessage = TextFormat("Value %d already exists.", pendingValue);
                 }
             }
             else if (pendingOp == PendingOperation::DELETE) {
@@ -420,7 +420,7 @@ void HashTable::UpdateSearchAnimation() {
                 }
                 else {
                     state = 6;
-                    searchMessage = TextFormat("%d does not exist!", pendingValue);
+                    searchMessage = TextFormat("Value %d not found!", pendingValue);
                 }
             }
             if (pendingOp != PendingOperation::UPDATE && pendingOp != PendingOperation::CHECK_NEW_VALUE) {
@@ -567,6 +567,7 @@ void HashTable::RandomInsert(int maxElements, int minValue, int maxValue) {
         Insert(randomValue, true);
     }
     undoStack.push(CopyTable());
+    searchMessage = "Random " + std::to_string(maxElements) + " elements";
 }
 
 void HashTable::HandleTableDragging() {

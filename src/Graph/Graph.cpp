@@ -144,6 +144,8 @@ void Graph::RandomGraph() {
     frameCounter = 0;
 }
 
+Color mutedOrange = { 230, 140, 90, 255 };
+
 void Graph::Draw() const {
     
 
@@ -154,7 +156,7 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if ((i == kruskalStep && !mstFinished && stateOfCode >= 2 && stateOfCode <= 5) || edge.inMST) {
-                edgeColor = BLUE;
+                edgeColor = mutedOrange;
 			}
 		
             else if (i < kruskalStep && !edge.inMST) {
@@ -219,14 +221,14 @@ void Graph::Draw() const {
 
         if (state == MST) {
             if (isInCurrentEdge) {
-                fillColor = BLUE;
+                fillColor = mutedOrange;
                 numberColor = WHITE;
-                outlineColor = BLUE;
+                outlineColor = mutedOrange;
             }
             else if (hasBeenConsidered) {
                 fillColor = WHITE;
-                numberColor = BLUE;
-                outlineColor = BLUE;
+                numberColor = mutedOrange;
+                outlineColor = mutedOrange;
             }
         }
 
