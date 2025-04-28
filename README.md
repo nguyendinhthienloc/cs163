@@ -8,7 +8,9 @@
 ## Overview
 DataVisualizer is a C++ application that visualizes fundamental data structures using Raylib. The application supports:
 - Singly Linked List (Insertion & Deletion)
-- More data structures to be added soon...
+- AVL Trees
+- Hash Tables
+- Graphs
 
 ## Features
 - Step-by-step visualization (Insert, Delete, Search and Random Generation. etc)
