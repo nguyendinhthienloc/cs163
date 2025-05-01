@@ -3,7 +3,7 @@
 ## Contributors
 - Nguyễn Đình Thiên Lộc – Singly Linked List, Testing, Documentation
 - Trần Tuấn Khải – Graph & Hash Table Visualizer, Source Highlighting
-- Phan Đăng Khôi – AVL Tree, Merge Visualizer
+- Phan Minh Khôi – AVL Tree, Merge Visualizer
 
 ## Overview
 DataVisualizer is a C++ application that visualizes fundamental data structures using Raylib. The application supports:
