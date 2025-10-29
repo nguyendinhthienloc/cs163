@@ -2,7 +2,7 @@
 
 ## Contributors
 - Nguyễn Đình Thiên Lộc – Singly Linked List, Testing, Documentation
-- Trần Tuấn Khải – Graph & Hash Table Visualizer, Source Highlighting
+- Văn Tuấn Khải – Graph & Hash Table Visualizer, Source Highlighting
 - Phan Minh Khôi – AVL Tree, Merge Visualizer
 
 ## Overview
